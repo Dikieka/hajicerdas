@@ -1,0 +1,77 @@
+/* Tablet (landscape/portrait) */
+@media (max-width: 991.98px) {
+  .section { padding: 2.5rem 0; }
+  .hero { padding: 5.5rem 0 2.5rem; }
+  .hero-compact { padding: calc(5.5rem + 26px) 0 2rem; }
+  .hero-search { border-radius: 10px; }
+  .hero-search .row > * { margin-bottom: .5rem; }
+  .search-panel { margin-top: -1.25rem; }
+  .nav-clock { display: none !important; }
+  .hub-card { padding: .9rem; }
+  .hub-card .hub-icon { width: 36px; height: 36px; flex-basis: 36px; font-size: 1rem; }
+  .navbar-collapse {
+    background: var(--header);
+    margin-top: .6rem;
+    border-radius: 8px;
+    padding: .5rem .25rem;
+  }
+  .navbar-nav .nav-link { padding: .55rem .75rem; }
+}
+
+/* Tablet portrait / large phones */
+@media (max-width: 767.98px) {
+  .section-title { font-size: 1.15rem; }
+  .hero h1 { font-size: 1.9rem; }
+  .col-6.col-lg-3 { flex: 0 0 50%; max-width: 50%; }
+  .admin-content { padding: 0 .85rem 1.5rem; }
+  .table-responsive { font-size: .88rem; }
+}
+
+/* Phones */
+@media (max-width: 575.98px) {
+  .section { padding: 2rem 0; }
+  .page-header { padding-top: 5.5rem; padding-bottom: 1.5rem; }
+  .hero { padding-top: 5rem; }
+  .hero-compact { padding-top: calc(5rem + 26px); }
+  .hero h1 { font-size: 1.55rem; }
+  .top-strip-inner { font-size: .7rem; gap: .45rem .65rem; }
+  .article-list-thumb { width: 52px; height: 52px; flex-basis: 52px; }
+  .hero-search { padding: .6rem; }
+  .btn, .form-control, .form-select { min-height: 46px; }
+  .surface { border-radius: 8px; }
+  .card-body-pad { padding: .9rem; }
+  .meta { gap: .5rem; }
+  .section-title { font-size: 1.05rem; }
+  .hub-card { flex-wrap: wrap; }
+  .hub-card .hub-desc { display: none; }
+  .clock-card .time { font-size: 1.6rem; }
+  .video-frame { aspect-ratio: 16/10; }
+  .breadcrumb { font-size: .8rem; }
+  .footer { text-align: center; }
+  .footer .d-flex.justify-content-between { justify-content: center !important; flex-direction: column; align-items: center; gap: .5rem; }
+  .back-to-top { right: .75rem; bottom: .75rem; width: 40px; height: 40px; }
+}
+
+/* Small phones */
+@media (max-width: 380px) {
+  .hero h1 { font-size: 1.35rem; }
+  .navbar-brand { font-size: .95rem; }
+  .btn-sm { padding: .3rem .6rem; font-size: .78rem; }
+}
+
+/* Larger screens */
+@media (min-width: 1200px) {
+  .container { max-width: 1140px; }
+}
+@media (min-width: 1400px) {
+  .container { max-width: 1260px; }
+}
+
+/* Touch devices: bigger tap targets, no hover-only affordances */
+@media (hover: none) and (pointer: coarse) {
+  .btn, .nav-link, .dropdown-item, .hub-card, .tip-card { min-height: 44px; }
+  .article-card:hover, .category-card:hover, .story-card:hover, .tip-card:hover, .hub-card:hover {
+    border-color: var(--border);
+    box-shadow: none;
+  }
+}

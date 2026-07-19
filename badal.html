@@ -1,0 +1,466 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="utf-8" />
+    <script>
+      (function () {
+        try {
+          var t = localStorage.getItem("hajicerdas-theme");
+          if (!t) {
+            t =
+              window.matchMedia &&
+              window.matchMedia("(prefers-color-scheme: dark)").matches
+                ? "dark"
+                : "light";
+          }
+          if (t === "dark") {
+            document.documentElement.classList.add("theme-dark-preload");
+          }
+        } catch (e) {}
+      })();
+    </script>
+    <meta content="width=device-width, initial-scale=1" name="viewport" />
+    <title>Badal Haji dan Umrah: Panduan Lengkap | HajiCerdas</title>
+    <meta
+      content="Definisi, dasar hukum, syarat sah, cara memilih penyelenggara resmi, dan cara menghindari penipuan badal haji dan umrah."
+      name="description"
+    />
+    <link href="https://www.hajicerdas.id/badal.html" rel="canonical" />
+    <link href="assets/icons/favicon.svg" rel="icon" type="image/svg+xml" />
+    <link href="manifest.json" rel="manifest" />
+    <link href="https://fonts.googleapis.com" rel="preconnect" />
+    <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&amp;display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css"
+      rel="stylesheet"
+    />
+    <link href="assets/css/style.css" rel="stylesheet" />
+    <link href="assets/css/responsive.css" rel="stylesheet" />
+  </head>
+  <body>
+    <nav aria-label="Navigasi utama" class="navbar navbar-expand-lg fixed-top">
+      <div class="container">
+        <a class="navbar-brand d-flex align-items-center" href="index.html"
+          ><span class="brand-mark"><i class="bi bi-compass"></i></span
+          >HajiCerdas</a
+        >
+        <div class="nav-clock d-none d-lg-block" data-nav-clock="">
+          <strong>--:--</strong> WIB ·
+          <span class="nav-clock-next">Memuat...</span>
+        </div>
+        <button
+          aria-controls="mainNav"
+          aria-expanded="false"
+          aria-label="Buka navigasi"
+          class="navbar-toggler"
+          data-bs-target="#mainNav"
+          data-bs-toggle="collapse"
+          type="button"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="mainNav">
+          <ul class="navbar-nav ms-auto align-items-lg-center gap-lg-1">
+            <li class="nav-item">
+              <a class="nav-link" href="index.html">Beranda</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="artikel.html">Artikel</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="index.html#panduan">Panduan</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="index.html#info-praktis"
+                >Info Praktis</a
+              >
+            </li>
+            <li class="nav-item dropdown">
+              <a
+                aria-expanded="false"
+                class="nav-link dropdown-toggle"
+                data-bs-toggle="dropdown"
+                href="#"
+                id="ensiklopediaDropdown"
+                role="button"
+                >Ensiklopedia</a
+              >
+              <ul aria-labelledby="ensiklopediaDropdown" class="dropdown-menu">
+                <li>
+                  <a class="dropdown-item" href="badal.html"
+                    >Badal Haji &amp; Umrah</a
+                  >
+                </li>
+                <li>
+                  <a class="dropdown-item" href="tabungan-investasi.html"
+                    >Tabungan &amp; Investasi Haji</a
+                  >
+                </li>
+                <li>
+                  <a class="dropdown-item" href="fikih.html"
+                    >Fikih Haji &amp; Umrah</a
+                  >
+                </li>
+                <li>
+                  <a class="dropdown-item" href="wakaf-quran.html"
+                    >Wakaf Al-Qur'an</a
+                  >
+                </li>
+                <li>
+                  <a class="dropdown-item" href="rekrutmen-petugas.html"
+                    >Rekrutmen Petugas Haji</a
+                  >
+                </li>
+              </ul>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="pengalaman.html">Cerita Jamaah</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="faq.html">FAQ</a>
+            </li>
+            <li class="nav-item">
+              <a class="btn btn-primary btn-sm ms-lg-2" href="kirim.html"
+                ><i class="bi bi-pencil-square"></i> Kirim</a
+              >
+            </li>
+            <li class="nav-item">
+              <button
+                aria-label="Ganti tema"
+                class="btn btn-outline-light btn-sm ms-lg-2"
+                data-theme-toggle=""
+                type="button"
+              >
+                <i class="bi bi-moon-stars" data-theme-icon=""></i>
+              </button>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+    <header class="page-header">
+      <div class="container">
+        <nav aria-label="Breadcrumb">
+          <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="index.html">Beranda</a></li>
+            <li class="breadcrumb-item active" data-ensiklopedia-crumb="">
+              Badal Haji &amp; Umrah
+            </li>
+          </ol>
+        </nav>
+        <span class="eyebrow" data-ensiklopedia-eyebrow=""
+          >Ensiklopedia · Badal</span
+        >
+        <h1 class="display-5 fw-bold" data-ensiklopedia-title="">
+          Badal Haji dan Umrah: Panduan Lengkap
+        </h1>
+        <p class="lead lead-muted col-lg-9" data-ensiklopedia-lead="">
+          Kapan badal boleh dilakukan, siapa yang berhak melaksanakan, dan
+          bagaimana memilih penyelenggara resmi agar ibadah benar-benar sampai
+          kepada yang dituju.
+        </p>
+      </div>
+    </header>
+    <main class="section" id="main">
+      <div class="container" data-ensiklopedia="badal">
+        <div class="surface p-3 p-lg-4 mb-4 d-flex gap-3 align-items-start">
+          <i class="bi bi-patch-check-fill text-primary fs-4"></i>
+          <div>
+            <p class="fw-semibold mb-1">Rujukan &amp; catatan sumber</p>
+            <p class="small lead-muted mb-0" data-ensiklopedia-source="">
+              Disusun dari hadits riwayat Bukhari-Muslim tentang haji
+              Khats'amiyah dan pandangan umum empat mazhab fikih. Untuk kasus
+              spesifik, konsultasikan ke pembimbing manasik atau lembaga fatwa
+              resmi seperti MUI. Untuk legalitas penyelenggara, verifikasi izin
+              PIHK/PPIU ke Kementerian Agama.
+            </p>
+          </div>
+        </div>
+        <div data-ensiklopedia-body="">
+          <section class="mb-5">
+            <h2 class="section-title">Definisi &amp; Dasar Hukum</h2>
+            <p>
+              Badal haji atau badal umrah adalah pelaksanaan ibadah haji/umrah
+              oleh seseorang atas nama orang lain, biasanya karena orang
+              tersebut sudah wafat atau mengalami uzur permanen (sakit menahun,
+              terlalu lanjut usia) sehingga secara fisik tidak mungkin lagi
+              berangkat sendiri.
+            </p>
+            <p>
+              Dasar yang sering dirujuk ulama adalah hadits riwayat Bukhari dan
+              Muslim tentang seorang perempuan dari suku Khats'am yang bertanya
+              kepada Nabi Muhammad � tentang kewajiban haji ayahnya yang sudah
+              renta dan tidak mampu duduk tegak di atas kendaraan; Nabi
+              mengizinkan haji tersebut dibadalkan. Mayoritas ulama empat mazhab
+              (Hanafi, Maliki, Syafi'i, Hanbali) membolehkan badal haji untuk
+              orang yang telah wafat atau uzur permanen, dengan sejumlah syarat
+              teknis yang berbeda-beda di antara mazhab — misalnya sebagian
+              mazhab mensyaratkan orang yang membadalkan sudah pernah berhaji
+              untuk dirinya sendiri.
+            </p>
+            <p class="small lead-muted">
+              Karena ada perbedaan pendapat pada detail syarat, sebaiknya
+              konfirmasikan kasus spesifik Anda kepada pembimbing manasik atau
+              lembaga fatwa resmi seperti MUI sebelum memutuskan.
+            </p>
+          </section>
+          <section class="mb-5">
+            <h2 class="section-title">Kapan Badal Boleh Dilakukan</h2>
+            <ul>
+              <li>
+                <strong>Sudah wafat</strong> sebelum sempat menunaikan
+                haji/umrah yang sudah menjadi kewajiban (misalnya sudah mampu
+                secara finansial/istitha'ah tapi belum sempat berangkat).
+              </li>
+              <li>
+                <strong>Uzur permanen</strong> — sakit menahun yang secara medis
+                tidak memungkinkan sembuh, atau usia sangat lanjut sehingga
+                tidak mampu menjalankan rangkaian ibadah secara fisik.
+              </li>
+              <li>
+                Badal <strong>tidak berlaku</strong> untuk uzur yang sifatnya
+                sementara (misalnya sakit ringan atau kendala keuangan sesaat) —
+                dalam kasus ini kewajiban haji/umrah tetap ditunda, bukan
+                dibadalkan.
+              </li>
+            </ul>
+          </section>
+          <section class="mb-5">
+            <h2 class="section-title">
+              Panduan Praktis: Cara Melakukan &amp; Memilih Penyelenggara
+            </h2>
+            <ol>
+              <li>
+                <strong>Pilih penyelenggara resmi.</strong> Untuk badal haji,
+                gunakan biro yang berizin PIHK (Penyelenggara Ibadah Haji
+                Khusus); untuk badal umrah, gunakan biro berizin PPIU
+                (Penyelenggara Perjalanan Umrah). Izin ini diterbitkan dan bisa
+                dicek ke Kementerian Agama.
+              </li>
+              <li>
+                <strong>Minta rincian layanan tertulis</strong> — siapa yang
+                akan melaksanakan, jadwal keberangkatan, dan apa saja yang
+                termasuk dalam paket (petugas pelaksana, laporan pelaksanaan
+                berupa foto/video, sertifikat/surat keterangan pelaksanaan).
+              </li>
+              <li>
+                <strong>Sampaikan data lengkap</strong> orang yang dibadalkan
+                (nama lengkap sesuai identitas, nama orang tua bila diperlukan
+                untuk niat) kepada petugas pelaksana.
+              </li>
+              <li>
+                <strong>Minta bukti pelaksanaan</strong> setelah selesai —
+                laporan tertulis atau dokumentasi menjadi bentuk
+                pertanggungjawaban penyelenggara.
+              </li>
+            </ol>
+            <p class="small lead-muted">
+              Biaya badal bervariasi tergantung musim, jenis ibadah
+              (haji/umrah), dan penyelenggara — selalu tanyakan rincian biaya
+              langsung ke biro resmi, jangan berpatokan pada angka yang beredar
+              di media sosial.
+            </p>
+          </section>
+          <section class="mb-5">
+            <h2 class="section-title">Saran &amp; Cara Menghindari Penipuan</h2>
+            <div class="row g-3">
+              <div class="col-md-6">
+                <div class="surface p-3 h-100">
+                  <p class="fw-semibold mb-2">
+                    <i class="bi bi-check-circle text-success"></i> Checklist
+                    verifikasi
+                  </p>
+                  <ul class="small mb-0">
+                    <li>Cek izin PIHK/PPIU biro ke Kementerian Agama</li>
+                    <li>
+                      Minta kontrak/perjanjian tertulis, bukan sekadar chat
+                    </li>
+                    <li>Cari testimoni/rekam jejak yang bisa diverifikasi</li>
+                    <li>Minta laporan pelaksanaan setelah selesai</li>
+                  </ul>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="surface p-3 h-100">
+                  <p class="fw-semibold mb-2">
+                    <i class="bi bi-exclamation-triangle text-danger"></i> Tanda
+                    bahaya
+                  </p>
+                  <ul class="small mb-0">
+                    <li>Harga jauh di bawah wajar tanpa penjelasan</li>
+                    <li>
+                      Minta transfer penuh ke rekening pribadi, bukan rekening
+                      resmi biro
+                    </li>
+                    <li>Tidak bersedia memberi bukti izin usaha</li>
+                    <li>Menolak memberi laporan/dokumentasi pelaksanaan</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </section>
+          <section class="mb-4">
+            <h2 class="section-title">Pertanyaan Singkat</h2>
+            <div class="accordion" id="pageFaqAccordion">
+              <div class="accordion-item">
+                <h3 class="accordion-header">
+                  <button
+                    aria-expanded="true"
+                    class="accordion-button"
+                    data-bs-target="#pf0"
+                    data-bs-toggle="collapse"
+                    type="button"
+                  >
+                    Apa beda badal haji dan badal umrah?
+                  </button>
+                </h3>
+                <div
+                  class="accordion-collapse collapse show"
+                  data-bs-parent="#pageFaqAccordion"
+                  id="pf0"
+                >
+                  <div class="accordion-body small lead-muted">
+                    Badal haji dilakukan untuk kewajiban haji, badal umrah untuk
+                    kewajiban umrah. Keduanya sama-sama untuk orang yang wafat
+                    atau uzur permanen, namun penyelenggaranya berbeda izin
+                    (PIHK untuk haji, PPIU untuk umrah).
+                  </div>
+                </div>
+              </div>
+              <div class="accordion-item">
+                <h3 class="accordion-header">
+                  <button
+                    aria-expanded="false"
+                    class="accordion-button collapsed"
+                    data-bs-target="#pf1"
+                    data-bs-toggle="collapse"
+                    type="button"
+                  >
+                    Apakah boleh badal untuk orang yang masih hidup dan sehat?
+                  </button>
+                </h3>
+                <div
+                  class="accordion-collapse collapse"
+                  data-bs-parent="#pageFaqAccordion"
+                  id="pf1"
+                >
+                  <div class="accordion-body small lead-muted">
+                    Tidak. Badal hanya berlaku untuk orang yang sudah wafat atau
+                    mengalami uzur permanen. Selama masih mampu secara fisik,
+                    kewajiban tetap harus dilaksanakan sendiri.
+                  </div>
+                </div>
+              </div>
+              <div class="accordion-item">
+                <h3 class="accordion-header">
+                  <button
+                    aria-expanded="false"
+                    class="accordion-button collapsed"
+                    data-bs-target="#pf2"
+                    data-bs-toggle="collapse"
+                    type="button"
+                  >
+                    Bagaimana cara memastikan badal benar-benar dilaksanakan?
+                  </button>
+                </h3>
+                <div
+                  class="accordion-collapse collapse"
+                  data-bs-parent="#pageFaqAccordion"
+                  id="pf2"
+                >
+                  <div class="accordion-body small lead-muted">
+                    Gunakan penyelenggara resmi berizin, minta kontrak tertulis,
+                    dan minta laporan/dokumentasi pelaksanaan setelah selesai
+                    sebagai bentuk pertanggungjawaban.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+        </div>
+      </div>
+    </main>
+    <footer class="footer">
+      <div class="container">
+        <div class="row g-4">
+          <div class="col-lg-4">
+            <h2 class="h4 text-white">HajiCerdas</h2>
+            <p>
+              Portal edukasi Haji dan Umrah yang membantu jamaah Indonesia
+              mempersiapkan ibadah dengan informasi yang rapi dan mudah
+              dipahami.
+            </p>
+          </div>
+          <div class="col-6 col-lg-2">
+            <h3 class="h6 text-white">Konten</h3>
+            <a class="d-block" href="artikel.html">Artikel</a
+            ><a class="d-block" href="pengalaman.html">Pengalaman</a
+            ><a class="d-block" href="faq.html">FAQ</a
+            ><a class="d-block" href="istilah.html">Kamus Istilah</a>
+          </div>
+          <div class="col-6 col-lg-2">
+            <h3 class="h6 text-white">Panduan Ibadah</h3>
+            <a class="d-block" href="tata-cara.html">Tata Cara Ibadah</a
+            ><a class="d-block" href="doa.html">Kumpulan Doa</a
+            ><a class="d-block" href="persiapan.html">Persiapan</a
+            ><a class="d-block" href="panduan-waktu.html">Waktu Ibadah</a
+            ><a class="d-block" href="waktu.html#jadwal"
+              >Jadwal Shalat &amp; Waktu</a
+            >
+          </div>
+          <div class="col-6 col-lg-2">
+            <h3 class="h6 text-white">Info Jamaah</h3>
+            <a class="d-block" href="artikel.html?kategori=Transportasi"
+              >Transportasi</a
+            ><a class="d-block" href="artikel.html?kategori=Hotel">Hotel</a
+            ><a class="d-block" href="artikel.html?kategori=Kuliner">Kuliner</a
+            ><a class="d-block" href="artikel.html?kategori=Belanja">Belanja</a
+            ><a class="d-block" href="budget.html">Budget Planner</a
+            ><a class="d-block" href="peta.html">Peta</a
+            ><a class="d-block" href="infografis.html">Infografis</a>
+          </div>
+          <div class="col-6 col-lg-2">
+            <h3 class="h6 text-white">Ensiklopedia</h3>
+            <a class="d-block" href="badal.html">Badal Haji &amp; Umrah</a
+            ><a class="d-block" href="tabungan-investasi.html"
+              >Tabungan &amp; Investasi</a
+            ><a class="d-block" href="fikih.html">Fikih Haji &amp; Umrah</a
+            ><a class="d-block" href="wakaf-quran.html">Wakaf Al-Qur'an</a
+            ><a class="d-block" href="rekrutmen-petugas.html"
+              >Rekrutmen Petugas Haji</a
+            >
+          </div>
+          <div class="col-6 col-lg-2">
+            <h3 class="h6 text-white">Lainnya</h3>
+            <a class="d-block" href="kirim.html">Kirim Pengalaman</a
+            ><a class="d-block" href="kontak.html">Kontak</a
+            ><a class="d-block" href="tentang.html">Tentang</a>
+          </div>
+        </div>
+        <hr class="border-secondary my-4" />
+        <div class="d-flex flex-wrap justify-content-between gap-2">
+          <p class="small mb-0">© 2026 HajiCerdas. Semua hak dilindungi.</p>
+          <a class="small" href="admin.html">Admin Panel</a>
+        </div>
+      </div>
+    </footer>
+    <script
+      defer=""
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+    ></script>
+    <script defer="" src="assets/js/api.js"></script>
+    <script defer="" src="assets/js/app.js"></script>
+    <script defer="" src="assets/js/darkmode.js"></script>
+    <script defer="" src="assets/js/content-data.js"></script>
+    <script defer="" src="assets/js/knowledge.js"></script>
+    <script defer="" src="assets/js/ensiklopedia.js"></script>
+  </body>
+</html>
