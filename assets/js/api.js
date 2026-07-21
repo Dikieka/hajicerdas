@@ -1,6 +1,6 @@
 const HC_CONFIG = {
   appsScriptUrl:
-    "https://script.google.com/macros/s/AKfycbyCXFaJAMW9kdZDu_mSjUu0KT6_0FGpsLaqIiCfkuVRR-ikPeH62bkP7uCynRe_hkk3cQ/exec",
+    "https://script.google.com/macros/s/AKfycbyIuPJpO0G2Vlzt00EhWPauY0j5ZXumGjmLHjZRsur4on8ezWrLPeN8i47Q38Egs7cB/exec",
   siteUrl: "https://www.hajicerdas.id",
 };
 
