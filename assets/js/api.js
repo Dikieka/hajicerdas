@@ -1,11 +1,11 @@
 const HC_CONFIG = {
   appsScriptUrl:
-    "https://script.google.com/macros/s/AKfycbx2g9g4eciM-glrKcZuUi_mZiLCFnBG3SgPE0kQgrsKAY5cFycGJpnKkQfp3SW9ff50Vg/exec",
+    "https://script.google.com/macros/s/AKfycbxjIeHb_yOHJD8T-QV5qcuqNNJvwvcS2bqtPSaAIW62XQE7VyY-mZvGA-dBIb6YN_1J/exec",
   siteUrl: "https://www.hajicerdas.id",
   // Nomor WhatsApp admin (format 62xxxxxxxxxx, tanpa +/spasi/tanda hubung).
   // Satu-satunya tempat pengaturan — dipakai di badal.html, wakaf-quran.html,
   // rekrutmen-petugas.html, dan akun.html supaya cukup diganti di sini saja.
-  waNumber: "6285732674201",
+  waNumber: "#",
 };
 
 const fallbackArticles = [
