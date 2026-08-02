@@ -14,6 +14,23 @@ const applyTheme = (theme) => {
     button.setAttribute("aria-pressed", isDark);
   });
   setTimeout(() => document.body?.classList.remove("theme-transitioning"), 400);
+
+  // Chromium/WebKit sometimes fail to repaint elements that use
+  // backdrop-filter (hero search bar, sticky nav, etc.) right after a
+  // CSS custom-property switch this high up the tree (html.theme-dark-preload
+  // touches --bg/--surface/--text on nearly every element at once). The
+  // symptom is cards/text staying blank until the mouse moves over them.
+  // Nudging opacity by a hair and back forces the compositor to redraw
+  // every layer without any visible flash.
+  if (document.body) {
+    const body = document.body;
+    requestAnimationFrame(() => {
+      body.style.opacity = "0.999";
+      requestAnimationFrame(() => {
+        body.style.opacity = "";
+      });
+    });
+  }
 };
 
 const getPreferredTheme = () => {

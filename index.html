@@ -46,7 +46,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
       rel="stylesheet"
     />
     <link
@@ -79,115 +79,14 @@
   </head>
   <body>
     <a class="skip-link" href="#main">Lewati ke konten</a>
-    <div class="site-header fixed-top">
-      <nav class="navbar navbar-expand-lg" aria-label="Navigasi utama">
-        <div class="container">
-          <a class="navbar-brand d-flex align-items-center" href="index.html"
-            ><span class="brand-mark"><i class="bi bi-compass"></i></span
-            >HajiCerdas</a
-          >
-          <div class="nav-clock d-none d-lg-block" data-nav-clock>
-            <strong>--:--</strong> WIB &middot;
-            <span class="nav-clock-next">Memuat...</span>
-          </div>
-          <button
-            class="navbar-toggler"
-            type="button"
-            data-bs-toggle="collapse"
-            data-bs-target="#mainNav"
-            aria-controls="mainNav"
-            aria-expanded="false"
-            aria-label="Buka navigasi"
-          >
-            <span class="navbar-toggler-icon"></span>
-          </button>
-          <div class="collapse navbar-collapse" id="mainNav">
-            <ul class="navbar-nav ms-auto align-items-lg-center gap-lg-1">
-              <li class="nav-item">
-                <a class="nav-link active" href="index.html">Beranda</a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" href="artikel.html">Artikel</a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" href="index.html#panduan">Panduan</a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" href="index.html#info-praktis"
-                  >Info Praktis</a
-                >
-              </li>
-              <li class="nav-item dropdown">
-                <a
-                  class="nav-link dropdown-toggle"
-                  href="#"
-                  id="layananDropdown"
-                  role="button"
-                  data-bs-toggle="dropdown"
-                  aria-expanded="false"
-                  >Layanan</a
-                >
-                <ul class="dropdown-menu" aria-labelledby="layananDropdown">
-                  <li>
-                    <a class="dropdown-item" href="badal.html">Badal Umroh</a>
-                  </li>
-                  <li>
-                    <a class="dropdown-item" href="fikih.html"
-                      >Fikih Haji &amp; Umrah</a
-                    >
-                  </li>
-                  <li>
-                    <a class="dropdown-item" href="wakaf-quran.html"
-                      >Wakaf Al-Qur'an</a
-                    >
-                  </li>
-                  <li>
-                    <a class="dropdown-item" href="rekrutmen-petugas.html"
-                      >Rekrutmen Petugas Haji</a
-                    >
-                  </li>
-                </ul>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" href="#cerita-jemaah">Cerita Jamaah</a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" href="faq.html">FAQ</a>
-              </li>
-              <li class="nav-item">
-                <button
-                  class="btn btn-outline-light btn-sm ms-lg-2"
-                  type="button"
-                  data-theme-toggle
-                  aria-label="Ganti tema"
-                >
-                  <i data-theme-icon class="bi bi-moon-stars"></i>
-                </button>
-              </li>
-              <!-- Auth nav placeholder: diisi otomatis oleh auth.js -->
-              <li class="auth-nav-placeholder"></li>
-            </ul>
-          </div>
-        </div>
-      </nav>
-      <div
-        class="top-strip"
-        data-top-strip
-        aria-label="Waktu dan jadwal shalat realtime"
-      >
-        <div class="container top-strip-inner">
-          <span class="top-strip-item"
-            ><i class="bi bi-hourglass-split"></i> Memuat waktu &amp; jadwal
-            shalat...</span
-          >
-        </div>
-      </div>
-    </div>
+    <script>
+      window.HC_TOP_STRIP = true;
+    </script>
+    <script src="assets/js/navbar.js"></script>
 
-    <!-- Background hero pakai assets/images/hero-haji.svg secara default.
-         Mau ganti pakai foto/gambar lain? Tinggal tambah atribut style
-         di tag <header> bawah ini, misal:
-         style="--hero-bg-image: url('assets/images/nama-file-kamu.jpg')" -->
+    <!-- Foto background hero sekarang diatur dari assets/css/style.css
+         (variabel --hero-bg-image di :root). Mau ganti foto? Cukup edit
+         file CSS-nya, tidak perlu ubah baris ini. -->
     <header class="hero hero-compact">
       <div class="container">
         <div class="row justify-content-center">
@@ -198,10 +97,10 @@
               Portal Panduan Haji &amp; Umrah Indonesia
             </p>
             <h1 class="mb-3 d-none d-md-block">
-              Satu tempat tenang untuk menyiapkan<br
+              Satu tempat <span class="hl">tenang</span> untuk menyiapkan<br
                 class="d-none d-lg-block"
               />
-              perjalanan ibadah Anda
+              perjalanan <span class="hl">ibadah</span> Anda
             </h1>
             <p
               class="mb-4 d-none d-md-block"
@@ -274,12 +173,16 @@
               class="hero-trust mt-4 d-flex flex-wrap justify-content-center gap-2 gap-lg-3"
             >
               <span class="hero-trust-item"
-                ><i class="bi bi-patch-check-fill"></i> Dirujuk dari Kemenag,
-                BPKH &amp; sumber resmi</span
+                ><i class="bi bi-patch-check-fill"></i> Dirujuk dari sumber
+                resmi</span
               >
               <span class="hero-trust-item"
-                ><i class="bi bi-journal-richtext"></i> 40+ artikel manasik
-                &amp; 200+ FAQ</span
+                ><i class="bi bi-journal-richtext"></i> 40+ artikel
+                manasik</span
+              >
+              <span class="hero-trust-item"
+                ><i class="bi bi-patch-check-fill"></i> Melayani badal umroh,
+                wakaf Qur'an &amp; pendaftaran panitia haji terpercaya</span
               >
             </div>
           </div>
@@ -498,7 +401,7 @@
             class="d-flex justify-content-between align-items-end gap-3 mb-4"
           >
             <div>
-              <span class="eyebrow">Siap dibawa pulang</span>
+              <span class="eyebrow">Infografis & Dokumen</span>
               <h2 class="section-title mb-0 d-block">
                 Dokumen &amp; Panduan Unduhan
               </h2>
@@ -729,70 +632,7 @@
       </section>
     </main>
 
-    <footer class="footer">
-      <div class="container">
-        <div class="row g-4">
-          <div class="col-lg-4">
-            <h2 class="h4 text-white">HajiCerdas</h2>
-            <p>
-              Portal edukasi Haji dan Umrah yang membantu jamaah Indonesia
-              mempersiapkan ibadah dengan informasi yang rapi dan mudah
-              dipahami.
-            </p><div class="footer-social mt-3" aria-label="Ikuti HajiCerdas di media sosial"><a href="https://www.tiktok.com/@hajicerdas" target="_blank" rel="noopener" aria-label="TikTok HajiCerdas"><i class="bi bi-tiktok"></i></a><a href="https://www.instagram.com/hajicerdas" target="_blank" rel="noopener" aria-label="Instagram HajiCerdas"><i class="bi bi-instagram"></i></a><a href="https://x.com/hajicerdas" target="_blank" rel="noopener" aria-label="X (Twitter) HajiCerdas"><i class="bi bi-twitter-x"></i></a></div>
-          </div>
-          <div class="col-6 col-lg-2">
-            <h3 class="h6 text-white">Konten</h3>
-            <a class="d-block" href="artikel.html">Artikel</a
-            ><a class="d-block" href="pengalaman.html">Pengalaman</a
-            ><a class="d-block" href="faq.html">FAQ</a
-            ><a class="d-block" href="istilah.html">Kamus Istilah</a>
-          </div>
-          <div class="col-6 col-lg-2">
-            <h3 class="h6 text-white">Panduan Ibadah</h3>
-            <a class="d-block" href="tata-cara.html">Tata Cara Ibadah</a
-            ><a class="d-block" href="doa.html">Kumpulan Doa</a
-            ><a class="d-block" href="persiapan.html">Persiapan</a
-            ><a class="d-block" href="panduan-waktu.html">Waktu Ibadah</a
-            ><a class="d-block" href="waktu.html#jadwal"
-              >Jadwal Shalat & Waktu</a
-            >
-          </div>
-          <div class="col-6 col-lg-2">
-            <h3 class="h6 text-white">Info Jamaah</h3>
-            <a class="d-block" href="artikel.html?kategori=Transportasi"
-              >Transportasi</a
-            ><a class="d-block" href="artikel.html?kategori=Hotel">Hotel</a
-            ><a class="d-block" href="artikel.html?kategori=Kuliner">Kuliner</a
-            ><a class="d-block" href="artikel.html?kategori=Belanja">Belanja</a
-            ><a class="d-block" href="budget.html">Budget Planner</a
-            ><a class="d-block" href="peta.html">Peta</a
-            ><a class="d-block" href="download.html">Download Center</a>
-          </div>
-          <div class="col-6 col-lg-2">
-            <h3 class="h6 text-white">Layanan</h3>
-            <a class="d-block" href="badal.html">Badal Umroh</a
-            ><a class="d-block" href="fikih.html">Fikih Haji &amp; Umrah</a
-            ><a class="d-block" href="wakaf-quran.html">Wakaf Al-Qur'an</a
-            ><a class="d-block" href="rekrutmen-petugas.html"
-              >Rekrutmen Petugas Haji</a
-            >
-          </div>
-          <div class="col-6 col-lg-2">
-            <h3 class="h6 text-white">Lainnya</h3>
-            <a class="d-block" href="kirim.html">Kirim Pengalaman</a
-            ><a class="d-block" href="kontak.html">Kontak</a
-            ><a class="d-block" href="tentang.html">Tentang</a>
-          </div>
-        </div>
-        <hr class="border-secondary my-4" />
-        <div class="d-flex flex-wrap justify-content-between gap-2">
-          <p class="small mb-0">
-            &copy; 2026 HajiCerdas. Semua hak dilindungi.
-          </p>
-          <a class="small" href="admin.html">Admin Panel</a>
-        </div>
-      </div>
-    </footer>
+    <script src="assets/js/footer.js"></script>
     <button
       id="backToTop"
       class="back-to-top"

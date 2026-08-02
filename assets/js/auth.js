@@ -117,7 +117,7 @@ const HCAuth = {
 };
 
 function hcAuthRenderNav() {
-  const menu = document.querySelector("#mainNav .navbar-nav");
+  const menu = document.getElementById("navbarActions");
   if (!menu) return;
   const existing = document.getElementById("hcAuthNavItem");
   if (existing) existing.remove();
@@ -152,8 +152,8 @@ function hcAuthRenderNav() {
   } else {
     li.className = "nav-item";
     li.innerHTML =
-      '<a class="btn btn-outline-light btn-sm ms-lg-2" href="login.html">' +
-      '<i class="bi bi-box-arrow-in-right"></i> Masuk</a>';
+      '<a class="btn btn-outline-light btn-sm" href="login.html">' +
+      '<i class="bi bi-door-open-fill"></i> Masuk</a>';
   }
 
   menu.appendChild(li);

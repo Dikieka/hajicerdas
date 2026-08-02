@@ -87,7 +87,7 @@
       width: 32px;
       height: 32px;
       border: 3px solid rgba(255,255,255,.15);
-      border-top-color: var(--accent, #c8a96b);
+      border-top-color: var(--accent, #c9a86a);
       border-radius: 50%;
       animation: hcSpin .7s linear infinite;
     }

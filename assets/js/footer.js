@@ -1,0 +1,70 @@
+// assets/js/footer.js
+// Footer HajiCerdas - SATU sumber untuk semua halaman.
+// Cukup taruh <script src="assets/js/footer.js"></script> (TANPA atribut
+// defer/async) di body, gantikan blok <footer>...</footer> yang dulu
+// diulang di tiap file.
+//
+// Mau ubah link atau kolom footer? Edit HTML di bawah ini SEKALI SAJA,
+// otomatis berlaku ke semua halaman.
+(function () {
+  document.write(
+    '<footer class="footer">' +
+      '<div class="container">' +
+      '<div class="row g-4">' +
+      '<div class="col-lg-4">' +
+      '<h2 class="h4 text-white">HajiCerdas</h2>' +
+      "<p>Portal edukasi Haji dan Umrah yang membantu jamaah Indonesia mempersiapkan ibadah dengan informasi yang rapi dan mudah dipahami.</p>" +
+      '<div class="footer-social mt-3" aria-label="Ikuti HajiCerdas di media sosial">' +
+      '<a href="https://www.facebook.com/hajicerdas" target="_blank" rel="noopener" aria-label="Facebook HajiCerdas"><i class="bi bi-facebook"></i></a>' +
+      '<a href="https://www.tiktok.com/@hajicerdas" target="_blank" rel="noopener" aria-label="TikTok HajiCerdas"><i class="bi bi-tiktok"></i></a>' +
+      '<a href="https://www.instagram.com/hajicerdas" target="_blank" rel="noopener" aria-label="Instagram HajiCerdas"><i class="bi bi-instagram"></i></a>' +
+      '<a href="https://x.com/hajicerdas" target="_blank" rel="noopener" aria-label="X (Twitter) HajiCerdas"><i class="bi bi-twitter-x"></i></a>' +
+      "</div>" +
+      "</div>" +
+      '<div class="col-6 col-lg-2">' +
+      '<h3 class="h6 text-white">Konten</h3>' +
+      '<a class="d-block" href="artikel.html">Artikel</a>' +
+      '<a class="d-block" href="pengalaman.html">Pengalaman</a>' +
+      '<a class="d-block" href="faq.html">FAQ</a>' +
+      '<a class="d-block" href="istilah.html">Kamus Istilah</a>' +
+      "</div>" +
+      '<div class="col-6 col-lg-2">' +
+      '<h3 class="h6 text-white">Panduan Ibadah</h3>' +
+      '<a class="d-block" href="tata-cara.html">Tata Cara Ibadah</a>' +
+      '<a class="d-block" href="doa.html">Kumpulan Doa</a>' +
+      '<a class="d-block" href="persiapan.html">Persiapan</a>' +
+      '<a class="d-block" href="panduan-waktu.html">Waktu Ibadah</a>' +
+      '<a class="d-block" href="waktu.html#jadwal">Jadwal Shalat &amp; Waktu</a>' +
+      "</div>" +
+      '<div class="col-6 col-lg-2">' +
+      '<h3 class="h6 text-white">Info Jamaah</h3>' +
+      '<a class="d-block" href="artikel.html?kategori=Transportasi">Transportasi</a>' +
+      '<a class="d-block" href="artikel.html?kategori=Hotel">Hotel</a>' +
+      '<a class="d-block" href="artikel.html?kategori=Kuliner">Kuliner</a>' +
+      '<a class="d-block" href="artikel.html?kategori=Belanja">Belanja</a>' +
+      '<a class="d-block" href="budget.html">Budget Planner</a>' +
+      '<a class="d-block" href="peta.html">Peta</a>' +
+      '<a class="d-block" href="download.html">Download Center</a>' +
+      "</div>" +
+      '<div class="col-6 col-lg-2">' +
+      '<h3 class="h6 text-white">Layanan</h3>' +
+      '<a class="d-block" href="badal.html">Badal Umroh</a>' +
+      '<a class="d-block" href="fikih.html">Fikih Haji &amp; Umrah</a>' +
+      "<a class=\"d-block\" href=\"wakaf-quran.html\">Wakaf Al-Qur'an</a>" +
+      '<a class="d-block" href="rekrutmen-petugas.html">Rekrutmen Petugas Haji</a>' +
+      "</div>" +
+      '<div class="col-6 col-lg-2">' +
+      '<h3 class="h6 text-white">Lainnya</h3>' +
+      '<a class="d-block" href="kirim.html">Kirim Pengalaman</a>' +
+      '<a class="d-block" href="kontak.html">Kontak</a>' +
+      '<a class="d-block" href="tentang.html">Tentang</a>' +
+      "</div>" +
+      "</div>" +
+      '<hr class="border-secondary my-4">' +
+      '<div class="d-flex flex-wrap justify-content-between gap-2">' +
+      '<p class="small mb-0">&copy; 2026 HajiCerdas. Semua hak dilindungi.</p>' +
+      "</div>" +
+      "</div>" +
+      "</footer>",
+  );
+})();

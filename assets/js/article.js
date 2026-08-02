@@ -662,6 +662,16 @@ const renderDetail = async () => {
     <div class="d-flex flex-wrap gap-2 mt-4">
       <button class="btn btn-outline-primary" type="button" data-share><i class="bi bi-share"></i> Bagikan Artikel</button>
     </div>
+    <div class="surface p-4 p-md-5 mt-4 text-center">
+      <h2 class="h5 fw-bold mb-1">Ikuti HajiCerdas di Media Sosial</h2>
+      <p class="lead-muted mb-3">Dapatkan artikel terbaru, tips, dan info seputar Haji &amp; Umrah setiap hari.</p>
+      <div class="social-links justify-content-center" aria-label="Ikuti HajiCerdas di media sosial">
+        <a href="https://www.facebook.com/hajicerdas" target="_blank" rel="noopener" aria-label="Facebook HajiCerdas"><i class="bi bi-facebook"></i></a>
+        <a href="https://www.tiktok.com/@hajicerdas" target="_blank" rel="noopener" aria-label="TikTok HajiCerdas"><i class="bi bi-tiktok"></i></a>
+        <a href="https://www.instagram.com/hajicerdas" target="_blank" rel="noopener" aria-label="Instagram HajiCerdas"><i class="bi bi-instagram"></i></a>
+        <a href="https://x.com/hajicerdas" target="_blank" rel="noopener" aria-label="X (Twitter) HajiCerdas"><i class="bi bi-twitter-x"></i></a>
+      </div>
+    </div>
     ${
       related.length
         ? `
