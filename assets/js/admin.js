@@ -768,7 +768,7 @@ const renderFieldInput = (field, row) => {
         <textarea class="form-control html-editor-textarea" name="${field.key}" rows="${field.rows || 3}" data-html-editor-input ${requiredAttr}>${escapeHtml(value)}</textarea>
         <div class="form-text">Blok (pilih) teks lalu klik <strong>H2/H3/H4</strong> untuk menandai judul bagian &mdash; tidak perlu ketik tag HTML manual. H2 = bagian utama, H3 = sub-bagian, H4 = detail terdalam, berurutan tanpa lompat level. Jangan pakai H1 di sini karena judul di atas sudah otomatis jadi H1 halaman.</div>
         <div class="html-editor-outline" data-html-editor-outline>
-          <p class="small fw-bold mb-2 text-primary"><i class="bi bi-list-nested"></i> Pratinjau struktur Daftar Isi (SEO)</p>
+          <p class="small fw-bold mb-2 text-primary"><i class="bi bi-list-nested"></i> Pratinjau struktur Daftar Isi</p>
           <div data-html-editor-outline-body></div>
         </div>
         ${hint}
@@ -865,7 +865,7 @@ const parseHeadingOutline = (html) => {
 // heading yang benar untuk SEO.
 const renderHeadingOutline = (headings) => {
   if (!headings.length) {
-    return `<p class="small lead-muted mb-0">Belum ada judul bagian (H2/H3/H4). Tambahkan minimal satu H2 supaya artikel punya struktur Daftar Isi yang baik untuk SEO.</p>`;
+    return `<p class="small lead-muted mb-0">Belum ada judul bagian (H2/H3/H4). Tambahkan minimal satu H2 supaya artikel punya struktur Daftar Isi yang baik.</p>`;
   }
   let lastLevel = 1; // H1 dianggap sudah dipakai oleh judul artikel/halaman
   return headings
