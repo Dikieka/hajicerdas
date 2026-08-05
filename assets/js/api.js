@@ -1,6 +1,6 @@
 const HC_CONFIG = {
   appsScriptUrl:
-    "https://script.google.com/macros/s/AKfycbwmA9_2u401HLsSkMx9ofK6LNF7QqY350UolsOxqO4h9ApMdK7hCydopZgzlfJ5Psohgw/exec",
+    "https://script.google.com/macros/s/AKfycbxjIeHb_yOHJD8T-QV5qcuqNNJvwvcS2bqtPSaAIW62XQE7VyY-mZvGA-dBIb6YN_1J/exec",
   siteUrl: "https://www.hajicerdas.id",
   // Nomor WhatsApp admin (format 62xxxxxxxxxx, tanpa +/spasi/tanda hubung).
   // Satu-satunya tempat pengaturan — dipakai di badal.html, wakaf-quran.html,
