@@ -130,6 +130,7 @@ const SHEETS = {
   tataCara: "TataCara",
   doa: "Doa",
   users: "Users",
+  petugasBadal: "PetugasBadal",
 };
 
 // Sheet "Users" SENGAJA tidak dimasukkan ke MANAGED_SHEETS (generic CRUD
@@ -160,7 +161,13 @@ const PESANAN_HEADERS = [
   "status", // pending | diproses | selesai | ditolak
   "catatan_admin",
   "tanggal_pesan",
+  "petugas_badal_id", // diisi admin: id petugas dari sheet PetugasBadal (khusus layanan badal_umroh)
+  "tanggal_pelaksanaan_hijri", // diisi admin: tanggal pelaksanaan badal, format bebas mis. "12 Rabiul Awal 1448 H"
 ];
+
+// Sheet "PetugasBadal" untuk data petugas pelaksana jasa Badal Umroh, dipakai
+// untuk mengisi nama & tanda tangan pada sertifikat Badal Umroh.
+const PETUGAS_BADAL_HEADERS = ["id", "nama", "ttd", "status"];
 
 // Sheet-sheet yang boleh dikelola lewat Admin Panel (create/update/delete generik).
 const MANAGED_SHEETS = {
@@ -186,7 +193,6 @@ const MANAGED_SHEETS = {
     "kategori",
     "pengalaman",
     "tips",
-    "foto",
     "tanggal",
     "like",
     "status",
@@ -256,7 +262,10 @@ const MANAGED_SHEETS = {
     "status",
     "catatan_admin",
     "tanggal_pesan",
+    "petugas_badal_id",
+    "tanggal_pelaksanaan_hijri",
   ],
+  PetugasBadal: ["id", "nama", "ttd", "status"],
   PanduanWaktu: ["id", "aktivitas", "durasi", "catatan", "status"],
   Persiapan: ["id", "kategori", "item", "status"],
   PersiapanTimeline: ["id", "waktu", "deskripsi", "status"],
@@ -354,6 +363,11 @@ function doGet(e) {
       return jsonResponse({
         success: true,
         data: getSertifikatPublicData(params.id),
+      });
+    if (action === "petugasbadal")
+      return jsonResponse({
+        success: true,
+        data: getPublishedRows(SHEETS.petugasBadal),
       });
 
     // Admin_list & admin_sheets sengaja TIDAK ada di sini (GET) lagi —
@@ -714,6 +728,26 @@ function doPost(e) {
           .getRange(rowIndex, catatanCol + 1)
           .setValue(sanitizeCellValue(sanitize(payload.catatan_admin)));
       }
+      // Petugas pelaksana & tanggal pelaksanaan (khusus badal_umroh), dipakai
+      // untuk mengisi sertifikat Badal Umroh begitu pesanan ditandai selesai.
+      if (payload.petugas_badal_id !== undefined) {
+        const col = headers.indexOf("petugas_badal_id");
+        if (col > -1) {
+          sheet
+            .getRange(rowIndex, col + 1)
+            .setValue(sanitizeCellValue(sanitize(payload.petugas_badal_id)));
+        }
+      }
+      if (payload.tanggal_pelaksanaan_hijri !== undefined) {
+        const col = headers.indexOf("tanggal_pelaksanaan_hijri");
+        if (col > -1) {
+          sheet
+            .getRange(rowIndex, col + 1)
+            .setValue(
+              sanitizeCellValue(sanitize(payload.tanggal_pelaksanaan_hijri)),
+            );
+        }
+      }
       return jsonResponse({
         success: true,
         message: "Pesanan berhasil diperbarui.",
@@ -804,6 +838,20 @@ function getSertifikatPublicData(id) {
     extra = {};
   }
 
+  // Cari data petugas pelaksana (nama & tanda tangan) yang ditugaskan admin
+  // untuk pesanan ini, dipakai untuk mengisi sertifikat.
+  let petugasNama = "";
+  let petugasTtd = "";
+  if (row.petugas_badal_id) {
+    const petugas = getRows(SHEETS.petugasBadal).find(function (p) {
+      return String(p.id) === String(row.petugas_badal_id);
+    });
+    if (petugas) {
+      petugasNama = petugas.nama || "";
+      petugasTtd = petugas.ttd || "";
+    }
+  }
+
   return {
     id: row.id,
     kode: "HC-BDL-" + String(row.id).replace(/^psn-/, ""),
@@ -811,6 +859,10 @@ function getSertifikatPublicData(id) {
     untuk: extra.untuk || "",
     tanggal_pesan: row.tanggal_pesan,
     status: row.status,
+    petugas_nama: petugasNama,
+    petugas_ttd: petugasTtd,
+    tanggal_pelaksanaan_hijri: row.tanggal_pelaksanaan_hijri || "",
+    pelaksana_badal: "HajiCerdas",
   };
 }
 

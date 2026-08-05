@@ -1,6 +1,37 @@
 const qs = (selector, root = document) => root.querySelector(selector);
 const qsa = (selector, root = document) => [...root.querySelectorAll(selector)];
 
+// Kotak saran pencarian (search-suggest-box) sebelumnya bisa terpotong
+// kalau induknya punya overflow:hidden (mis. .hero di Beranda) atau
+// tertimpa elemen lain yang stacking context-nya lebih tinggi. Untuk
+// menjaminnya selalu tampil penuh dan paling atas di mobile & desktop,
+// kotak ini dipindah (bukan disalin) ke <body> lalu diposisikan dengan
+// position:fixed mengikuti posisi input, dihitung ulang tiap kali
+// muncul dan saat scroll/resize selama sedang tampil.
+const positionedSuggestBoxes = new WeakSet();
+const positionSuggestBox = (input, box) => {
+  if (!input || !box) return;
+  if (box.parentElement !== document.body) {
+    document.body.appendChild(box);
+    box.classList.add("search-suggest-box-floating");
+  }
+  const place = () => {
+    const rect = input.getBoundingClientRect();
+    box.style.top = `${rect.bottom + 6}px`;
+    box.style.left = `${rect.left}px`;
+    box.style.width = `${rect.width}px`;
+  };
+  place();
+  if (!positionedSuggestBoxes.has(box)) {
+    positionedSuggestBoxes.add(box);
+    const reposition = () => {
+      if (box.classList.contains("show")) place();
+    };
+    window.addEventListener("scroll", reposition, true);
+    window.addEventListener("resize", reposition);
+  }
+};
+
 const formatDate = (dateString) =>
   new Intl.DateTimeFormat("id-ID", {
     day: "numeric",
@@ -314,6 +345,7 @@ const initHeroSearch = async () => {
       )
       .join("");
     box.setAttribute("aria-label", keyword ? `Saran pencarian untuk "${keyword}"` : "Saran pencarian hero");
+    positionSuggestBox(input, box);
     box.classList.add("show");
   };
   input.addEventListener("input", render);
@@ -347,6 +379,7 @@ window.HCUtils = {
   createArticleCard,
   showToast,
   initAnimations,
+  positionSuggestBox,
 };
 
 // === HCVideoThumb ===

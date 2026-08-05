@@ -299,6 +299,7 @@ const initArticleSearch = async () => {
         ? `Saran pencarian untuk "${keywordLabel}"`
         : "Saran pencarian artikel",
     );
+    window.HCUtils?.positionSuggestBox?.(searchInput, suggestBox);
     suggestBox.classList.add("show");
   };
 

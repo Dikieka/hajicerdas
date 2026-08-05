@@ -11,6 +11,12 @@
   .article-toc-sidebar .article-toc {
     margin-bottom: 2rem;
   }
+  /* Daftar Isi dipindah oleh JS (positionArticleTocForViewport) ke slot
+     ini, tepat di atas tombol Bagikan, alih-alih tetap di sidebar yang
+     di layar sempit jatuh ke paling bawah artikel. */
+  .article-toc-mobile-slot .article-toc {
+    margin-bottom: 2rem;
+  }
   .section {
     padding: 2.5rem 0;
   }
@@ -273,7 +279,101 @@
   }
 }
 
-/* Touch devices: bigger tap targets, no hover-only affordances */
+/* ==========================================================================
+   Homepage — mobile-first refinements (section Layanan, Panduan Ibadah,
+   Artikel Terbaru/Populer, header baris judul+tombol, story slider).
+   Tujuannya: tampilan ringkas & rapi khusus di layar kecil, tanpa mengubah
+   tampilan desktop yang sudah ada.
+   ========================================================================== */
+@media (max-width: 767.98px) {
+  /* Section pertama setelah hero jangan terlalu jauh jaraknya */
+  #layanan {
+    padding-top: 1.75rem;
+  }
+  .services-section-header .section-title {
+    font-size: 1.2rem;
+  }
+  .services-section-header p.lead-muted {
+    font-size: 0.88rem;
+  }
+
+  /* Baris judul + tombol "Lihat Semua": kalau kepanjangan, tombol turun
+     ke baris baru alih-alih memepetkan judul. */
+  main .section .d-flex.flex-wrap.justify-content-between.align-items-end {
+    row-gap: 0.6rem;
+  }
+  main .section .d-flex.flex-wrap.justify-content-between.align-items-end
+    > .btn {
+    margin-left: auto;
+  }
+}
+
+@media (max-width: 575.98px) {
+  /* Kartu "Layanan HajiCerdas": lebih ringkas di HP, tetap 2 kolom */
+  .service-card {
+    padding: 1.25rem 0.75rem;
+    gap: 0.6rem;
+  }
+  .service-card-icon {
+    width: 44px;
+    height: 44px;
+    font-size: 1.15rem;
+  }
+  .service-card-label {
+    font-size: 0.82rem;
+  }
+
+  /* Panduan Ibadah: teks intro & kartu fitur dipadatkan */
+  .panduan-header {
+    margin-bottom: 1.25rem !important;
+  }
+  .panduan-header p.lead-muted {
+    font-size: 0.88rem;
+  }
+  .panduan-feature-card {
+    padding: 1.35rem 1rem;
+  }
+  .panduan-feature-icon {
+    max-width: 120px;
+    font-size: 2rem;
+    margin-bottom: 1rem;
+  }
+  .panduan-feature-title {
+    font-size: 0.95rem;
+    margin-bottom: 0.85rem;
+  }
+  .panduan-feature-desc {
+    font-size: 0.82rem;
+    margin-bottom: 1rem;
+  }
+  .panduan-list-item {
+    padding: 0.85rem 1rem;
+    font-size: 0.88rem;
+  }
+
+  /* Artikel Terbaru: gambar & ringkasan dipangkas biar kartu tidak
+     terlalu tinggi saat di-scroll di HP */
+  .featured-article-media img {
+    aspect-ratio: 16 / 10;
+    max-height: 220px;
+  }
+  .featured-article-card .card-body-pad {
+    padding: 1.1rem;
+  }
+  .featured-article-card .card-body-pad p.lead-muted {
+    -webkit-line-clamp: 3;
+    font-size: 0.88rem;
+  }
+  .featured-article-card .article-title {
+    font-size: 1.05rem;
+  }
+
+  /* Artikel Populer: kartu list lebih ramping */
+  .article-list-item {
+    padding: 0.55rem;
+  }
+}
+
 @media (hover: none) and (pointer: coarse) {
   .btn,
   .nav-link,

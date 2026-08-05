@@ -1,11 +1,11 @@
 const HC_CONFIG = {
   appsScriptUrl:
-    "https://script.google.com/macros/s/AKfycbxjIeHb_yOHJD8T-QV5qcuqNNJvwvcS2bqtPSaAIW62XQE7VyY-mZvGA-dBIb6YN_1J/exec",
+    "https://script.google.com/macros/s/AKfycbwmA9_2u401HLsSkMx9ofK6LNF7QqY350UolsOxqO4h9ApMdK7hCydopZgzlfJ5Psohgw/exec",
   siteUrl: "https://www.hajicerdas.id",
   // Nomor WhatsApp admin (format 62xxxxxxxxxx, tanpa +/spasi/tanda hubung).
   // Satu-satunya tempat pengaturan — dipakai di badal.html, wakaf-quran.html,
   // rekrutmen-petugas.html, dan akun.html supaya cukup diganti di sini saja.
-  waNumber: "#",
+  waNumber: "6285732674201",
 };
 
 const fallbackArticles = [
@@ -89,15 +89,28 @@ const fallbackArticles = [
   },
   {
     id: "art-048",
-    judul: "Rekrutmen Petugas Haji (PPIH): Panduan Lengkap",
+    judul: "Informasi Rekrutmen PPIH: Panduan Lengkap",
     slug: "rekrutmen-petugas-haji-ppih",
     kategori: "Karier Petugas",
     gambar: "assets/images/article-placeholder.svg",
     ringkasan:
-      "Skema PPIH, syarat umum, tahapan seleksi, dan cara memantau pengumuman resmi rekrutmen petugas haji.",
-    isi: '<p>Baca panduan lengkapnya di <a href="rekrutmen-petugas.html">halaman Rekrutmen Petugas Haji</a>: jenis PPIH (Kloter, Arab Saudi, non-kloter), syarat umum, tahapan seleksi, dan peringatan bahwa proses ini tidak dipungut biaya.</p>',
+      "Skema PPIH, syarat umum, tahapan seleksi, dan cara memantau pengumuman resmi rekrutmen PPIH.",
+    isi: '<p>Baca panduan lengkapnya di <a href="rekrutmen-petugas.html">halaman Informasi Rekrutmen PPIH</a>: jenis PPIH (Kloter, Arab Saudi, non-kloter), syarat umum, tahapan seleksi, dan peringatan bahwa proses ini tidak dipungut biaya.</p>',
     penulis: "Tim HajiCerdas",
     tanggal: "2026-07-19",
+    status: "Publish",
+  },
+];
+
+// Data demo petugas pelaksana Badal Umroh, dipakai saat appsScriptUrl belum
+// terhubung supaya halaman sertifikat tetap bisa ditampilkan/di-preview.
+const fallbackPetugasBadal = [
+  { id: "ptg-001", nama: "Ust. Ahmad Fauzi, S.Ag", ttd: "", status: "Publish" },
+  { id: "ptg-002", nama: "Ust. Muhammad Ridwan", ttd: "", status: "Publish" },
+  {
+    id: "ptg-003",
+    nama: "Ustadzah Siti Nur Aisyah",
+    ttd: "",
     status: "Publish",
   },
 ];
@@ -1807,6 +1820,28 @@ HCApi.verifySertifikat = async function (id) {
   if (!data.success)
     throw new Error(data.message || "Gagal memverifikasi sertifikat.");
   return data.data;
+};
+
+// Daftar petugas pelaksana jasa Badal Umroh (nama & tanda tangan), dipakai
+// di Admin Panel (pilih petugas saat menyelesaikan pesanan) dan untuk
+// menyusun sertifikat.
+HCApi.getPetugasBadal = async function () {
+  try {
+    const data = await requestJson({ action: "petugasbadal" });
+    const rows = onlyPublished(data.data || data);
+    return rows.length ? rows : fallbackPetugasBadal;
+  } catch (error) {
+    console.info(error.message);
+    return fallbackPetugasBadal;
+  }
+};
+
+// Ambil satu cerita/pengalaman jamaah berdasarkan id, dipakai di
+// detail-pengalaman.html. Sengaja memakai getExperiences() (bukan endpoint baru)
+// supaya konsisten dengan pola fallback lokal yang sudah ada.
+HCApi.getExperience = async function (id) {
+  const all = await HCApi.getExperiences();
+  return all.find((item) => String(item.id) === String(id)) || null;
 };
 
 window.HC_CONFIG = HC_CONFIG;

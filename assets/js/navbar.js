@@ -52,8 +52,8 @@
       '<ul class="dropdown-menu" aria-labelledby="layananDropdown">' +
       '<li><a class="dropdown-item" href="badal.html">Badal Umroh</a></li>' +
       '<li><a class="dropdown-item" href="fikih.html">Fikih Haji &amp; Umrah</a></li>' +
-      "<li><a class=\"dropdown-item\" href=\"wakaf-quran.html\">Wakaf Al-Qur'an</a></li>" +
-      '<li><a class="dropdown-item" href="rekrutmen-petugas.html">Rekrutmen Petugas Haji</a></li>' +
+      '<li><a class="dropdown-item" href="wakaf-quran.html">Wakaf Al-Qur\'an</a></li>' +
+      '<li><a class="dropdown-item" href="rekrutmen-petugas.html">Informasi Rekrutmen PPIH</a></li>' +
       "</ul>" +
       "</li>" +
       '<li class="nav-item"><a class="nav-link" href="pengalaman.html">Cerita Jamaah</a></li>' +
@@ -85,7 +85,8 @@
     offcanvasEl.addEventListener("click", function (event) {
       var link = event.target.closest("a.nav-link, a.dropdown-item");
       if (!link || link.classList.contains("dropdown-toggle")) return;
-      var instance = window.bootstrap.Offcanvas.getOrCreateInstance(offcanvasEl);
+      var instance =
+        window.bootstrap.Offcanvas.getOrCreateInstance(offcanvasEl);
       if (instance) instance.hide();
     });
   });

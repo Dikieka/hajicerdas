@@ -750,6 +750,15 @@
             >
               Tutup
             </button>
+            <a
+              href="#"
+              class="btn btn-success"
+              id="certOpenFullBtn"
+              target="_blank"
+              rel="noopener"
+            >
+              <i class="bi bi-file-earmark-text"></i> Buka Sertifikat Lengkap
+            </a>
             <button
               type="button"
               class="btn btn-primary"
@@ -1077,6 +1086,12 @@
             (order.data_pesanan && order.data_pesanan.untuk) || "-";
           document.getElementById("certTanggal").textContent =
             formatTanggalId(order.tanggal_pesan);
+
+          var openFullBtn = document.getElementById("certOpenFullBtn");
+          if (openFullBtn) {
+            openFullBtn.href =
+              "sertifikat-badal.html?id=" + encodeURIComponent(order.id);
+          }
 
           var qrContainer = document.getElementById("certQrContainer");
           qrContainer.innerHTML = "";

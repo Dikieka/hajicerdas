@@ -177,6 +177,46 @@ const buildArticleTableOfContents = async (container, toc, article = null) => {
   setupTocScrollSpy(toc, headingEls);
 };
 
+// Di layar mobile/tablet (<992px) layout artikel jadi satu kolom, jadi
+// Daftar Isi (yang aslinya sidebar di samping artikel) ikut turun ke
+// paling bawah, setelah tombol Bagikan, artikel terkait, dst. Fungsi ini
+// memindah (bukan menyalin) elemen <nav data-article-toc> yang sama ke
+// slot khusus (data-toc-mobile-slot) tepat di atas tombol Bagikan saat
+// mobile, dan mengembalikannya ke sidebar aslinya saat kembali ke
+// desktop. Karena node-nya dipindah (bukan dibangun ulang), scroll-spy
+// & event listener yang sudah terpasang di TOC tetap jalan seperti biasa.
+const articleTocMobileQuery =
+  typeof window !== "undefined" && window.matchMedia
+    ? window.matchMedia("(max-width: 991.98px)")
+    : null;
+
+const positionArticleTocForViewport = () => {
+  const toc = document.querySelector("[data-article-toc]");
+  const sidebar = document.querySelector(".article-toc-sidebar");
+  const mobileSlot = document.querySelector("[data-toc-mobile-slot]");
+  if (!toc || !sidebar || !mobileSlot) return;
+
+  const isMobile = articleTocMobileQuery
+    ? articleTocMobileQuery.matches
+    : window.innerWidth < 992;
+
+  if (isMobile) {
+    if (toc.parentElement !== mobileSlot) mobileSlot.appendChild(toc);
+  } else if (toc.parentElement !== sidebar) {
+    sidebar.appendChild(toc);
+  }
+};
+
+if (articleTocMobileQuery) {
+  const handleTocViewportChange = () => positionArticleTocForViewport();
+  if (articleTocMobileQuery.addEventListener) {
+    articleTocMobileQuery.addEventListener("change", handleTocViewportChange);
+  } else if (articleTocMobileQuery.addListener) {
+    // Fallback Safari lama
+    articleTocMobileQuery.addListener(handleTocViewportChange);
+  }
+}
+
 const getStoryId = (story) => String(story.id || story.judul || "").trim();
 const getStoryLike = (story) => Number(story.like || 0);
 const getLikedStories = () => {
@@ -281,14 +321,16 @@ const createStoryCard = (
     <div class="${wrapperClass}" id="${safeText(id)}">
       <article class="story-card p-4 fade-up">
         <span class="badge-soft mb-3"><i class="bi bi-chat-heart"></i>${safeText(story.kategori || "Cerita Jamaah")}</span>
-        <${Heading} class="${compact ? "h5" : "h4"} article-title">${safeText(story.judul)}</${Heading}>
+        <${Heading} class="${compact ? "h5" : "h4"} article-title">
+          <a class="stretched-link text-reset text-decoration-none" href="detail-pengalaman.html?id=${encodeURIComponent(id)}">${safeText(story.judul)}</a>
+        </${Heading}>
         <p class="lead-muted">${safeText(story.pengalaman)}</p>
         <p class="small"><strong>Tips:</strong> ${safeText(story.tips || "Ikuti arahan pembimbing dan simpan kontak rombongan.")}</p>
         <div class="meta">
           <span><i class="bi bi-person"></i> ${safeText(story.nama)}${story.asal ? `, ${safeText(story.asal)}` : ""}</span>
           <span><i class="bi bi-calendar3"></i> ${HCUtils.formatDate(story.tanggal)}</span>
         </div>
-        <div class="d-flex flex-wrap gap-2 mt-3">
+        <div class="d-flex flex-wrap gap-2 mt-3 story-card-actions">
           <button class="btn btn-sm ${liked ? "btn-primary" : "btn-outline-primary"} story-like-btn" type="button" data-like-story="${safeText(id)}" aria-pressed="${liked}" title="${liked ? "Batalkan suka" : "Sukai cerita"}">
             <i class="bi ${liked ? "bi-heart-fill" : "bi-heart"}"></i> <span data-like-label>${liked ? "Disukai" : "Suka"}</span> <span data-like-count>${getStoryLike(story)}</span>
           </button>
@@ -407,7 +449,7 @@ const bindStorySlider = (wrap) => {
 // Artikel Populer + kartu Layanan HajiCerdas) -- CSS line-clamp di
 // .featured-article-card (assets/css/style.css) jadi jaring pengaman kedua
 // kalau tetap kepanjangan untuk kombinasi judul+ringkasan tertentu.
-const buildFeaturedExcerpt = (article, maxLength = 300) => {
+const buildFeaturedExcerpt = (article, maxLength = 100) => {
   const fallback = String(article.ringkasan || "").trim();
   const fromContent = HCUtils.stripHtml(article.isi || "")
     .replace(/\s+/g, " ")
@@ -558,7 +600,7 @@ const renderHomeContent = async () => {
       .filter((item) => item.slug !== featuredSlug)
       .slice()
       .sort((a, b) => (Number(b.views) || 0) - (Number(a.views) || 0))
-      .slice(0, 4);
+      .slice(0, 5);
     articleList.innerHTML = mostViewed
       .map((article) => createArticleListItem(article, { showViews: true }))
       .join("");
@@ -641,26 +683,24 @@ const renderDetail = async () => {
     </div>`
         : ""
     }
+    <div class="article-toc-mobile-slot" data-toc-mobile-slot></div>
+        <div class="d-flex flex-wrap gap-2 mt-4">
+      <button class="btn btn-outline-primary" type="button" data-share><i class="bi bi-share"></i> Bagikan</button>
+    </div>
     <div class="surface p-4 p-md-5 mt-4 share-experience-cta">
       <div class="d-flex flex-column flex-md-row align-items-md-center gap-3 gap-md-4">
         <div class="share-experience-icon flex-shrink-0"><i class="bi bi-mic"></i></div>
         <div class="flex-grow-1">
           <h2 class="h5 fw-bold mb-1">Sudah Pernah Menunaikan Haji atau Umrah?</h2>
           <p class="lead-muted mb-0">
-            Cerita, kendala, dan tips dari jamaah yang sudah berangkat sangat berharga bagi
-            calon jamaah lain. Ceritakan pengalaman Anda &mdash; mulai dari persiapan,
-            perjalanan, sampai kesan selama di Tanah Suci &mdash; agar bisa menjadi bekal dan
-            inspirasi bagi pembaca HajiCerdas lainnya. Cerita yang dikirim akan ditinjau
-            admin sebelum ditampilkan di halaman <a href="pengalaman.html">Cerita Jamaah</a>.
+            Bagikan pengalaman Anda agar bisa menjadi bekal dan inspirasi bagi
+            calon jamaah lain di HajiCerdas.
           </p>
         </div>
         <a class="btn btn-primary flex-shrink-0" href="kirim.html">
           <i class="bi bi-pencil-square"></i> Bagikan Pengalaman Anda
         </a>
       </div>
-    </div>
-    <div class="d-flex flex-wrap gap-2 mt-4">
-      <button class="btn btn-outline-primary" type="button" data-share><i class="bi bi-share"></i> Bagikan Artikel</button>
     </div>
     <div class="surface p-4 p-md-5 mt-4 text-center">
       <h2 class="h5 fw-bold mb-1">Ikuti HajiCerdas di Media Sosial</h2>
@@ -703,11 +743,12 @@ const renderDetail = async () => {
         : ""
     }
   `;
-  buildArticleTableOfContents(
+  await buildArticleTableOfContents(
     target,
     document.querySelector("[data-article-toc]"),
     article,
   );
+  positionArticleTocForViewport();
   // render FAQ section related to article category
   renderArticleFAQ(target, article);
   document.querySelector("[data-share]")?.addEventListener("click", () =>
@@ -724,6 +765,143 @@ const renderDetail = async () => {
     if (el)
       el.innerHTML = `<i class="bi bi-eye"></i> ${Number(views).toLocaleString("id-ID")}x dibaca`;
   });
+};
+
+// Halaman detail-pengalaman.html: tampilan penuh satu cerita pengalaman jamaah,
+// strukturnya sengaja dibuat mirip renderDetail() (halaman artikel) supaya
+// terasa konsisten (breadcrumb, meta info, konten, CTA berbagi, cerita
+// terkait) walau sumber datanya beda (sheet Pengalaman, bukan Artikel).
+const getRelatedStories = (all, current, limit = 3) => {
+  const currentId = getStoryId(current);
+  return all
+    .filter((item) => getStoryId(item) !== currentId)
+    .filter(
+      (item) =>
+        !current.kategori ||
+        String(item.kategori).toLowerCase() ===
+          String(current.kategori).toLowerCase(),
+    )
+    .sort((a, b) => getStoryLike(b) - getStoryLike(a))
+    .slice(0, limit);
+};
+
+const renderCeritaDetail = async () => {
+  const target = document.querySelector("[data-cerita-detail]");
+  if (!target) return;
+  const id = getParam("id");
+  const [story, allStories] = await Promise.all([
+    HCApi.getExperience(id),
+    HCApi.getExperiences(),
+  ]);
+  if (!story) {
+    location.href = "404.html";
+    return;
+  }
+  const storyId = getStoryId(story);
+  const liked = hasLikedStory(storyId);
+  document.title = `${story.judul} | Cerita Jamaah | HajiCerdas`;
+  document
+    .querySelector("meta[name='description']")
+    ?.setAttribute("content", String(story.pengalaman || "").slice(0, 160));
+  const related = getRelatedStories(allStories, story, 3);
+  target.innerHTML = `
+    <nav aria-label="Breadcrumb" class="mb-4">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="index.html">Beranda</a></li>
+        <li class="breadcrumb-item"><a href="pengalaman.html">Cerita Jamaah</a></li>
+        <li class="breadcrumb-item active" aria-current="page">${safeText(story.judul)}</li>
+      </ol>
+    </nav>
+    <span class="badge-soft mb-3"><i class="bi bi-chat-heart"></i> ${safeText(story.kategori || "Cerita Jamaah")}</span>
+    <h1 class="display-5 fw-bold">${safeText(story.judul)}</h1>
+    <div class="meta mb-4">
+      <span><i class="bi bi-person"></i> ${safeText(story.nama)}${story.asal ? `, ${safeText(story.asal)}` : ""}</span>
+      <span title="${HCUtils.formatDateTime(story.tanggal)}"><i class="bi bi-calendar3"></i> ${HCUtils.formatDate(story.tanggal)}</span>
+      <span><i class="bi bi-clock-history"></i> <span data-time-ago="${story.tanggal}">${HCUtils.timeAgo(story.tanggal)}</span></span>
+    </div>
+    <div class="article-content">
+      <p>${safeText(story.pengalaman).replace(/\n+/g, "</p><p>")}</p>
+    </div>
+    ${
+      story.tips
+        ? `
+    <div class="surface p-3 p-md-4 mt-4">
+      <p class="small fw-bold mb-1"><i class="bi bi-lightbulb text-primary"></i> Tips dari ${safeText(story.nama)}</p>
+      <p class="small lead-muted mb-0">${safeText(story.tips)}</p>
+    </div>`
+        : ""
+    }
+    <div class="d-flex flex-wrap gap-2 mt-4">
+      <button class="btn ${liked ? "btn-primary" : "btn-outline-primary"} story-like-btn" type="button" data-like-story="${safeText(storyId)}" aria-pressed="${liked}" title="${liked ? "Batalkan suka" : "Sukai cerita"}">
+        <i class="bi ${liked ? "bi-heart-fill" : "bi-heart"}"></i> <span data-like-label>${liked ? "Disukai" : "Suka"}</span> <span data-like-count>${getStoryLike(story)}</span>
+      </button>
+      <button class="btn btn-outline-primary" type="button" data-share><i class="bi bi-share"></i> Bagikan</button>
+    </div>
+    <div class="surface p-4 p-md-5 mt-4 share-experience-cta">
+      <div class="d-flex flex-column flex-md-row align-items-md-center gap-3 gap-md-4">
+        <div class="share-experience-icon flex-shrink-0"><i class="bi bi-mic"></i></div>
+        <div class="flex-grow-1">
+          <h2 class="h5 fw-bold mb-1">Anda Juga Punya Cerita Haji atau Umrah?</h2>
+          <p class="lead-muted mb-0">
+            Bagikan pengalaman Anda agar bisa menjadi bekal dan inspirasi bagi
+            calon jamaah lain di HajiCerdas.
+          </p>
+        </div>
+        <a class="btn btn-primary flex-shrink-0" href="kirim.html">
+          <i class="bi bi-pencil-square"></i> Kirim Cerita Anda
+        </a>
+      </div>
+    </div>
+        <div class="surface p-4 p-md-5 mt-4 text-center">
+      <h2 class="h5 fw-bold mb-1">Ikuti HajiCerdas di Media Sosial</h2>
+      <p class="lead-muted mb-3">Dapatkan artikel terbaru, tips, dan info seputar Haji &amp; Umrah setiap hari.</p>
+      <div class="social-links justify-content-center" aria-label="Ikuti HajiCerdas di media sosial">
+        <a href="https://www.facebook.com/hajicerdas" target="_blank" rel="noopener" aria-label="Facebook HajiCerdas"><i class="bi bi-facebook"></i></a>
+        <a href="https://www.tiktok.com/@hajicerdas" target="_blank" rel="noopener" aria-label="TikTok HajiCerdas"><i class="bi bi-tiktok"></i></a>
+        <a href="https://www.instagram.com/hajicerdas" target="_blank" rel="noopener" aria-label="Instagram HajiCerdas"><i class="bi bi-instagram"></i></a>
+        <a href="https://x.com/hajicerdas" target="_blank" rel="noopener" aria-label="X (Twitter) HajiCerdas"><i class="bi bi-twitter-x"></i></a>
+      </div>
+    </div>
+    ${
+      related.length
+        ? `
+    <div class="mt-5 pt-4 border-top">
+      <h2 class="h4 fw-bold mb-3"><i class="bi bi-collection text-primary"></i> Cerita Jamaah Lainnya</h2>
+      <div class="row g-3">
+        ${related
+          .map(
+            (item) => `
+          <div class="col-md-4">
+            <a class="related-article-card fade-up" href="detail-pengalaman.html?id=${encodeURIComponent(getStoryId(item))}">
+              <div class="card-body-pad">
+                <span class="badge-soft mb-2"><i class="bi bi-chat-heart"></i>${safeText(item.kategori || "Cerita Jamaah")}</span>
+                <p class="article-title h6 mb-1">${safeText(item.judul)}</p>
+                <p class="small lead-muted mb-0"><i class="bi bi-person"></i> ${safeText(item.nama)}</p>
+              </div>
+            </a>
+          </div>
+        `,
+          )
+          .join("")}
+      </div>
+      <div class="text-center mt-4">
+        <a class="btn btn-outline-primary" href="pengalaman.html?kategori=${encodeURIComponent(story.kategori || "")}">
+          <i class="bi bi-collection"></i> Cerita Lainnya di Kategori ${safeText(story.kategori || "Cerita Jamaah")}
+        </a>
+      </div>
+    </div>`
+        : ""
+    }
+  `;
+  bindStoryActions(target);
+  document.querySelector("[data-share]")?.addEventListener("click", () =>
+    shareContent({
+      title: story.judul,
+      text: story.pengalaman,
+      url: `detail-pengalaman.html?id=${encodeURIComponent(storyId)}`,
+    }),
+  );
+  HCUtils.initAnimations();
 };
 
 const initExperienceForm = () => {
@@ -745,7 +923,7 @@ const initExperienceForm = () => {
       form.reset();
       form.classList.remove("was-validated");
       HCUtils.showToast(
-        "Pengalaman terkirim. Admin akan meninjau sebelum publish.",
+        "Pengalaman terkirim. Terimakasih sudah berbagi pengalaman anda.",
       );
     } catch (error) {
       HCUtils.showToast(error.message, "danger");
@@ -759,5 +937,6 @@ const initExperienceForm = () => {
 document.addEventListener("DOMContentLoaded", () => {
   renderHomeContent();
   renderDetail();
+  renderCeritaDetail();
   initExperienceForm();
 });

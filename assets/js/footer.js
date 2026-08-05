@@ -50,8 +50,8 @@
       '<h3 class="h6 text-white">Layanan</h3>' +
       '<a class="d-block" href="badal.html">Badal Umroh</a>' +
       '<a class="d-block" href="fikih.html">Fikih Haji &amp; Umrah</a>' +
-      "<a class=\"d-block\" href=\"wakaf-quran.html\">Wakaf Al-Qur'an</a>" +
-      '<a class="d-block" href="rekrutmen-petugas.html">Rekrutmen Petugas Haji</a>' +
+      '<a class="d-block" href="wakaf-quran.html">Wakaf Al-Qur\'an</a>' +
+      '<a class="d-block" href="rekrutmen-petugas.html">Informasi Rekrutmen PPIH</a>' +
       "</div>" +
       '<div class="col-6 col-lg-2">' +
       '<h3 class="h6 text-white">Lainnya</h3>' +

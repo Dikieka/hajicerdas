@@ -331,7 +331,7 @@ const ADMIN_SCHEMA = {
         type: "select",
         options: CONTENT_CATEGORIES,
         required: true,
-        hint: "Dipakai untuk filter di halaman Download Center, mis. kartu \"Transportasi\" di beranda menuju download.html?kategori=Transportasi.",
+        hint: 'Dipakai untuk filter di halaman Download Center, mis. kartu "Transportasi" di beranda menuju download.html?kategori=Transportasi.',
       },
       {
         key: "file",
@@ -463,7 +463,7 @@ const ADMIN_SCHEMA = {
         label: "Data Pesanan (JSON)",
         type: "textarea",
         rows: 3,
-        hint: "Data tambahan pesanan dalam format JSON",
+        hint: 'Data tambahan pesanan dalam format JSON, mis. {"untuk":"Almarhum ayah saya"} untuk Badal Umroh.',
       },
       {
         key: "status",
@@ -478,6 +478,39 @@ const ADMIN_SCHEMA = {
         rows: 2,
       },
       { key: "tanggal_pesan", label: "Tanggal Pesan", type: "date" },
+      {
+        key: "petugas_badal_id",
+        label: "Petugas Pelaksana (khusus Badal Umroh)",
+        type: "text",
+        hint: 'Isi dengan ID petugas dari menu "Petugas Badal" (mis. ptg-001). Wajib diisi bersama status "selesai" agar sertifikat menampilkan nama & tanda tangan petugas yang benar.',
+      },
+      {
+        key: "tanggal_pelaksanaan_hijri",
+        label: "Tanggal Pelaksanaan (Hijriah)",
+        type: "text",
+        hint: 'Tanggal badal umroh dilaksanakan, format bebas. Contoh: "12 Rabiul Awal 1448 H". Tampil di sertifikat.',
+      },
+    ],
+  },
+  PetugasBadal: {
+    label: "Petugas Badal",
+    icon: "bi-person-badge-fill",
+    group: "Layanan",
+    fields: [
+      { key: "nama", label: "Nama Petugas", type: "text", required: true },
+      {
+        key: "ttd",
+        label: "Tanda Tangan (gambar)",
+        type: "image",
+        hint: "Tempel link gambar tanda tangan, atau unggah file dari perangkat (PNG latar transparan lebih rapi). Tampil pada sertifikat Badal Umroh.",
+      },
+      {
+        key: "status",
+        label: "Status",
+        type: "select",
+        options: ["Publish", "Draft"],
+        hint: 'Hanya petugas berstatus "Publish" yang bisa dipilih untuk pesanan Badal Umroh.',
+      },
     ],
   },
 };

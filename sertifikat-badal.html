@@ -1,0 +1,594 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="utf-8" />
+    <script>
+      (function () {
+        try {
+          var t = localStorage.getItem("hajicerdas-theme");
+          if (!t) {
+            t =
+              window.matchMedia &&
+              window.matchMedia("(prefers-color-scheme: dark)").matches
+                ? "dark"
+                : "light";
+          }
+          if (t === "dark") {
+            document.documentElement.classList.add("theme-dark-preload");
+          }
+        } catch (e) {}
+      })();
+    </script>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Sertifikat Badal Umroh | HajiCerdas</title>
+    <meta
+      name="description"
+      content="Sertifikat resmi bukti pelaksanaan jasa Badal Umroh HajiCerdas, lengkap dengan nama petugas pelaksana, tanda tangan, dan kode QR verifikasi."
+    />
+    <meta name="robots" content="noindex, follow" />
+    <link rel="canonical" href="https://www.hajicerdas.id/sertifikat-badal.html" />
+    <link rel="manifest" href="manifest.json" />
+    <link rel="icon" href="assets/icons/favicon.svg" type="image/svg+xml" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="assets/css/style.css" />
+    <link rel="stylesheet" href="assets/css/responsive.css" />
+    <link rel="stylesheet" href="assets/css/animation.css" />
+
+    <style>
+      /* === Halaman Sertifikat Badal Umroh (khusus, tidak dipakai halaman lain) === */
+      .sertifikat-shell {
+        background: var(--bg);
+        padding: 2.5rem 1rem 4rem;
+      }
+      .sertifikat-toolbar {
+        max-width: 780px;
+        margin: 0 auto 1.5rem;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.75rem;
+        align-items: center;
+        justify-content: space-between;
+      }
+      .sertifikat-toolbar .lead-muted {
+        margin: 0;
+      }
+
+      /* Lembar sertifikat: rasio potrait A4 (210mm x 297mm) */
+      .cert-sheet {
+        max-width: 780px;
+        margin: 0 auto;
+        background: #fdfaf3;
+        color: #2f3e34;
+        border-radius: 6px;
+        box-shadow: 0 30px 60px -25px rgba(47, 62, 52, 0.35);
+        position: relative;
+        overflow: hidden;
+        padding: 0;
+        aspect-ratio: 210 / 297;
+      }
+      .cert-frame {
+        position: absolute;
+        inset: 14px;
+        border: 2px solid #c9a86a;
+        border-radius: 4px;
+      }
+      .cert-frame::before {
+        content: "";
+        position: absolute;
+        inset: 8px;
+        border: 1px solid #c9a86a;
+        border-radius: 2px;
+        opacity: 0.55;
+      }
+      .cert-inner {
+        position: absolute;
+        inset: 34px;
+        display: flex;
+        flex-direction: column;
+        text-align: center;
+        font-family: "Plus Jakarta Sans", sans-serif;
+      }
+      .cert-bismillah {
+        font-family: "Amiri", serif;
+        font-size: 1.1rem;
+        color: #5e8f73;
+        letter-spacing: 0.03em;
+      }
+      .cert-brandmark {
+        width: 46px;
+        height: 46px;
+        margin: 0.35rem auto 0.4rem;
+        border-radius: 50%;
+        display: grid;
+        place-items: center;
+        background: linear-gradient(135deg, #7fa58a, #5e8f73);
+        color: #fff;
+        font-size: 1.3rem;
+        box-shadow: 0 6px 16px -6px rgba(94, 143, 115, 0.6);
+      }
+      .cert-brand {
+        font-weight: 800;
+        letter-spacing: 0.16em;
+        font-size: 0.8rem;
+        color: #5e8f73;
+      }
+      .cert-title {
+        font-family: "Cormorant Garamond", serif;
+        font-weight: 700;
+        font-size: clamp(1.65rem, 4.4vw, 2.35rem);
+        margin: 0.55rem 0 0.15rem;
+        color: #2f3e34;
+      }
+      .cert-subtitle {
+        font-size: 0.82rem;
+        text-transform: uppercase;
+        letter-spacing: 0.14em;
+        color: #8a7a4f;
+        margin-bottom: 0.9rem;
+      }
+      .cert-kode {
+        display: inline-block;
+        margin: 0 auto 1rem;
+        padding: 0.28rem 0.9rem;
+        border: 1px dashed #c9a86a;
+        border-radius: 999px;
+        font-size: 0.78rem;
+        font-weight: 700;
+        letter-spacing: 0.05em;
+        color: #5e8f73;
+      }
+      .cert-body-text {
+        font-size: 0.92rem;
+        line-height: 1.75;
+        color: #3a463d;
+        max-width: 34rem;
+        margin: 0 auto;
+      }
+      .cert-nama-untuk {
+        font-family: "Cormorant Garamond", serif;
+        font-weight: 700;
+        font-style: italic;
+        font-size: clamp(1.35rem, 3.6vw, 1.75rem);
+        color: #5e8f73;
+        margin: 0.35rem 0 0.6rem;
+        border-bottom: 1px solid #e4d9b8;
+        display: inline-block;
+        padding: 0 0.5rem 0.25rem;
+      }
+      .cert-meta-row {
+        display: flex;
+        justify-content: center;
+        gap: 2.2rem;
+        flex-wrap: wrap;
+        margin: 0.9rem 0 1.1rem;
+        font-size: 0.82rem;
+      }
+      .cert-meta-row .cert-meta-label {
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        font-size: 0.68rem;
+        color: #8a7a4f;
+        margin-bottom: 0.15rem;
+      }
+      .cert-meta-row .cert-meta-value {
+        font-weight: 700;
+        color: #2f3e34;
+      }
+      .cert-doa-box {
+        margin: 0.4rem auto 1.1rem;
+        max-width: 34rem;
+        background: rgba(201, 168, 106, 0.08);
+        border: 1px solid rgba(201, 168, 106, 0.4);
+        border-radius: 10px;
+        padding: 0.9rem 1.1rem;
+      }
+      .cert-doa-arab {
+        font-family: "Amiri", serif;
+        font-size: 1.35rem;
+        line-height: 2.1;
+        direction: rtl;
+        color: #2f3e34;
+        margin-bottom: 0.35rem;
+      }
+      .cert-doa-latin {
+        font-style: italic;
+        font-size: 0.82rem;
+        color: #5e8f73;
+        margin-bottom: 0.25rem;
+      }
+      .cert-doa-arti {
+        font-size: 0.78rem;
+        color: #6b7a70;
+      }
+      .cert-spacer {
+        flex: 1 1 auto;
+      }
+      .cert-sign-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-end;
+        gap: 1rem;
+        margin-top: auto;
+        padding-top: 0.75rem;
+      }
+      .cert-sign-col {
+        flex: 1;
+        text-align: center;
+      }
+      .cert-sign-caption {
+        font-size: 0.68rem;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        color: #8a7a4f;
+        margin-bottom: 0.35rem;
+      }
+      .cert-sign-img-slot {
+        height: 52px;
+        display: flex;
+        align-items: flex-end;
+        justify-content: center;
+        margin-bottom: 0.15rem;
+      }
+      .cert-sign-img-slot img {
+        max-height: 52px;
+        max-width: 130px;
+        object-fit: contain;
+      }
+      .cert-sign-name {
+        font-family: "Cormorant Garamond", serif;
+        font-weight: 700;
+        font-size: 1rem;
+        border-top: 1px solid #c9a86a;
+        padding-top: 0.3rem;
+        display: inline-block;
+        min-width: 150px;
+      }
+      .cert-qr-col {
+        flex: 0 0 auto;
+        text-align: center;
+      }
+      .cert-qr-box {
+        width: 64px;
+        height: 64px;
+        background: #fff;
+        border: 1px solid #e4d9b8;
+        border-radius: 6px;
+        padding: 4px;
+        margin: 0 auto 0.25rem;
+      }
+      .cert-qr-box canvas,
+      .cert-qr-box img {
+        width: 100% !important;
+        height: 100% !important;
+      }
+      .cert-qr-caption {
+        font-size: 0.6rem;
+        color: #8a7a4f;
+        max-width: 90px;
+      }
+      .cert-footer-note {
+        font-size: 0.65rem;
+        color: #a89a6e;
+        margin-top: 0.7rem;
+        letter-spacing: 0.03em;
+      }
+      .cert-invalid {
+        max-width: 560px;
+        margin: 0 auto;
+      }
+
+      @media (max-width: 575.98px) {
+        .cert-sheet {
+          aspect-ratio: auto;
+          min-height: 640px;
+        }
+        .cert-inner {
+          inset: 20px;
+        }
+        .cert-meta-row {
+          gap: 1.2rem;
+        }
+      }
+
+      @media print {
+        @page {
+          size: A4 portrait;
+          margin: 0;
+        }
+        body * {
+          visibility: hidden;
+        }
+        #certPrintArea,
+        #certPrintArea * {
+          visibility: visible;
+        }
+        #certPrintArea {
+          position: absolute;
+          top: 0;
+          left: 0;
+          width: 210mm;
+          height: 297mm;
+          margin: 0;
+          box-shadow: none;
+          border-radius: 0;
+          aspect-ratio: auto;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Lewati ke konten</a>
+    <script src="assets/js/navbar.js"></script>
+
+    <main id="main" class="sertifikat-shell">
+      <div class="container">
+        <!-- Loading -->
+        <div id="certLoading" class="text-center py-5">
+          <div class="spinner-border text-primary mb-3" role="status"></div>
+          <p class="lead-muted mb-0">Memuat sertifikat...</p>
+        </div>
+
+        <!-- Invalid -->
+        <div id="certInvalid" class="cert-invalid text-center py-5 d-none">
+          <i class="bi bi-x-circle-fill text-danger display-3 mb-3 d-block"></i>
+          <h1 class="h4 fw-bold mb-2">Sertifikat Tidak Ditemukan</h1>
+          <p class="lead-muted">
+            Kode sertifikat tidak valid, tidak lengkap, atau pesanan belum
+            berstatus &ldquo;Selesai&rdquo;. Jika Anda merasa ini keliru,
+            hubungi admin HajiCerdas melalui halaman
+            <a href="kontak.html">Kontak</a>.
+          </p>
+          <a href="akun.html" class="btn btn-outline-primary mt-2"
+            ><i class="bi bi-arrow-left"></i> Kembali ke Akun Saya</a
+          >
+        </div>
+
+        <!-- Valid -->
+        <div id="certValid" class="d-none">
+          <div class="sertifikat-toolbar">
+            <p class="lead-muted small">
+              <i class="bi bi-shield-check text-primary"></i> Sertifikat resmi
+              HajiCerdas — dapat dicetak atau disimpan sebagai PDF.
+            </p>
+            <div class="d-flex gap-2">
+              <a href="akun.html" class="btn btn-outline-secondary btn-sm"
+                ><i class="bi bi-arrow-left"></i> Kembali</a
+              >
+              <button
+                type="button"
+                id="certPrintBtn"
+                class="btn btn-primary btn-sm"
+              >
+                <i class="bi bi-printer"></i> Cetak / Simpan PDF
+              </button>
+            </div>
+          </div>
+
+          <div class="cert-sheet" id="certPrintArea">
+            <div class="cert-frame"></div>
+            <div class="cert-inner">
+              <p class="cert-bismillah mb-0">
+                بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ
+              </p>
+              <span class="cert-brandmark"><i class="bi bi-compass"></i></span>
+              <p class="cert-brand mb-0">HAJICERDAS</p>
+              <h1 class="cert-title">Sertifikat Badal Umroh</h1>
+              <p class="cert-subtitle">Bukti Pelaksanaan Ibadah Badal Umroh</p>
+              <span class="cert-kode" id="certKode">HC-BDL-000000</span>
+
+              <p class="cert-body-text mb-0">
+                Dengan memohon rida dan pertolongan Allah Subhanahu wa
+                Ta&rsquo;ala, ibadah umrah telah dilaksanakan sebagai
+                <strong>badal (pengganti)</strong> atas nama:
+              </p>
+              <p class="cert-nama-untuk" id="certUntuk">-</p>
+
+              <div class="cert-meta-row">
+                <div>
+                  <div class="cert-meta-label">Atas Pesanan</div>
+                  <div class="cert-meta-value" id="certPemesan">-</div>
+                </div>
+                <div>
+                  <div class="cert-meta-label">Tanggal Pelaksanaan</div>
+                  <div class="cert-meta-value" id="certTanggalPelaksanaan">
+                    -
+                  </div>
+                </div>
+              </div>
+
+              <div class="cert-doa-box">
+                <p class="cert-doa-arab mb-1" id="certDoaArab">
+                  لَبَّيْكَ اللَّهُمَّ عُمْرَةً عَنْ فُلَان
+                </p>
+                <p class="cert-doa-latin mb-1" id="certDoaLatin">
+                  Labbaikallāhumma &lsquo;umratan &lsquo;an (fulan)
+                </p>
+                <p class="cert-doa-arti mb-0">
+                  &ldquo;Aku penuhi panggilan-Mu ya Allah, untuk melaksanakan
+                  umrah atas nama (nama yang dibadalkan).&rdquo; &mdash;
+                  lafaz niat ihram umrah badal, diucapkan oleh petugas
+                  pelaksana pada saat miqat.
+                </p>
+              </div>
+
+              <div class="cert-spacer"></div>
+
+              <div class="cert-sign-row">
+                <div class="cert-sign-col">
+                  <div class="cert-sign-caption">Petugas Pelaksana</div>
+                  <div class="cert-sign-img-slot" id="certTtdSlot"></div>
+                  <div class="cert-sign-name" id="certPetugasNama">-</div>
+                </div>
+                <div class="cert-qr-col">
+                  <div class="cert-qr-box" id="certQrBox"></div>
+                  <p class="cert-qr-caption mb-0">Pindai untuk verifikasi</p>
+                </div>
+                <div class="cert-sign-col">
+                  <div class="cert-sign-caption">Pelaksana Badal</div>
+                  <div class="cert-sign-img-slot">
+                    <span class="cert-brandmark" style="margin: 0"
+                      ><i class="bi bi-compass"></i
+                    ></span>
+                  </div>
+                  <div class="cert-sign-name" id="certPelaksana">HajiCerdas</div>
+                </div>
+              </div>
+              <p class="cert-footer-note mb-0">
+                Diterbitkan otomatis oleh sistem HajiCerdas pada
+                <span id="certTanggalTerbit">-</span> &middot;
+                www.hajicerdas.id/verifikasi-sertifikat.html
+              </p>
+            </div>
+          </div>
+
+          <p class="small lead-muted text-center mt-3" style="max-width: 780px; margin-inline: auto">
+            <i class="bi bi-info-circle text-primary"></i> Sertifikat ini
+            adalah catatan internal HajiCerdas sebagai bukti pesanan Anda
+            telah ditandai selesai oleh admin. Untuk kepastian pelaksanaan
+            ibadah, tetap simpan bukti/laporan resmi dari penyelenggara Badal
+            Umroh Anda.
+          </p>
+        </div>
+      </div>
+    </main>
+
+    <script src="assets/js/footer.js"></script>
+    <div class="toast-container position-fixed top-0 end-0 p-3"></div>
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+      defer
+    ></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/davidshimjs-qrcodejs@0.0.2/qrcode.min.js"
+      defer
+    ></script>
+    <script src="assets/js/api.js" defer></script>
+    <script src="assets/js/auth.js" defer></script>
+    <script src="assets/js/app.js" defer></script>
+    <script src="assets/js/darkmode.js" defer></script>
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        var id = new URLSearchParams(window.location.search).get("id");
+        var loadingEl = document.getElementById("certLoading");
+        var invalidEl = document.getElementById("certInvalid");
+        var validEl = document.getElementById("certValid");
+
+        function showInvalid() {
+          loadingEl.classList.add("d-none");
+          invalidEl.classList.remove("d-none");
+        }
+
+        function formatTanggalId(value) {
+          if (!value) return "-";
+          try {
+            return new Intl.DateTimeFormat("id-ID", {
+              day: "numeric",
+              month: "long",
+              year: "numeric",
+            }).format(new Date(value));
+          } catch (e) {
+            return String(value).split("T")[0] || "-";
+          }
+        }
+
+        // Susun lafaz niat badal umrah, menyisipkan nama yang dibadalkan
+        // (jika ada) ke dalam teks Arab/Latin secara sederhana.
+        function fillDoa(untuk) {
+          var nama = untuk && untuk.trim() ? untuk.trim() : "Fulan";
+          document.getElementById("certDoaLatin").textContent =
+            "Labbaikallāhumma \u2018umratan \u2018an " + nama;
+        }
+
+        function render(data) {
+          loadingEl.classList.add("d-none");
+          if (!data) {
+            showInvalid();
+            return;
+          }
+          document.getElementById("certKode").textContent = data.kode || "-";
+          document.getElementById("certUntuk").textContent =
+            data.untuk || "(tidak dicantumkan)";
+          document.getElementById("certPemesan").textContent =
+            data.nama_pemesan || "-";
+          document.getElementById("certTanggalPelaksanaan").textContent =
+            data.tanggal_pelaksanaan_hijri &&
+            String(data.tanggal_pelaksanaan_hijri).trim()
+              ? data.tanggal_pelaksanaan_hijri
+              : formatTanggalId(data.tanggal_pesan) + " (estimasi)";
+          document.getElementById("certPetugasNama").textContent =
+            data.petugas_nama && data.petugas_nama.trim()
+              ? data.petugas_nama
+              : "Belum ditugaskan";
+          document.getElementById("certPelaksana").textContent =
+            data.pelaksana_badal || "HajiCerdas";
+          document.getElementById("certTanggalTerbit").textContent =
+            formatTanggalId(new Date().toISOString());
+          fillDoa(data.untuk);
+
+          var ttdSlot = document.getElementById("certTtdSlot");
+          if (data.petugas_ttd && data.petugas_ttd.trim()) {
+            ttdSlot.innerHTML =
+              '<img src="' +
+              data.petugas_ttd +
+              '" alt="Tanda tangan ' +
+              (data.petugas_nama || "petugas") +
+              '" onerror="this.parentElement.innerHTML=\'\'">';
+          }
+
+          var qrBox = document.getElementById("certQrBox");
+          qrBox.innerHTML = "";
+          if (typeof QRCode !== "undefined") {
+            var siteUrl =
+              (window.HC_CONFIG && window.HC_CONFIG.siteUrl) ||
+              window.location.origin;
+            var verifyUrl =
+              siteUrl +
+              "/verifikasi-sertifikat.html?id=" +
+              encodeURIComponent(data.id || id);
+            new QRCode(qrBox, {
+              text: verifyUrl,
+              width: 56,
+              height: 56,
+              colorDark: "#2f3e34",
+              colorLight: "#ffffff",
+            });
+          }
+
+          validEl.classList.remove("d-none");
+        }
+
+        if (!id) {
+          showInvalid();
+          return;
+        }
+
+        window.HCApi
+          .verifySertifikat(id)
+          .then(render)
+          .catch(function () {
+            showInvalid();
+          });
+
+        var printBtn = document.getElementById("certPrintBtn");
+        if (printBtn) {
+          printBtn.addEventListener("click", function () {
+            window.print();
+          });
+        }
+      });
+    </script>
+  </body>
+</html>
