@@ -5,7 +5,7 @@ const HC_CONFIG = {
   // Nomor WhatsApp admin (format 62xxxxxxxxxx, tanpa +/spasi/tanda hubung).
   // Satu-satunya tempat pengaturan — dipakai di badal.html, wakaf-quran.html,
   // rekrutmen-petugas.html, dan akun.html supaya cukup diganti di sini saja.
-  waNumber: "6285732674201",
+  waNumber: "",
 };
 
 const fallbackArticles = [
