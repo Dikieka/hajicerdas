@@ -499,6 +499,30 @@ const HCLayanan = {
     source:
       "Disusun dari pemahaman umum atas skema PPIH yang dikelola Kementerian Agama. Syarat, kuota, dan jadwal pendaftaran berubah tiap tahun — selalu rujuk pengumuman resmi terbaru dari Kemenag Pusat atau Kanwil Kemenag provinsi setempat.",
   },
+  // Konten "isi" sengaja dikosongkan: tata-cara-haji.html dan
+  // tata-cara-umrah.html sudah punya konten lengkap (tabbar/panel/journey)
+  // langsung di HTML sebagai tampilan bawaan. Kalau admin mengisi kolom
+  // "isi" lewat Admin Panel > Layanan, tampilan bawaan itu baru ditimpa.
+  "tata-cara-haji": {
+    halaman: "tata-cara-haji",
+    eyebrow: "Panduan Ibadah",
+    judul: "Tata Cara Ibadah Haji",
+    ringkasan:
+      "Urutan pelaksanaan ibadah haji secara umum, lengkap dengan niat, talbiyah, jenis haji (Tamattu', Ifrad, Qiran), dan doa di setiap tahap.",
+    isi: "",
+    source:
+      "Disusun dari pemahaman umum manasik haji yang diajarkan secara luas di Indonesia. Ikuti bimbingan pembimbing manasik dan petugas resmi untuk detail dan penyesuaian di lapangan.",
+  },
+  "tata-cara-umrah": {
+    halaman: "tata-cara-umrah",
+    eyebrow: "Panduan Ibadah",
+    judul: "Tata Cara Ibadah Umrah",
+    ringkasan:
+      "Rangkaian ringkas ibadah umrah, dapat dilaksanakan kapan saja sepanjang tahun, lengkap dengan niat, talbiyah, dan doa di setiap tahap.",
+    isi: "",
+    source:
+      "Disusun dari pemahaman umum manasik umrah yang diajarkan secara luas di Indonesia. Ikuti bimbingan pembimbing manasik dan petugas resmi untuk detail dan penyesuaian di lapangan.",
+  },
 };
 
 window.HCLayanan = HCLayanan;

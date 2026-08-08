@@ -889,3 +889,86 @@ Sebelumnya kolom `penulis` di sheet `Artikel` cuma teks nama bebas, tanpa foto. 
 - Setiap kartu cerita di `pengalaman.html` (dan slider cerita jamaah di beranda) kini punya tombol **"Baca Selengkapnya"** menuju `detail-pengalaman.html?id=ID_CERITA`.
 - Halaman baru ini memakai layout yang sama persis dengan `detail.html` (breadcrumb, judul besar, meta info, foto, konten penuh, tombol suka/bagikan, kotak tips, CTA kirim cerita, dan "Cerita Jamaah Lainnya" di kategori yang sama) tetapi sumber datanya dari sheet `Pengalaman`, bukan `Artikel`.
 - `assets/js/article.js`: fungsi baru `renderCeritaDetail()` (dipanggil otomatis saat elemen `[data-cerita-detail]` ada di halaman) dan `getRelatedStories()`. `assets/js/api.js`: fungsi baru `HCApi.getExperience(id)` untuk mengambil satu cerita berdasarkan ID (dibangun di atas `getExperiences()` yang sudah ada, jadi tetap konsisten dengan pola fallback lokal).
+
+## Update (2026-08-06): Tata Cara Haji & Umrah Dipisah Jadi Halaman Sendiri + Dibuat Dinamis
+
+**1. `tata-cara.html` dipecah menjadi `tata-cara-haji.html` dan `tata-cara-umrah.html`**
+- Halaman lama `tata-cara.html` (satu halaman berisi tab Haji + Umrah) sekarang jadi halaman **redirect** otomatis (mengikuti pola `jadwal-shalat.html`): tautan lama tetap jalan, `#umrah` diarahkan ke `tata-cara-umrah.html`, selain itu ke `tata-cara-haji.html`.
+- `tata-cara-haji.html`: berisi tab Pengertian, Jenis Haji (Tamattu'/Ifrad/Qiran), Cara Pendaftaran, dan Ketentuan Haji — konten sama persis dengan `tata-cara.html` lama, hanya tab "Tata Cara Umrah" dilepas dan diganti tombol menuju halaman baru.
+- `tata-cara-umrah.html`: halaman baru berisi rangkaian tata cara umrah (journey ihram → tawaf → sa'i → tahallul) yang sebelumnya jadi salah satu tab di `tata-cara.html`.
+- Semua tautan internal yang sebelumnya menunjuk ke `tata-cara.html`/`tata-cara.html#haji`/`tata-cara.html#umrah` (di `index.html`, `assets/js/footer.js`, `doa.html`) sudah diperbarui ke dua halaman baru ini. `sitemap.xml` juga sudah ditambahkan.
+
+**2. Data tata cara kini tersimpan di database & dapat diedit lewat Admin Panel**
+- Kedua halaman baru memuat section **"Ringkasan Tahapan"** yang sepenuhnya dinamis dari sheet **`TataCara`** (lewat `HCApi.getTataCara()` yang sebelumnya sudah ada di `api.js` tapi belum pernah dipakai di halaman manapun). Tambah/ubah/hapus/urutkan tahapan haji atau umrah lewat menu Admin Panel **"Tata Cara Ibadah"** — tanpa perlu mengubah kode.
+  - Skema admin `TataCara` (`assets/js/admin.js`) ditambah field `waktu`, `doa_dzikir`, dan `catatan` yang sebelumnya sudah ada di header sheet & `Code.gs` tapi belum bisa diisi lewat form admin.
+- Konten detail (tabbar/panel di halaman Haji, dan blok journey di halaman Umrah) dibungkus `data-layanan="tata-cara-haji"` / `"tata-cara-umrah"` + `data-layanan-body`, memakai pola yang sama seperti `fikih.html`/`badal.html`. Artinya seluruh konten (termasuk teks, tabel perbandingan, doa) juga bisa **ditimpa penuh** lewat Admin Panel > Layanan (isi field "isi" dengan HTML), tanpa kehilangan tampilan bawaan yang sudah dirancang kalau field itu dikosongkan.
+  - Skema admin `Layanan` menambahkan opsi halaman `tata-cara-haji` dan `tata-cara-umrah`.
+  - `content-data.js` (`HCLayanan`) dan sheet `Layanan` di database mendapat entri baru untuk kedua halaman ini (kolom `isi` sengaja dikosongkan supaya tampilan bawaan di HTML yang dipakai secara default).
+- **`assets/js/ibadah.js`** (`initTataCara`): sekarang mendukung dua mode — mode tab (`[data-jenis-tab]`, dipakai kalau satu halaman menampilkan Haji & Umrah sekaligus) dan mode tetap satu jenis lewat atribut `data-jenis` pada container `[data-tatacara-list]` (dipakai di dua halaman baru ini, karena satu halaman = satu jenis, tidak perlu tab pemilih).
+- **`assets/js/tata-cara.js`** (baru): logika tab/dropdown/segmen di `tata-cara-haji.html`, ditulis dengan *event delegation* (listener dipasang di `document`, bukan langsung ke tombol) supaya tetap berfungsi walau isi `.content` ditimpa ulang oleh `layanan.js` setelah admin mengisi konten dari sheet `Layanan`.
+- **Backend tidak perlu diubah** — `Code.gs` sudah punya endpoint `tatacara` dan CRUD generik (`admin_list`/`create`/`update`/`delete`) untuk sheet `TataCara` maupun `Layanan` sejak sebelumnya.
+
+**Migrasi ke Spreadsheet produksi:** kalau Google Sheet Anda sudah dibuat sebelum update ini, sheet `TataCara` dan `Layanan` seharusnya sudah ada (dibuat otomatis oleh `setupSheets()`). Tambahkan saja dua baris baru di sheet `Layanan` (halaman `tata-cara-haji` dan `tata-cara-umrah`) — lihat `HajiCerdas_Database_updated.xlsx` terbaru sebagai contoh isian, atau biarkan kosong karena kedua halaman sudah punya tampilan bawaan sendiri di HTML.
+
+## Update (2026-08-07): Bersih-bersih Database — Kolom Peta Diaktifkan, Sheet `Doa` Lama Dihapus
+
+Audit menyeluruh terhadap semua sheet database dibandingkan dengan kode frontend, untuk mencari kolom yang tidak pernah ditampilkan dan tabel yang sudah tidak terpakai.
+
+**1. Sheet `Peta`: kolom yang sudah ada di database tapi belum pernah tampil, sekarang diaktifkan**
+- Kolom `lokasi`, `deskripsi`, `rating`, `jarak`, `estimasi`, `harga`, dan `gambar` sudah lama ada di header sheet `Peta` dan bisa diisi lewat form Admin Panel, tapi `peta.html` sebelumnya hanya membaca `nama`, `kategori`, dan `maps` — jadi isian kolom-kolom itu tidak pernah terlihat pengunjung.
+- `peta.html` sekarang menampilkan kartu lokasi yang lebih lengkap: foto lokasi (`gambar`), nama kota/area (`lokasi`), deskripsi singkat (`deskripsi`), serta chip info rating, jarak, estimasi waktu tempuh, dan harga (kalau kolom terkait diisi — chip yang kosong otomatis disembunyikan, tidak menampilkan kolom kosong).
+- Styling baru (`.mini-map-thumb`, `.mini-map-body`, `.mini-map-meta`, `.mini-map-chip`) ditambahkan di `assets/css/style.css`.
+- **Tidak ada perubahan skema** — kolom-kolom ini sudah ada di database, jadi tidak perlu migrasi manual apa pun di Google Sheet produksi.
+
+**2. Sheet `Doa` (lama) dihapus total — sudah digantikan sistem `DoaKategori`/`DoaPutaran`/`DoaList`**
+- Sejak `doa.html` dipindah ke sistem kategori-putaran-daftar (`DoaKategori` → `DoaPutaran`/`DoaList`), sheet `Doa` yang lama (kolom: `jenis`, `judul`, `arab`, `latin`, `arti`) tidak pernah dibaca lagi oleh halaman manapun — tapi menu "Kumpulan Doa" masih ada di Admin Panel, sehingga admin bisa mengisi data yang tidak akan pernah tampil ke pengunjung.
+- Dihapus: sheet `Doa` dari database, entri `doa: "Doa"` dari `SHEETS` dan `Doa: [...]` dari `MANAGED_SHEETS` di `Code.gs`, action `doa` di `doGet()`, menu "Kumpulan Doa" dari `ADMIN_SCHEMA` di `admin.js`, dan fungsi `getDoa()` yang sudah tidak dipanggil di `assets/js/api.js`.
+- **Perubahan ini WAJIB diterapkan manual di Google Sheet produksi**: hapus tab sheet `Doa` (klik kanan tab → Delete). Data doa yang masih relevan sudah tercakup penuh di sheet `DoaList`.
+- Kategori konten "Doa" untuk Artikel (sheet `Kategori`, dropdown `CONTENT_CATEGORIES`) **tidak terpengaruh** — itu hal yang berbeda dari sheet `Doa` yang dihapus ini.
+
+## Update (2026-08-07, lanjutan): Sheet `TataCara` Dirombak — Isi Lama Tidak Pernah Tampil, Diganti Rincian 3 Jenis Haji
+
+**Temuan:** 18 baris lama di sheet `TataCara` (alur umum Haji 12 tahap + Umrah 6 tahap) ternyata **tidak pernah dirender** di halaman manapun — `assets/js/ibadah.js` (`initTataCara`) mencari elemen `[data-tatacara-list]` yang tidak ada baik di `tata-cara-haji.html` maupun `tata-cara-umrah.html`. Sementara itu, konten tab "Jenis Haji" (Tamattu'/Ifrad/Qiran) di `tata-cara-haji.html` — termasuk definisi, status dam, dan rangkaian doa tiap tahap — selama ini statis di HTML, tidak bisa diedit lewat Admin Panel.
+
+**Perubahan:**
+- Sheet `TataCara` dikosongkan dari data lama, diisi ulang dengan rincian lengkap Haji **Tamattu'** (9 baris), **Ifrad** (10 baris), **Qiran** (9 baris) — total 28 baris, diambil apa adanya dari HTML asli (bukan ditulis ulang) supaya teks Arab/Latin/terjemahan tetap presisi.
+- Skema baris: `urutan=0` + `judul="__intro__"` = teks pengantar jenis haji tsb (kolom `deskripsi` = paragraf pembuka, kolom `catatan` = ringkasan poin format `Label: Nilai` satu per baris, mis. "Status Dam: Wajib (Dam Tamattu')"). `urutan` 1 dst = tahapan perjalanan ibadah berurutan.
+- Kolom `judul` diawali `★ ` untuk menandai tahap penting (milestone) di garis waktu — mis. `★ d. Wukuf di Arafah`.
+- Kolom `doa_dzikir` mendukung lebih dari satu doa per tahap: tiap doa ditulis 4 baris berurutan (Label, Arab, Latin, Arti), antar-doa dipisah satu baris kosong.
+- Kolom `catatan` menyimpan kotak info tambahan sebagai teks biasa, dan baris berformat `→ Teks: url` dikenali otomatis sebagai tautan cepat (mis. ke `doa.html#tawaf`).
+- `tata-cara-haji.html` (via `assets/js/tata-cara.js`, fungsi baru `renderJenisHaji()`) sekarang mengambil ketiga jenis haji dari `HCApi.getTataCara(jenis)` saat halaman dimuat dan merender ulang panel Tamattu'/Ifrad/Qiran secara dinamis, memakai struktur HTML & class CSS yang sama seperti sebelumnya (`type-intro`, `kv-grid`, `journey`, `jstep`, `doa-box`, `info-box`, `doa-more-btn`) — jadi tampilan tetap identik. Kalau data dari Apps Script kosong/gagal diambil, konten statis bawaan HTML tetap tampil sebagai fallback (tidak ditimpa kosong).
+- **Penyederhanaan yang disengaja:** badge ringkas ("pill") di atas kartu pengantar dihapus karena isinya duplikat dari `kv-grid` di bawahnya (sama-sama merangkum status dam/tahallul/tawaf qudum) — sekarang cukup satu tempat (`kv-grid`) yang diedit admin. Ikon garis waktu (`jnode`) disederhanakan jadi pola otomatis berdasar posisi (tahap pertama = ikon Ka'bah, tahap terakhir = ikon keluar, milestone lain = ikon segitiga, tahap biasa = ikon lingkaran) karena ikon spesifik per tahap tidak disimpan sebagai data — kalau butuh ikon custom per tahap lagi, perlu kolom baru.
+- Skema Admin Panel `TataCara` (`assets/js/admin.js`) diperbarui: dropdown "Jenis Haji" sekarang `Tamattu`/`Ifrad`/`Qiran` (sebelumnya `Haji`/`Umrah`), field "Doa / Dzikir" & hint form disesuaikan dengan format 4-baris di atas.
+- **Tahapan umum Umrah (`tata-cara-umrah.html`) tidak diubah** — halaman itu tetap statis seperti sebelumnya, karena tidak diminta pada revisi ini dan datanya juga tidak sedang orphan dari sisi tampilan (kontennya tunggal, tidak berjenis-jenis seperti Haji).
+- **Perubahan ini WAJIB diterapkan manual ke Google Sheet produksi**: hapus semua baris lama di sheet `TataCara`, lalu salin 28 baris baru dari `HajiCerdas_Database_updated.xlsx` (kolom & urutan header tidak berubah, jadi tinggal salin isinya).
+
+## Update (2026-08-07, lanjutan 2): Bugfix Panel "Tamattu" Tidak Muncul + Konten Jenis Haji Diperkaya dari Dokumen Sumber
+
+**1. Bugfix: `filterByJenis` di `Code.gs` sekarang menormalkan nilai `jenis`**
+- **Akar masalah:** panel "Tamattu" di `tata-cara-haji.html` tidak menerima data dari Apps Script (Ifrad/Qiran normal), sementara Ifrad/Qiran tidak bermasalah. Penyebabnya: perbandingan `filterByJenis` di `Code.gs` bersifat *exact match* (`row.jenis.toLowerCase() === jenis.toLowerCase()`), sedangkan `tata-cara.js` selalu mengirim query `jenis="Tamattu"` (tanpa tanda kutip). Kalau kolom `jenis` di baris Tamattu pada Google Sheet produksi tertulis **"Tamattu'"** (memakai apostrof — sangat mudah tersalin begitu dari dokumen sumber yang menulis "Haji Tamattu'"), perbandingan gagal dan baris itu tidak pernah cocok, sehingga panel Tamattu tidak pernah ter-update (fallback ke HTML statis, yang isinya tidak reflect data admin).
+- **Perbaikan:** fungsi baru `normalizeJenisValue_()` — trim spasi, lowercase, dan buang semua varian tanda kutip tunggal/apostrof (`'` `’` `‘` `` ` ``) — dipakai di kedua sisi perbandingan pada `filterByJenis()`. Sekarang "Tamattu", "Tamattu'", " tamattu " semuanya dianggap sama.
+- **Migrasi:** tidak perlu ubah data di Google Sheet — cukup update `Code.gs` di Apps Script Editor lalu **Deploy > Manage deployments > Edit > New version**. Namun disarankan tetap mengecek kolom `jenis` di sheet `TataCara` produksi agar konsisten dengan dropdown Admin Panel (`Tamattu`/`Ifrad`/`Qiran`, tanpa apostrof).
+
+**2. Konten Tamattu/Ifrad/Qiran diperkaya dari dokumen sumber `Panduan_Ibadah_Haji.docx`**
+- Dokumen sumber ternyata memuat beberapa kotak "Info Tambahan" yang lebih detail dari isi sheet `TataCara` sebelumnya: **Murur** (skema jamaah lansia/disabilitas/risiko tinggi di Muzdalifah), **Tanazul Mina** (skema menginap di hotel Makkah alih-alih tenda Mina), **Tawaf Qudum** (penjelasan status sunnah), dan **Tawaf Ifadah** (penjelasan rukun haji + info transportasi bus gratis ke terminal Jamarat dekat Bin Dawood Supermarket, serta pembatasan akses taksi selama masa Iduladha/Tasyrik).
+- Seluruh 28 baris Tamattu/Ifrad/Qiran di sheet `TataCara` (`HajiCerdas_Database_fixed.xlsx`) diperbarui: deskripsi tahapan diperpanjang mengikuti redaksi dokumen sumber, dan kolom `catatan` (kotak info tambahan) diisi dengan penjelasan Murur/Tanazul Mina/Tawaf Qudum/Tawaf Ifadah yang sebelumnya tidak ada atau terlalu ringkas.
+- **Konten statis fallback di `tata-cara-haji.html`** (3 panel `#type-tamattu`/`#type-ifrad`/`#type-qiran`) turut disamakan persis dengan data baru di atas — dibuat lewat generator yang mereplikasi logika `renderTypePanel()`/`renderStep()` di `assets/js/tata-cara.js`, supaya markup HTML & class CSS tetap identik dan tampilan tidak berubah walau data dari Apps Script gagal diambil.
+- **Perubahan ini WAJIB diterapkan manual ke Google Sheet produksi**: timpa 28 baris di sheet `TataCara` dengan isi terbaru dari `HajiCerdas_Database_fixed.xlsx` (header & urutan kolom tidak berubah).
+
+## Update (2026-08-07, lanjutan 3): Panel Tamattu'/Ifrad Tidak Muncul di Produksi + "Ketentuan Haji" Dijadikan Dinamis
+
+**1. Kenapa panel "Haji Tamattu'" dan "Haji Ifrad" macet di "Memuat tahapan dari data tata cara..."**
+- Kode di repo ini (termasuk bugfix `normalizeJenisValue_()` pada update sebelumnya) **sudah benar** — jika data gagal/kosong, `renderJenisHaji()` di `assets/js/tata-cara.js` sengaja membiarkan konten statis bawaan HTML tampil sebagai fallback, bukan menampilkan teks "Memuat tahapan...". Teks itu tidak ada sama sekali di file manapun pada repo ini.
+- **Kesimpulan:** situs yang di-screenshot (live) masih menjalankan versi kode/Apps Script **lama**, dari sebelum rangkaian bugfix di atas diterapkan — jadi permintaan ke Apps Script gagal (jenis "Tamattu'" ber-apostrof tidak cocok dengan query "Tamattu", atau endpoint lama belum punya fallback yang baik) dan UI lama menampilkan indikator loading yang tidak pernah selesai.
+- **Yang perlu dilakukan supaya perbaikan ini aktif di situs live** (tidak bisa dilakukan dari sini karena memerlukan akses ke Apps Script Editor & hosting Anda):
+  1. Salin ulang `appscript/Code.gs` dari paket ini ke Apps Script Editor produksi, lalu **Deploy > Manage deployments > Edit > New version**.
+  2. Timpa sheet `TataCara` di Google Sheet produksi dengan isi terbaru dari `HajiCerdas_Database_fixed.xlsx` (lihat poin 2 di bawah — sekarang juga berisi data `Syarat`/`Rukun`/`Wajib`/`Sunnah`).
+  3. Unggah ulang seluruh file statis (html/css/js) dari paket ini ke hosting Anda.
+
+**2. Konten disamakan lagi dengan `Panduan_Ibadah_Haji.docx` + "Ketentuan Haji" kini data-driven**
+- Baris Tamattu langkah "Wukuf di Arafah" sebelumnya masih menampilkan doa lengkap secara inline di kolom `doa_dzikir` (tidak konsisten dengan baris Ifrad/Qiran yang sudah hanya memuat tautan `→ Lihat Doa Arafah: doa.html#arafah`) — kini disamakan: kolom `doa_dzikir` dikosongkan, tautan ke `doa.html#arafah` tetap di `catatan`. Pola ini memang disengaja untuk doa Arafah, Sa'i, dan Tawaf di seluruh baris `TataCara`: diarahkan ke halaman Doa, bukan ditulis ulang di sini.
+- Sheet `TataCara` bertambah **34 baris baru** dengan `jenis` = `Syarat`, `Rukun`, `Wajib`, `Sunnah` — mengisi tab "Ketentuan Haji" yang sebelumnya statis penuh di HTML. Skema baris sama seperti Tamattu/Ifrad/Qiran/Umrah: `urutan=0` + judul `__intro__` = paragraf pembuka segmen (kolom `deskripsi`), `urutan` 1–9 = tiap poin (Judul Tahapan = nama poin, `deskripsi` = penjelasan), dan baris baru `urutan=99` + judul `__consequence__` = teks banner konsekuensi di bawah daftar.
+- `assets/js/tata-cara.js` mendapat fungsi baru `renderKetentuan()` yang mengambil keempat `jenis` di atas lewat `HCApi.getTataCara()` dan merender ulang `#seg-syarat`/`#seg-rukun`/`#seg-wajib`/`#seg-sunnah` — memakai class `rule-list`/`rule-item`/`rule-num`/`consequence-banner` yang sama persis, jadi tampilan tidak berubah. Kalau data kosong/gagal diambil, konten statis bawaan HTML tetap tampil (fallback, sama seperti pola Jenis Haji).
+- Skema Admin Panel `TataCara` (`assets/js/admin.js`) diperbarui: dropdown "Jenis Haji / Ketentuan" menambahkan opsi `Umrah`, `Syarat`, `Rukun`, `Wajib`, `Sunnah`, dan hint form dijelaskan untuk kedua pola pengisian.
+- **Backend tidak perlu diubah** — `filterByJenis` di `Code.gs` sudah generik terhadap nilai `jenis` apa pun.
+- **Perubahan ini WAJIB diterapkan manual ke Google Sheet produksi**: timpa sheet `TataCara` dengan isi terbaru `HajiCerdas_Database_fixed.xlsx` (34 baris baru ditambahkan di akhir, header & urutan kolom tidak berubah), lalu unggah ulang `assets/js/tata-cara.js` dan `assets/js/admin.js`.

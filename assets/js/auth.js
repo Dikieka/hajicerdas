@@ -133,7 +133,7 @@ function hcAuthRenderNav() {
     const dashboardLabel =
       session.user.role === "member" ? "Kelola Pesanan" : "Admin Panel";
     li.innerHTML =
-      '<a class="nav-link dropdown-toggle" href="#" id="hcAuthDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">' +
+      '<a class="nav-link dropdown-toggle" href="#" id="hcAuthDropdown" role="button" data-bs-toggle="dropdown" data-bs-display="static" aria-expanded="false">' +
       '<i class="bi bi-person-circle"></i> ' +
       firstName +
       "</a>" +

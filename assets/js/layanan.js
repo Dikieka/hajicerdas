@@ -2,7 +2,16 @@ const renderLayananPage = async () => {
   const root = document.querySelector("[data-layanan]");
   if (!root) return;
   const halaman = root.getAttribute("data-layanan");
+
+  // Halaman tata-cara-haji & tata-cara-umrah BUKAN bagian dari Layanan.
+  // Keduanya adalah panduan ibadah, dan penanganannya (fetch data +
+  // pengisian [data-layanan-title]/[data-layanan-body] dkk) sepenuhnya
+  // dilakukan oleh assets/js/tata-cara.js. layanan.js cukup berhenti di
+  // sini supaya tidak ada dua skrip yang berebut menimpa elemen yang sama.
+  if (halaman === "tata-cara-haji" || halaman === "tata-cara-umrah") return;
+
   const page = await HCApi.getLayanan(halaman);
+
   // If neither Apps Script nor the local fallback returned data, keep the
   // static HTML already in the page untouched instead of blanking it out.
   if (!page) return;
@@ -27,4 +36,10 @@ const renderLayananPage = async () => {
   if (bodyEl && page.isi) bodyEl.innerHTML = page.isi;
 };
 
-document.addEventListener("DOMContentLoaded", renderLayananPage);
+document.addEventListener("DOMContentLoaded", async () => {
+  try {
+    await renderLayananPage();
+  } catch (error) {
+    console.info(error?.message || error);
+  }
+});

@@ -9,7 +9,18 @@ document.addEventListener("DOMContentLoaded", async () => {
   let items = HCContent.maps.map(([nama, maps]) => ({ nama, maps }));
   try {
     const rows = await HCApi.getPeta();
-    if (rows && rows.length) items = rows.map((r) => ({ nama: r.nama, maps: r.maps, kategori: r.kategori }));
+    if (rows && rows.length) items = rows.map((r) => ({
+      nama: r.nama,
+      maps: r.maps,
+      kategori: r.kategori,
+      lokasi: r.lokasi,
+      deskripsi: r.deskripsi,
+      rating: r.rating,
+      jarak: r.jarak,
+      estimasi: r.estimasi,
+      harga: r.harga,
+      gambar: r.gambar,
+    }));
   } catch (e) { console.info(e.message); }
 
   const extractQuery = (url) => {
@@ -54,8 +65,21 @@ document.addEventListener("DOMContentLoaded", async () => {
       <h2 class="h6 fw-bold mb-2"><i class="bi ${grouped[group][0].icon} text-primary"></i> ${group}</h2>
       <div class="info-list">${grouped[group].map((item) => `
         <div class="mini-map-link" data-preview data-name="${item.nama}" role="button" tabindex="0" aria-label="Lihat pratinjau peta ${item.nama}">
-          <span><i class="bi ${item.icon} text-primary"></i> ${item.nama}</span>
-          <a class="btn btn-sm btn-outline-primary" href="${directionsUrl(item.query)}" target="_blank" rel="noopener" onclick="event.stopPropagation()"><i class="bi bi-signpost-2"></i> Rute</a>
+          ${item.gambar ? `<img class="mini-map-thumb" src="${item.gambar}" alt="${item.nama}" loading="lazy" onerror="this.remove()">` : ""}
+          <div class="mini-map-body">
+            <div class="mini-map-top">
+              <span class="mini-map-title"><i class="bi ${item.icon} text-primary"></i> ${item.nama}</span>
+              <a class="btn btn-sm btn-outline-primary" href="${directionsUrl(item.query)}" target="_blank" rel="noopener" onclick="event.stopPropagation()"><i class="bi bi-signpost-2"></i> Rute</a>
+            </div>
+            ${item.lokasi ? `<p class="mini-map-loc mb-1"><i class="bi bi-pin-map"></i> ${item.lokasi}</p>` : ""}
+            ${item.deskripsi ? `<p class="mini-map-desc mb-1">${item.deskripsi}</p>` : ""}
+            <div class="mini-map-meta">
+              ${item.rating ? `<span class="mini-map-chip"><i class="bi bi-star-fill text-warning"></i> ${item.rating}</span>` : ""}
+              ${item.jarak ? `<span class="mini-map-chip"><i class="bi bi-signpost"></i> ${item.jarak}</span>` : ""}
+              ${item.estimasi ? `<span class="mini-map-chip"><i class="bi bi-clock"></i> ${item.estimasi}</span>` : ""}
+              ${item.harga ? `<span class="mini-map-chip"><i class="bi bi-cash-coin"></i> ${item.harga}</span>` : ""}
+            </div>
+          </div>
         </div>
       `).join("")}</div>
     </section>

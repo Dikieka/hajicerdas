@@ -128,7 +128,9 @@ const SHEETS = {
   persiapan: "Persiapan",
   persiapanTimeline: "PersiapanTimeline",
   tataCara: "TataCara",
-  doa: "Doa",
+  doaKategori: "DoaKategori",
+  doaPutaran: "DoaPutaran",
+  doaList: "DoaList",
   users: "Users",
   petugasBadal: "PetugasBadal",
 };
@@ -280,7 +282,37 @@ const MANAGED_SHEETS = {
     "catatan",
     "status",
   ],
-  Doa: ["id", "jenis", "judul", "arab", "latin", "arti", "status"],
+  // Daftar tab halaman Kumpulan Doa (mis. Tawaf, Sa'i, Arafah). "tipe"
+  // menentukan tampilan: "putaran" = mode baca per putaran dengan indikator
+  // angka + tombol Lanjut (dipakai Tawaf), "list" = daftar kartu doa biasa
+  // dengan dropdown filter kategori doa (dipakai Sa'i, Arafah, dst).
+  DoaKategori: ["id", "nama", "urutan", "tipe", "status"],
+  // Isi bacaan untuk tab bertipe "putaran". Satu baris = satu bagian
+  // bacaan (mis. "Doa Menuju Rukun Yamani") dalam satu putaran tertentu.
+  DoaPutaran: [
+    "id",
+    "kategori",
+    "putaran",
+    "urutan",
+    "judul_bagian",
+    "keterangan",
+    "arab",
+    "latin",
+    "arti",
+    "status",
+  ],
+  // Isi bacaan untuk tab bertipe "list". "kategori_doa" dipakai untuk
+  // dropdown filter (mis. "Doa Ortu", "Doa Pribadi"). Boleh dikosongkan.
+  DoaList: [
+    "id",
+    "kategori",
+    "kategori_doa",
+    "judul",
+    "arab",
+    "latin",
+    "arti",
+    "status",
+  ],
 };
 
 function doGet(e) {
@@ -354,10 +386,33 @@ function doGet(e) {
         success: true,
         data: filterByJenis(getPublishedRows(SHEETS.tataCara), params.jenis),
       });
-    if (action === "doa")
+    if (action === "doakategori")
       return jsonResponse({
         success: true,
-        data: filterByJenis(getPublishedRows(SHEETS.doa), params.jenis),
+        data: getPublishedRows(SHEETS.doaKategori).sort(function (a, b) {
+          return Number(a.urutan || 0) - Number(b.urutan || 0);
+        }),
+      });
+    if (action === "doaputaran")
+      return jsonResponse({
+        success: true,
+        data: filterByKategori(
+          getPublishedRows(SHEETS.doaPutaran),
+          params.kategori,
+        ).sort(function (a, b) {
+          return (
+            Number(a.putaran || 0) - Number(b.putaran || 0) ||
+            Number(a.urutan || 0) - Number(b.urutan || 0)
+          );
+        }),
+      });
+    if (action === "doalist")
+      return jsonResponse({
+        success: true,
+        data: filterByKategoriDoa(
+          filterByKategori(getPublishedRows(SHEETS.doaList), params.kategori),
+          params.kategori_doa,
+        ),
       });
     if (action === "sertifikat_verify")
       return jsonResponse({
@@ -885,12 +940,37 @@ function filterByHalaman(rows, halaman) {
   });
 }
 
-function filterByJenis(rows, jenis) {
-  if (!jenis) return rows;
+function filterByKategoriDoa(rows, kategoriDoa) {
+  if (!kategoriDoa) return rows;
   return rows.filter(function (row) {
     return (
-      String(row.jenis || "").toLowerCase() === String(jenis).toLowerCase()
+      String(row.kategori_doa || "").toLowerCase() ===
+      String(kategoriDoa).toLowerCase()
     );
+  });
+}
+
+// Menormalkan nilai kolom "jenis" sebelum dibandingkan: trim spasi,
+// lowercase, dan buang semua varian tanda kutip tunggal/apostrof (' ’ ‘ `).
+// BUGFIX: baris "Tamattu" di sheet TataCara sempat diisi manual sebagai
+// "Tamattu'" (menyalin ejaan dari dokumen sumber, mis. "Haji Tamattu'"),
+// sehingga tidak pernah cocok dengan query jenis="Tamattu" yang dikirim
+// tata-cara.js — akibatnya panel Tamattu tidak pernah menerima data baru
+// dari Apps Script (Ifrad/Qiran tetap normal karena ejaannya tidak
+// mengandung apostrof). Normalisasi ini membuat "Tamattu", "Tamattu'",
+// " tamattu " semua dianggap sama.
+function normalizeJenisValue_(value) {
+  return String(value || "")
+    .trim()
+    .toLowerCase()
+    .replace(/['’‘`]/g, "");
+}
+
+function filterByJenis(rows, jenis) {
+  if (!jenis) return rows;
+  const target = normalizeJenisValue_(jenis);
+  return rows.filter(function (row) {
+    return normalizeJenisValue_(row.jenis) === target;
   });
 }
 

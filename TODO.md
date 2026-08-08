@@ -1,38 +1,22 @@
-# TODO: Sistem Pemesanan & Dashboard Akun
+# TODO: Perbaikan Tata Cara Haji & Umrah
 
-## Steps
+## Batch 1 — Dropdown Jenis Haji Dinamis + Button Aktif Palsu
 
-### 1. Backend - Code.gs ✅
+- [x] `tata-cara-haji.html`: label tombol "Jenis Haji" dibungkus `<span class="jenis-label">` agar bisa di-update dinamis.
+- [x] `tata-cara-haji.html`: fallback statis panel ditambahkan di `.content` (pengertian, jenis + 3 sub-panel, pendaftaran, ketentuan).
+- [x] `tata-cara-haji.html`: button "Tata Cara Umrah" di "Lihat Juga" diubah ke `btn btn-outline-primary`.
+- [x] `assets/js/tata-cara.js`: `.jenis-label` diperbarui saat dropdown dipilih + inisialisasi saat halaman dimuat.
+- [x] `assets/css/tata-cara.css`: styling kecil untuk `.jenis-label`.
 
-- [x] Add "Pesanan" sheet headers constant
-- [x] Add "Pesanan" to MANAGED_SHEETS
-- [x] Add doPost action handlers: pesanan_list, pesanan_create, pesanan_update
+## Batch 2 — Feedback Lanjutan
 
-### 2. Frontend - API (api.js) ✅
-
-- [x] Add HCApi.getOrders, getMyOrders, createOrder, updateOrder methods
-
-### 3. Admin Panel - admin.js ✅
-
-- [x] Add "Pesanan" schema to ADMIN_SCHEMA in "Layanan" group
-
-### 4. Auth - auth.js ✅
-
-- [x] Add HCAuth.setSession() method
-
-### 5. Dashboard - akun.html ✅
-
-- [x] Tab-based dashboard (Profil, Pesan, Status, Bantuan)
-- [x] Edit profile modal (nama, whatsapp, password)
-- [x] 3 service order forms with dynamic extra fields
-- [x] Order status tracking table with filter
-- [x] Order summary cards (pending/diproses/selesai/ditolak)
-- [x] "Tanya Admin" WhatsApp button
-- [x] FAQ accordion in bantuan panel
-
-### 6. Styling - style.css ✅
-
-- [x] Dashboard tab pills styling
-- [x] Order summary cards
-- [x] Profile section styling
-- [x] Dark mode overrides
+- [x] `tata-cara-umrah.html`: button "Tata Cara Haji" di "Lihat Juga" diubah ke `btn btn-outline-primary` agar tidak tampak aktif.
+- [x] `tata-cara-umrah.html`: tambah kontainer `#type-umrah` + fallback statis agar journey umrah dirender dinamis dari database.
+- [x] `assets/css/tata-cara.css`: perbaikan tampilan mobile untuk kedua halaman:
+  - `.panel-head` wrap agar tombol "Ganti jenis" turun ke baris sendiri.
+  - Dropdown "Jenis Haji" dipaksa ke kiri + `max-width` agar tidak keluar layar.
+  - Journey timeline & jnode diperkecil untuk layar kecil.
+  - Doa Arab mengecil otomatis agar tidak meluber.
+  - Segmented control lebih responsif.
+  - Padding kartu/panel dikecilkan.
+  - Breakpoint khusus layar sangat kecil (≤360px).

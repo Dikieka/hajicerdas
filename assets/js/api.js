@@ -1,11 +1,11 @@
 const HC_CONFIG = {
   appsScriptUrl:
-    "https://script.google.com/macros/s/AKfycbxjIeHb_yOHJD8T-QV5qcuqNNJvwvcS2bqtPSaAIW62XQE7VyY-mZvGA-dBIb6YN_1J/exec",
+    "https://script.google.com/macros/s/AKfycbwmA9_2u401HLsSkMx9ofK6LNF7QqY350UolsOxqO4h9ApMdK7hCydopZgzlfJ5Psohgw/exec",
   siteUrl: "https://www.hajicerdas.id",
   // Nomor WhatsApp admin (format 62xxxxxxxxxx, tanpa +/spasi/tanda hubung).
   // Satu-satunya tempat pengaturan — dipakai di badal.html, wakaf-quran.html,
   // rekrutmen-petugas.html, dan akun.html supaya cukup diganti di sini saja.
-  waNumber: "",
+  waNumber: "6285732674201",
 };
 
 const fallbackArticles = [
@@ -1460,36 +1460,52 @@ const HCApi = {
             "Melakukan tawaf perpisahan sebelum meninggalkan Makkah. Doa/dzikir: syukur, istighfar, doa agar ibadah diterima dan diberi kesempatan kembali. Waktu: 45-150 menit bergantung kepadatan dan jadwal kepulangan. Catatan: setelah Tawaf Wada sebaiknya tidak lagi belanja atau kunjungan yang tidak perlu.",
         },
       ],
+      // Selaras dengan baris jenis="Umrah" (tc-029..tc-033) di tabel TataCara
+      // pada database, dan dengan konten statis fallback di
+      // tata-cara-umrah.html, supaya offline/API-gagal tidak menampilkan
+      // rangkaian yang berbeda dari versi live.
       Umrah: [
         {
-          urutan: 1,
-          judul: "Ihram dari Miqat",
+          urutan: 0,
+          judul: "__intro__",
           deskripsi:
-            "Berihram dari miqat yang sesuai, mandi sunnah bila memungkinkan, memakai pakaian ihram, membaca niat umrah, lalu memperbanyak talbiyah sampai mulai tawaf. Doa/dzikir: talbiyah dan doa agar umrah diterima tanpa riya dan sum'ah. Waktu: 30-60 menit. Catatan: setelah niat, larangan ihram berlaku sampai tahallul.",
+            "Berbeda dengan haji yang hanya sah pada bulan-bulan tertentu, umrah dapat dilaksanakan kapan saja. Rangkaiannya lebih singkat — cukup ihram, tawaf, sa'i, dan tahallul — sehingga umumnya dapat diselesaikan dalam beberapa jam.",
+          waktu: "Kapan saja",
+          catatan: "Lokasi: Masjidil Haram\nEstimasi Durasi: 2\u20135 jam",
+        },
+        {
+          urutan: 1,
+          judul: "\u2605 1. Ihram & Niat Umrah",
+          deskripsi:
+            "Mengenakan pakaian ihram dan berniat umrah saat melewati miqat, lalu memperbanyak bacaan talbiyah. Larangan ihram mulai berlaku sejak saat ini.",
+          waktu: "Miqat",
+          doa_dzikir:
+            "Niat Umrah\n\u0646\u064E\u0648\u064E\u064A\u0652\u062A\u064F \u0627\u0644\u0652\u0639\u064F\u0645\u0652\u0631\u064E\u0629\u064E \u0648\u064E\u0623\u064E\u062D\u0652\u0631\u064E\u0645\u0652\u062A\u064F \u0628\u0650\u0647\u064E\u0627 \u0644\u0650\u0644\u0651\u0647\u0650 \u062A\u064E\u0639\u064E\u0627\u0644\u0649\n\"Nawaitul 'umrata wa a\u1e25ramtu bih\u0101 lill\u0101hi ta'\u0101l\u0101.\" (atau cukup: \"Labbaika 'umratan.\")\nArtinya: \"Aku berniat umrah dan berihram karenanya karena Allah Ta'ala.\"\n\nBacaan Talbiyah\n\u0644\u064E\u0628\u0651\u064E\u064A\u0652\u0643\u064E \u0627\u0644\u0644\u0651\u0647\u064F\u0645\u0651\u064E \u0644\u064E\u0628\u0651\u064E\u064A\u0652\u0643\u064E\u060C \u0644\u064E\u0628\u0651\u064E\u064A\u0652\u0643\u064E \u0644\u064E\u0627 \u0634\u064E\u0631\u0650\u064A\u0643\u064E \u0644\u064E\u0643\u064E \u0644\u064E\u0628\u0651\u064E\u064A\u0652\u0643\u064E\u060C \u0625\u0650\u0646\u0651\u064E \u0627\u0644\u0652\u062D\u064E\u0645\u0652\u062F\u064E \u0648\u064E\u0627\u0644\u0646\u0651\u0650\u0639\u0652\u0645\u064E\u0629\u064E \u0644\u064E\u0643\u064E \u0648\u064E\u0627\u0644\u0652\u0645\u064F\u0644\u0652\u0643\u064E\u060C \u0644\u064E\u0627 \u0634\u064E\u0631\u0650\u064A\u0643\u064E \u0644\u064E\u0643\u064E\nLabbaik\u0101ll\u0101humma labbaik. Labbaika l\u0101 syar\u012bka laka labbaik. Innal-\u1e25amda wan-ni'mata laka wal-mulk. L\u0101 syar\u012bka lak.\nArtinya: \"Aku memenuhi panggilan-Mu ya Allah, aku memenuhi panggilan-Mu. Aku memenuhi panggilan-Mu, tiada sekutu bagi-Mu. Sesungguhnya segala puji, nikmat, dan kerajaan adalah milik-Mu. Tiada sekutu bagi-Mu.\"",
         },
         {
           urutan: 2,
-          judul: "Tawaf di Ka'bah",
+          judul: "2. Tawaf",
           deskripsi:
-            "Masuk Masjidil Haram dengan tenang, lalu tawaf tujuh putaran dimulai dan diakhiri sejajar Hajar Aswad. Doa/dzikir: dzikir, doa pribadi, dan rabbanaa aatinaa fid-dunyaa hasanah antara Rukun Yamani-Hajar Aswad. Waktu: 45-120 menit. Catatan: jangan memaksakan mencium Hajar Aswad saat padat.",
+            "Mengelilingi Ka'bah sebanyak tujuh putaran, dimulai dan diakhiri sejajar Hajar Aswad, dilanjutkan salat sunnah di dekat Maqam Ibrahim bila memungkinkan.",
+          waktu: "Masjidil Haram",
+          catatan: "\u2192 Lihat Doa Tawaf: doa.html#tawaf",
         },
         {
           urutan: 3,
-          judul: "Shalat di Maqam Ibrahim",
+          judul: "3. Sa'i",
           deskripsi:
-            "Setelah tawaf, shalat sunnah dua rakaat di belakang atau sekitar Maqam Ibrahim bila memungkinkan; jika padat, lakukan di area masjid yang aman. Doa/dzikir: berdoa agar tawaf dan umrah diterima, lalu minum zamzam dengan doa kebaikan. Waktu: 10-20 menit. Catatan: jangan menghalangi jalur tawaf.",
+            "Berjalan atau berlari kecil antara Bukit Shafa dan Marwah sebanyak tujuh kali perjalanan.",
+          waktu: "Shafa\u2013Marwah",
+          catatan: "\u2192 Lihat Doa Sa'i: doa.html#sa'i",
         },
         {
           urutan: 4,
-          judul: "Sa'i antara Safa dan Marwah",
+          judul: "\u2605 4. Tahallul",
           deskripsi:
-            "Melakukan sa'i dari Safa ke Marwah sebanyak tujuh lintasan, dimulai di Safa dan selesai di Marwah. Doa/dzikir: saat di Safa dan Marwah bertakbir, bertahlil, dan berdoa; di lintasan boleh membaca rabbighfir warham innaka antal a'azzul akram. Waktu: 60-120 menit. Catatan: pilih jalur sesuai kondisi fisik.",
-        },
-        {
-          urutan: 5,
-          judul: "Tahallul",
-          deskripsi:
-            "Menutup umrah dengan mencukur atau memendekkan rambut. Doa/dzikir: ucapkan hamdalah dan mohon agar umrah diterima. Waktu: 5-20 menit, tergantung antrean layanan cukur. Catatan: setelah tahallul, larangan ihram selesai dan jamaah kembali boleh beraktivitas normal.",
+            "Mencukur atau memotong sebagian rambut sebagai tanda berakhirnya ibadah umrah. Setelah tahallul, seluruh larangan ihram berakhir.",
+          waktu: "Penutup",
+          catatan:
+            "Umrah juga menjadi bagian dari rangkaian Haji Tamattu' (sebelum berihram haji) dan dapat ditambahkan secara opsional oleh jamaah Haji Ifrad setelah rangkaian haji selesai.",
         },
       ],
     };
@@ -1506,72 +1522,339 @@ const HCApi = {
       return (fallback[jenis] || []).map(normalizeTataCaraStep);
     }
   },
-  async getDoa(jenis) {
-    const fallback = {
-      Haji: [
+
+  async getDoaKategori() {
+    // Fallback dipakai kalau sheet DoaKategori kosong/belum dibuat, supaya
+    // halaman tetap tampil. Data utama tetap di Google Sheets (lihat
+    // README/panduan appscript), bukan di-hardcode di sini.
+    const fallback = [
+      {
+        id: "kat-01",
+        nama: "Tawaf",
+        urutan: 1,
+        tipe: "putaran",
+        status: "Publish",
+      },
+      {
+        id: "kat-02",
+        nama: "Sa'i",
+        urutan: 2,
+        tipe: "putaran",
+        status: "Publish",
+      },
+      {
+        id: "kat-03",
+        nama: "Arafah",
+        urutan: 3,
+        tipe: "list",
+        status: "Publish",
+      },
+    ];
+    try {
+      const data = await requestJson({ action: "doakategori" });
+      const rows = onlyPublished(data.data || data).sort(
+        (a, b) => Number(a.urutan || 0) - Number(b.urutan || 0),
+      );
+      return rows.length ? rows : fallback;
+    } catch (error) {
+      console.info(error.message);
+      return fallback;
+    }
+  },
+  async getDoaPutaran(kategori) {
+    const fallbackPutaran = {
+      Tawaf: [
         {
-          judul: "Talbiyah",
-          arab: "لَبَّيْكَ اللَّهُمَّ لَبَّيْكَ، لَبَّيْكَ لَا شَرِيكَ لَكَ لَبَّيْكَ",
+          id: "dp-001",
+          kategori: "Tawaf",
+          putaran: 1,
+          urutan: 1,
+          judul_bagian: "Do'a Menuju Rukun Yamani (Putaran ke-1)",
+          keterangan:
+            "Thawaf dimulai dari Hajar Aswad. Posisikan Ka'bah di sebelah kiri. Laki-laki yang berthawaf disunnahkan idhthiba' (membuka bahu kanan). Saat sejajar Hajar Aswad, menghadap atau memberi isyarat ke arahnya, lalu membaca basmalah. Jika memungkinkan, cium atau sentuh Hajar Aswad tanpa menyakiti jamaah lain; jika tidak, cukup memberi isyarat. Bacaan berikut dibaca sambil berjalan menuju Rukun Yamani — tidak perlu berhenti di tengah jika bacaan selesai sebelum sampai, lanjutkan dengan dzikir atau doa pribadi.",
+          arab: "بِسْمِ اللهِ، اللهُ أَكْبَرُ. سُبْحَانَ اللهِ وَالْحَمْدُ لِلَّهِ وَلَا إِلَهَ إِلَّا اللهُ اللهُ أَكْبَرُ، وَلَا حَوْلَ وَلَا قُوَّةَ إِلَّا بِاللهِ الْعَلِيِّ الْعَظِيمِ. وَالصَّلَاةُ وَالسَّلَامُ عَلَى رَسُولِ اللهِ صَلَّى اللهُ عَلَيْهِ وَسَلَّمَ. اللَّهُمَّ إِيمَانًا بِكَ، وَتَصْدِيقًا بِكِتَابِكَ، وَوَفَاءً بِعَهْدِكَ، وَاتِّبَاعًا لِسُنَّةِ نَبِيِّكَ مُحَمَّدٍ صَلَّى اللهُ عَلَيْهِ وَسَلَّمَ. اللَّهُمَّ إِنِّي أَسْأَلُكَ الْعَفْوَ وَالْعَافِيَةَ وَالْمُعَافَاةَ الدَّائِمَةَ فِي الدِّينِ وَالدُّنْيَا وَالْآخِرَةِ، وَالْفَوْزَ بِالْجَنَّةِ وَالنَّجَاةَ مِنَ النَّارِ.",
           latin:
-            "Labbaikallahumma labbaik, labbaika laa syariika laka labbaik.",
-          arti: "Aku penuhi panggilan-Mu ya Allah, tiada sekutu bagi-Mu.",
+            "Bismillāhi, Allāhu akbar. Subḥānallāhi wal-ḥamdu lillāhi wa lā ilāha illallāhu wallāhu akbar, wa lā ḥawla wa lā quwwata illā billāhil-'aliyyil-'aẓīm. Waṣ-ṣalātu was-salāmu 'alā rasūlillāhi ṣallallāhu 'alaihi wa sallam. Allāhumma īmānan bika, wa taṣdīqan bikitābika, wa wafā'an bi'ahdika, wattibā'an lisunnati nabiyyika Muḥammadin ṣallallāhu 'alaihi wa sallam. Allāhumma innī as'alukal-'afwa wal-'āfiyata wal-mu'āfātad-dā'imata fid-dīni wad-dunyā wal-ākhirah, wal-fawza bil-jannati wan-najāta minan-nār.",
+          arti: "Dengan nama Allah, Allah Mahabesar. Mahasuci Allah, segala puji bagi Allah, tidak ada Tuhan selain Allah, Allah Mahabesar. Tidak ada daya dan kekuatan kecuali dengan pertolongan Allah Yang Mahatinggi lagi Mahabesar. Semoga shalawat dan salam tercurah kepada Rasulullah ﷺ. Ya Allah, (aku melakukan thawaf ini) dengan keimanan kepada-Mu, membenarkan kitab-Mu, memenuhi janji-Mu, dan mengikuti sunnah Nabi-Mu Muhammad ﷺ. Ya Allah, sesungguhnya aku memohon kepada-Mu ampunan, kesehatan, keselamatan yang terus-menerus dalam agama, dunia, dan akhirat; serta kemenangan dengan masuk surga dan keselamatan dari neraka.",
+          status: "Publish",
         },
         {
-          judul: "Doa Sapu Jagat",
-          arab: "رَبَّنَا آتِنَا فِي الدُّنْيَا حَسَنَةً وَفِي الْآخِرَةِ حَسَنَةً وَقِنَا عَذَابَ النَّارِ",
+          id: "dp-002",
+          kategori: "Tawaf",
+          putaran: 1,
+          urutan: 2,
+          judul_bagian: "Do'a Rukun Yamani menuju Hajar Aswad",
+          keterangan:
+            "Saat sampai Rukun Yamani, jika memungkinkan dan tidak mengganggu jamaah lain, sentuh Rukun Yamani dengan tangan kanan sambil membaca basmalah. Tidak perlu memaksakan diri saat ramai. Lanjutkan dengan bacaan berikut sambil berjalan menuju Hajar Aswad.",
+          arab: "بِسْمِ اللهِ، اللهُ أَكْبَرُ. رَبَّنَا آتِنَا فِي الدُّنْيَا حَسَنَةً وَفِي الْآخِرَةِ حَسَنَةً وَقِنَا عَذَابَ النَّارِ، وَأَدْخِلْنَا الْجَنَّةَ مَعَ الْأَبْرَارِ، يَا عَزِيزُ يَا غَفَّارُ، يَا رَبَّ الْعَالَمِينَ",
           latin:
-            "Rabbanaa aatinaa fid-dunyaa hasanah, wa fil-aakhirati hasanah, wa qinaa adzaaban-naar.",
-          arti: "Ya Tuhan kami, berilah kami kebaikan di dunia dan akhirat serta lindungilah kami dari azab neraka.",
+            "Bismillāhi, Allāhu akbar. Rabbanā ātinā fid-dunyā ḥasanatan wa fil-ākhirati ḥasanatan wa qinā 'adzāban-nār, wa adkhilnal-jannata ma'al-abrār, yā 'azīzu yā ghaffār, yā rabbal-'ālamīn.",
+          arti: "Dengan nama Allah, Allah Mahabesar. Ya Tuhan kami, berilah kami kebaikan di dunia dan kebaikan di akhirat, dan lindungilah kami dari azab neraka. Dan masukkanlah kami ke dalam surga bersama orang-orang yang berbakti, wahai Yang Mahaperkasa, wahai Yang Maha Pengampun, wahai Tuhan seluruh alam.",
+          status: "Publish",
         },
         {
-          judul: "Dzikir Wukuf Arafah",
-          arab: "لَا إِلٰهَ إِلَّا اللَّهُ وَحْدَهُ لَا شَرِيكَ لَهُ",
-          latin: "Laa ilaaha illallaahu wahdahu laa syariika lah.",
-          arti: "Tiada Tuhan selain Allah semata, tiada sekutu bagi-Nya.",
+          id: "dp-003",
+          kategori: "Tawaf",
+          putaran: 2,
+          urutan: 1,
+          judul_bagian: "Do'a Menuju Rukun Yamani (Putaran ke-2)",
+          keterangan:
+            "Setelah putaran pertama selesai dan kembali ke posisi Hajar Aswad, mulai putaran kedua. Jika memungkinkan, menghadap atau memberi isyarat ke Hajar Aswad lalu membaca basmalah, kemudian mulai berjalan dengan Ka'bah tetap di sebelah kiri.",
+          arab: "بِسْمِ اللهِ، اللهُ أَكْبَرُ. اللَّهُمَّ إِنَّ هَذَا الْبَيْتَ بَيْتُكَ، وَهَذَا الْحَرَمَ حَرَمُكَ، وَهَذَا الْأَمْنَ أَمْنُكَ، وَهَذَا مَقَامُ الْعَائِذِ بِكَ مِنَ النَّارِ. اللَّهُمَّ حَبِّبْ إِلَيْنَا الْإِيمَانَ وَزَيِّنْهُ فِي قُلُوبِنَا، وَكَرِّهْ إِلَيْنَا الْكُفْرَ وَالْفُسُوقَ وَالْعِصْيَانَ، وَاجْعَلْنَا مِنَ الرَّاشِدِينَ. اللَّهُمَّ قِنِي عَذَابَكَ يَوْمَ تَبْعَثُ عِبَادَكَ. اللَّهُمَّ ارْزُقْنِي الْجَنَّةَ بِغَيْرِ حِسَابٍ.",
+          latin:
+            "Bismillāhi, Allāhu akbar. Allāhumma inna hādzal-baita baituka, wa hādzal-ḥarama ḥaramuka, wa hādzal-amna amnuka, wa hādzā maqāmul-'ā'idzi bika minan-nār. Allāhumma ḥabbib ilainal-īmāna wa zayyinhu fī qulūbinā, wa karrih ilainal-kufra wal-fusūqa wal-'iṣyāna, waj'alnā minar-rāsyidīn. Allāhumma qinī 'adzābaka yauma tab'atsu 'ibādak. Allāhumma-rzuqnī al-jannata bighairi ḥisāb.",
+          arti: "Dengan nama Allah, Allah Mahabesar. Ya Allah, sesungguhnya rumah ini adalah rumah-Mu, tanah haram ini adalah tanah haram-Mu, keamanan ini adalah keamanan dari-Mu, dan ini adalah tempat berlindung kepada-Mu dari neraka. Ya Allah, cintakanlah kepada kami keimanan dan hiasilah iman itu di dalam hati kami, jadikanlah kami benci kepada kekufuran, kefasikan, dan kemaksiatan, dan jadikanlah kami termasuk orang-orang yang mendapat petunjuk. Ya Allah, lindungilah aku dari azab-Mu pada hari Engkau membangkitkan hamba-hamba-Mu. Ya Allah, karuniakanlah kepadaku surga tanpa hisab.",
+          status: "Publish",
         },
         {
-          judul: "Takbir Melontar Jumrah",
-          arab: "اللَّهُ أَكْبَرُ",
-          latin: "Allahu akbar.",
-          arti: "Allah Maha Besar. Dibaca pada setiap lemparan jumrah.",
+          id: "dp-004",
+          kategori: "Tawaf",
+          putaran: 2,
+          urutan: 2,
+          judul_bagian: "Do'a Rukun Yamani menuju Hajar Aswad",
+          keterangan:
+            "Saat sampai Rukun Yamani, jika memungkinkan dan tidak mengganggu jamaah lain, sentuh Rukun Yamani dengan tangan kanan sambil membaca basmalah. Tidak perlu memaksakan diri saat ramai. Lanjutkan dengan bacaan berikut sambil berjalan menuju Hajar Aswad.",
+          arab: "بِسْمِ اللهِ، اللهُ أَكْبَرُ. رَبَّنَا آتِنَا فِي الدُّنْيَا حَسَنَةً وَفِي الْآخِرَةِ حَسَنَةً وَقِنَا عَذَابَ النَّارِ، وَأَدْخِلْنَا الْجَنَّةَ مَعَ الْأَبْرَارِ، يَا عَزِيزُ يَا غَفَّارُ، يَا رَبَّ الْعَالَمِينَ",
+          latin:
+            "Bismillāhi, Allāhu akbar. Rabbanā ātinā fid-dunyā ḥasanatan wa fil-ākhirati ḥasanatan wa qinā 'adzāban-nār, wa adkhilnal-jannata ma'al-abrār, yā 'azīzu yā ghaffār, yā rabbal-'ālamīn.",
+          arti: "Dengan nama Allah, Allah Mahabesar. Ya Tuhan kami, berilah kami kebaikan di dunia dan kebaikan di akhirat, dan lindungilah kami dari azab neraka. Dan masukkanlah kami ke dalam surga bersama orang-orang yang berbakti, wahai Yang Mahaperkasa, wahai Yang Maha Pengampun, wahai Tuhan seluruh alam.",
+          status: "Publish",
+        },
+        {
+          id: "dp-005",
+          kategori: "Tawaf",
+          putaran: 3,
+          urutan: 1,
+          judul_bagian: "Do'a Menuju Rukun Yamani (Putaran ke-3)",
+          keterangan:
+            "Setelah putaran kedua selesai, kembali ke posisi Hajar Aswad. Saat sejajar dengan Hajar Aswad, baca basmalah, lalu mulai berjalan dengan Ka'bah tetap di sebelah kiri.",
+          arab: "بِسْمِ اللهِ، اللهُ أَكْبَرُ. اللَّهُمَّ إِنِّي أَعُوذُ بِكَ مِنَ الشَّكِّ وَالشِّرْكِ وَالشِّقَاقِ وَالنِّفَاقِ وَسُوءِ الْأَخْلَاقِ، وَسُوءِ الْمَنْظَرِ فِي الْأَهْلِ وَالْمَالِ، وَأَعُوذُ بِكَ مِنْ فَقْرِ الدُّنْيَا وَعَذَابِ الْآخِرَةِ. اللَّهُمَّ إِنِّي أَسْأَلُكَ رِضَاكَ وَالْجَنَّةَ، وَأَعُوذُ بِكَ مِنْ سَخَطِكَ وَالنَّارِ، وَأَسْأَلُكَ حُبَّكَ وَحُبَّ مَنْ يُحِبُّكَ، وَالْعَمَلَ الَّذِي يُقَرِّبُنِي إِلَى حُبِّكَ.",
+          latin:
+            "Bismillāhi, Allāhu akbar. Allāhumma innī a'ūdzu bika minasy-syakki wasy-syirki wasy-syiqāqi wan-nifāqi wa sū'il-akhlāqi, wa sū'il-manzhari fil-ahli wal-māl, wa a'ūdzu bika min faqrid-dunyā wa 'adzābil-ākhirah. Allāhumma innī as'aluka riḍāka wal-jannah, wa a'ūdzu bika min sakhaṭika wan-nār, wa as'aluka ḥubbaka wa ḥubba man yuḥibbuka, wal-'amalal-ladzī yuqarribunī ilā ḥubbik.",
+          arti: "Dengan nama Allah, Allah Mahabesar. Ya Allah, sesungguhnya aku berlindung kepada-Mu dari keraguan, kemusyrikan, perselisihan, kemunafikan, akhlak yang buruk, dan pandangan buruk pada keluarga dan harta. Aku berlindung kepada-Mu dari kefakiran dunia dan azab akhirat. Ya Allah, sesungguhnya aku memohon keridaan-Mu dan surga, aku berlindung kepada-Mu dari kemurkaan-Mu dan neraka, dan aku memohon kepada-Mu cinta-Mu, cinta orang-orang yang mencintai-Mu, dan amal yang mendekatkanku kepada cinta-Mu.",
+          status: "Publish",
+        },
+        {
+          id: "dp-006",
+          kategori: "Tawaf",
+          putaran: 3,
+          urutan: 2,
+          judul_bagian: "Do'a Rukun Yamani menuju Hajar Aswad",
+          keterangan:
+            "Saat sampai Rukun Yamani, jika memungkinkan dan tidak mengganggu jamaah lain, sentuh Rukun Yamani dengan tangan kanan sambil membaca basmalah. Tidak perlu memaksakan diri saat ramai. Lanjutkan dengan bacaan berikut sambil berjalan menuju Hajar Aswad.",
+          arab: "بِسْمِ اللهِ، اللهُ أَكْبَرُ. رَبَّنَا آتِنَا فِي الدُّنْيَا حَسَنَةً وَفِي الْآخِرَةِ حَسَنَةً وَقِنَا عَذَابَ النَّارِ، وَأَدْخِلْنَا الْجَنَّةَ مَعَ الْأَبْرَارِ، يَا عَزِيزُ يَا غَفَّارُ، يَا رَبَّ الْعَالَمِينَ",
+          latin:
+            "Bismillāhi, Allāhu akbar. Rabbanā ātinā fid-dunyā ḥasanatan wa fil-ākhirati ḥasanatan wa qinā 'adzāban-nār, wa adkhilnal-jannata ma'al-abrār, yā 'azīzu yā ghaffār, yā rabbal-'ālamīn.",
+          arti: "Dengan nama Allah, Allah Mahabesar. Ya Tuhan kami, berilah kami kebaikan di dunia dan kebaikan di akhirat, dan lindungilah kami dari azab neraka. Dan masukkanlah kami ke dalam surga bersama orang-orang yang berbakti, wahai Yang Mahaperkasa, wahai Yang Maha Pengampun, wahai Tuhan seluruh alam.",
+          status: "Publish",
+        },
+        {
+          id: "dp-007",
+          kategori: "Tawaf",
+          putaran: 4,
+          urutan: 1,
+          judul_bagian: "Do'a Menuju Rukun Yamani (Putaran ke-4)",
+          keterangan:
+            "Setelah putaran ketiga selesai dan kembali ke Hajar Aswad, mulai putaran keempat. Baca basmalah menghadap/isyarat ke Hajar Aswad, lalu mulai berjalan dengan Ka'bah tetap di sebelah kiri.",
+          arab: "بِسْمِ اللهِ، اللهُ أَكْبَرُ. اللَّهُمَّ اجْعَلْهُ حَجًّا مَبْرُورًا، وَسَعْيًا مَشْكُورًا، وَذَنْبًا مَغْفُورًا، وَعَمَلًا صَالِحًا مَقْبُولًا، وَتِجَارَةً لَنْ تَبُورَ. يَا عَالِمَ مَا فِي الصُّدُورِ، أَخْرِجْنِي يَا اللهُ مِنَ الظُّلُمَاتِ إِلَى النُّورِ. اللَّهُمَّ إِنِّي أَسْأَلُكَ مُوجِبَاتِ رَحْمَتِكَ، وَعَزَائِمَ مَغْفِرَتِكَ، وَالسَّلَامَةَ مِنْ كُلِّ إِثْمٍ، وَالْغَنِيمَةَ مِنْ كُلِّ بِرٍّ، وَالْفَوْزَ بِالْجَنَّةِ، وَالنَّجَاةَ مِنَ النَّارِ. رَبِّ قَنِّعْنِي بِمَا رَزَقْتَنِي، وَبَارِكْ لِي فِيمَا أَعْطَيْتَنِي، وَأَخْلِفْ عَلَيَّ كُلَّ غَائِبَةٍ لِي مِنْكَ بِخَيْرٍ.",
+          latin:
+            "Bismillāhi, Allāhu akbar. Allāhummaj'alhu ḥajjan mabrūran, wa sa'yan masykūran, wa dzanban maghfūran, wa 'amalan ṣāliḥan maqbūlan, wa tijāratan lan tabūr. Yā 'ālima mā fiṣ-ṣudūr, akhrijnī yā Allāhu minaẓ-ẓulumāti ilan-nūr. Allāhumma innī as'aluka mūjibāti raḥmatika, wa 'azā'ima maghfiratika, was-salāmata min kulli itsmin, wal-ghanīmata min kulli birrin, wal-fawza bil-jannati, wan-najāta minan-nār. Rabbi qanni'nī bimā razaqtanī, wa bārik lī fīmā a'ṭaitanī, wa akhlif 'alayya kulla ghā'ibatin lī minka bikhair.",
+          arti: "Dengan nama Allah, Allah Mahabesar. Ya Allah, jadikanlah haji ini haji yang mabrur, sa'i yang diterima, dosa yang diampuni, amal saleh yang diterima, dan perdagangan yang tidak merugi. Wahai Yang Maha Mengetahui apa yang ada di dalam dada, keluarkanlah aku, ya Allah, dari kegelapan menuju cahaya. Ya Allah, sesungguhnya aku memohon kepada-Mu hal-hal yang mendatangkan rahmat-Mu, ketetapan-ketetapan ampunan-Mu, keselamatan dari setiap dosa, keberuntungan dari setiap kebajikan, kemenangan dengan masuk surga, dan keselamatan dari neraka. Ya Tuhanku, jadikanlah aku merasa cukup dengan rezeki yang telah Engkau berikan, berkahilah apa yang telah Engkau karuniakan kepadaku, dan gantilah untukku setiap yang hilang dariku dengan kebaikan dari-Mu.",
+          status: "Publish",
+        },
+        {
+          id: "dp-008",
+          kategori: "Tawaf",
+          putaran: 4,
+          urutan: 2,
+          judul_bagian: "Do'a Rukun Yamani menuju Hajar Aswad",
+          keterangan:
+            "Saat sampai Rukun Yamani, jika memungkinkan dan tidak mengganggu jamaah lain, sentuh Rukun Yamani dengan tangan kanan sambil membaca basmalah. Tidak perlu memaksakan diri saat ramai. Lanjutkan dengan bacaan berikut sambil berjalan menuju Hajar Aswad.",
+          arab: "بِسْمِ اللهِ، اللهُ أَكْبَرُ. رَبَّنَا آتِنَا فِي الدُّنْيَا حَسَنَةً وَفِي الْآخِرَةِ حَسَنَةً وَقِنَا عَذَابَ النَّارِ، وَأَدْخِلْنَا الْجَنَّةَ مَعَ الْأَبْرَارِ، يَا عَزِيزُ يَا غَفَّارُ، يَا رَبَّ الْعَالَمِينَ",
+          latin:
+            "Bismillāhi, Allāhu akbar. Rabbanā ātinā fid-dunyā ḥasanatan wa fil-ākhirati ḥasanatan wa qinā 'adzāban-nār, wa adkhilnal-jannata ma'al-abrār, yā 'azīzu yā ghaffār, yā rabbal-'ālamīn.",
+          arti: "Dengan nama Allah, Allah Mahabesar. Ya Tuhan kami, berilah kami kebaikan di dunia dan kebaikan di akhirat, dan lindungilah kami dari azab neraka. Dan masukkanlah kami ke dalam surga bersama orang-orang yang berbakti, wahai Yang Mahaperkasa, wahai Yang Maha Pengampun, wahai Tuhan seluruh alam.",
+          status: "Publish",
+        },
+        {
+          id: "dp-009",
+          kategori: "Tawaf",
+          putaran: 5,
+          urutan: 1,
+          judul_bagian: "Do'a Menuju Rukun Yamani (Putaran ke-5)",
+          keterangan:
+            "Setelah putaran keempat selesai dan kembali ke Hajar Aswad, mulai putaran kelima. Baca basmalah menghadap/isyarat ke Hajar Aswad, lalu mulai berjalan dengan Ka'bah tetap di sebelah kiri.",
+          arab: "بِسْمِ اللهِ، اللهُ أَكْبَرُ. اَللّٰهُمَّ أَظِلَّنِيْ تَحْتَ ظِلِّ عَرْشِكَ يَوْمَ لَا ظِلِّ اِلَّا ظِلُّكَ وَلَا بَاقِىَ اِلَّا وَجْهُكَ، وَأَسْقِنِيْ مِنْ حَوْضِ نَبِيِّكَ مُحَمَّدٍ صَلَّى اللهُ عَلَيْهِ وَسَلَّمَ شُرْبَةً هَنِيَْئَةً مَرِيْئَةً لَا أَظْمَأُ بَعْدَهَا أَبَدًا. اَللّٰهُمَّ إِنِّيْ أَسْأَلُكَ مِنْ خَيْرِ مَا سَأَلَكَ مِنْهُ نَبِيُّكَ مُحَمَّدٌ صَلَّى اللهُ عَلَيْهِ وَسَلَّمَ، وَأَعُوْذُ بِكَ مِنْ شَرِّ مَا اسْتَعَاذَكَ مِنْهُ نَبِيُّكَ مُحَمَّدٌ صَلَّى اللهُ عَلَيْهِ وَسَلَّمَ. اَللّٰهُمَّ إِنِّيْ أَسْأَلُكَ الْجَنَّةَ وَنَعِيْمَهَا وَمَا يُقَرِّبُنِيْ إِلَيْهَا مِنْ قَوْلٍ أَوْ فِعْلٍ أَوْ عَمَلٍ، وَأَعُوْذُ بِكَ مِنَ النَّارِ وَمَا يُقَرِّبُنِيْ إِلَيْهَا مِنْ قَوْلٍ أَوْ فِعْلٍ أَوْ عَمَلٍ.",
+          latin:
+            "Bismillāhi, Allāhu akbar. Allāhumma azhillanī taḥta ẓilli 'arsyika yauma lā ẓilla illā ẓilluka wa lā bāqiya illā wajhuka, wasqinī min ḥauḍi nabiyyika Muḥammadin ṣallallāhu 'alaihi wa sallam syurbatan hanī'atan marī'atan lā aẓma'u ba'dahā abadā. Allāhumma innī as'aluka min khairi mā sa'alaka minhu nabiyyuka Muḥammadun ṣallallāhu 'alaihi wa sallam, wa a'ūdzu bika min syarri mastā'ādzaka minhu nabiyyuka Muḥammadun ṣallallāhu 'alaihi wa sallam. Allāhumma innī as'alukal-jannata wa na'īmahā wa mā yuqarribunī ilaihā min qaulin au fi'lin au 'amalin, wa a'ūdzu bika minan-nāri wa mā yuqarribunī ilaihā min qaulin au fi'lin au 'amal.",
+          arti: "Dengan nama Allah, Allah Mahabesar. Ya Allah, lindungilah aku di bawah naungan-Mu pada hari yang tidak ada naungan selain naungan-Mu, dan tidak ada yang kekal selain wajah-Mu. Berilah aku minum dari telaga Nabi Muhammad ﷺ dengan minuman yang lezat dan nyaman, sehingga aku tidak akan haus selamanya setelah itu. Ya Allah, aku memohon kepada-Mu kebaikan yang diminta oleh Nabi Muhammad ﷺ, dan aku berlindung kepada-Mu dari keburukan yang beliau mohonkan perlindungan darinya. Ya Allah, aku memohon kepada-Mu surga serta segala kenikmatannya dan apa pun yang dapat mendekatkan aku kepadanya, baik ucapan, perbuatan, maupun amal. Dan aku berlindung kepada-Mu dari neraka serta apa pun yang mendekatkan aku kepadanya.",
+          status: "Publish",
+        },
+        {
+          id: "dp-010",
+          kategori: "Tawaf",
+          putaran: 5,
+          urutan: 2,
+          judul_bagian: "Do'a Rukun Yamani menuju Hajar Aswad",
+          keterangan:
+            "Saat sampai Rukun Yamani, jika memungkinkan dan tidak mengganggu jamaah lain, sentuh Rukun Yamani dengan tangan kanan sambil membaca basmalah. Tidak perlu memaksakan diri saat ramai. Lanjutkan dengan bacaan berikut sambil berjalan menuju Hajar Aswad.",
+          arab: "بِسْمِ اللهِ، اللهُ أَكْبَرُ. رَبَّنَا آتِنَا فِي الدُّنْيَا حَسَنَةً وَفِي الْآخِرَةِ حَسَنَةً وَقِنَا عَذَابَ النَّارِ، وَأَدْخِلْنَا الْجَنَّةَ مَعَ الْأَبْرَارِ، يَا عَزِيزُ يَا غَفَّارُ، يَا رَبَّ الْعَالَمِينَ",
+          latin:
+            "Bismillāhi, Allāhu akbar. Rabbanā ātinā fid-dunyā ḥasanatan wa fil-ākhirati ḥasanatan wa qinā 'adzāban-nār, wa adkhilnal-jannata ma'al-abrār, yā 'azīzu yā ghaffār, yā rabbal-'ālamīn.",
+          arti: "Dengan nama Allah, Allah Mahabesar. Ya Tuhan kami, berilah kami kebaikan di dunia dan kebaikan di akhirat, dan lindungilah kami dari azab neraka. Dan masukkanlah kami ke dalam surga bersama orang-orang yang berbakti, wahai Yang Mahaperkasa, wahai Yang Maha Pengampun, wahai Tuhan seluruh alam.",
+          status: "Publish",
+        },
+        {
+          id: "dp-011",
+          kategori: "Tawaf",
+          putaran: 6,
+          urutan: 1,
+          judul_bagian: "Do'a Menuju Rukun Yamani (Putaran ke-6)",
+          keterangan:
+            "Setelah putaran kelima selesai dan kembali ke Hajar Aswad, mulai putaran keenam. Baca basmalah menghadap/isyarat ke Hajar Aswad, lalu mulai berjalan dengan Ka'bah tetap di sebelah kiri.",
+          arab: "بِسْمِ اللهِ، اللهُ أَكْبَرُ. اللّهُمَّ إِنَّ لَكَ عَلَيَّ حُقُوقًا كَثِيرَةً فِيمَا بَيْنِي وَبَيْنَكَ، وَحُقُوقًا كَثِيرَةً فِيمَا بَيْنِي وَبَيْنَ خَلْقِكَ. اللّهُمَّ مَا كَانَ لَكَ مِنْهَا فَاغْفِرْهُ لِي، وَمَا كَانَ لِخَلْقِكَ فَتَحَمَّلْهُ عَنِّي، وَأَغْنِنِي بِحَلَالِكَ عَنْ حَرَامِكَ، وَبِطَاعَتِكَ عَنْ مَعْصِيَتِكَ، وَبِفَضْلِكَ عَمَّنْ سِوَاكَ، يَا وَاسِعَ الْمَغْفِرَةِ. اللّهُمَّ إِنَّ بَيْتَكَ عَظِيمٌ وَوَجْهَكَ كَرِيمٌ، أَنْتَ يَا اللهُ حَلِيمٌ كَرِيمٌ عَظِيمٌ تُحِبُّ الْعَفْوَ فَاعْفُ عَنِّي.",
+          latin:
+            "Bismillāhi, Allāhu akbar. Allāhumma inna laka 'alayya ḥuqūqan katsīratan fīmā bainī wa bainaka, wa ḥuqūqan katsīratan fīmā bainī wa baina khalqik. Allāhumma mā kāna laka minhā faghfirhu lī, wa mā kāna likhalqika fataḥammalhu 'annī, wa aghninī biḥalālika 'an ḥarāmika, wa biṭā'atika 'an ma'ṣiyatika, wa bifaḍlika 'amman siwāka, yā wāsi'al-maghfirah. Allāhumma inna baitaka 'aẓīmun wa wajhaka karīmun, anta yā Allāhu ḥalīmun karīmun 'aẓīmun tuḥibbul-'afwa fa'fu 'annī.",
+          arti: "Dengan nama Allah, Allah Mahabesar. Ya Allah, sesungguhnya Engkau mempunyai hak yang banyak atas diriku dalam hubungan antara aku dengan-Mu, dan Engkau juga mempunyai hak yang banyak dalam hubungan antara aku dengan makhluk-Mu. Ya Allah, apa yang menjadi hak-Mu atas diriku, ampunilah aku. Dan apa yang menjadi hak makhluk-Mu atas diriku, tanggungkanlah dariku. Cukupkanlah diriku dengan yang halal dari-Mu, terhindar dari yang haram, dengan taat kepada-Mu terhindar dari maksiat, dan dengan anugerah-Mu terhindar dari mengharap selain-Mu, wahai Tuhan Yang Maha Luas ampunan-Nya. Ya Allah, sesungguhnya rumah-Mu ini agung dan wajah-Mu mulia. Engkau, ya Allah, Maha Penyabar, Maha Pemurah, dan Maha Agung, Engkau menyukai ampunan, maka ampunilah aku.",
+          status: "Publish",
+        },
+        {
+          id: "dp-012",
+          kategori: "Tawaf",
+          putaran: 6,
+          urutan: 2,
+          judul_bagian: "Do'a Rukun Yamani menuju Hajar Aswad",
+          keterangan:
+            "Saat sampai Rukun Yamani, jika memungkinkan dan tidak mengganggu jamaah lain, sentuh Rukun Yamani dengan tangan kanan sambil membaca basmalah. Tidak perlu memaksakan diri saat ramai. Lanjutkan dengan bacaan berikut sambil berjalan menuju Hajar Aswad.",
+          arab: "بِسْمِ اللهِ، اللهُ أَكْبَرُ. رَبَّنَا آتِنَا فِي الدُّنْيَا حَسَنَةً وَفِي الْآخِرَةِ حَسَنَةً وَقِنَا عَذَابَ النَّارِ، وَأَدْخِلْنَا الْجَنَّةَ مَعَ الْأَبْرَارِ، يَا عَزِيزُ يَا غَفَّارُ، يَا رَبَّ الْعَالَمِينَ",
+          latin:
+            "Bismillāhi, Allāhu akbar. Rabbanā ātinā fid-dunyā ḥasanatan wa fil-ākhirati ḥasanatan wa qinā 'adzāban-nār, wa adkhilnal-jannata ma'al-abrār, yā 'azīzu yā ghaffār, yā rabbal-'ālamīn.",
+          arti: "Dengan nama Allah, Allah Mahabesar. Ya Tuhan kami, berilah kami kebaikan di dunia dan kebaikan di akhirat, dan lindungilah kami dari azab neraka. Dan masukkanlah kami ke dalam surga bersama orang-orang yang berbakti, wahai Yang Mahaperkasa, wahai Yang Maha Pengampun, wahai Tuhan seluruh alam.",
+          status: "Publish",
+        },
+        {
+          id: "dp-013",
+          kategori: "Tawaf",
+          putaran: 7,
+          urutan: 1,
+          judul_bagian: "Do'a Menuju Rukun Yamani (Putaran ke-7)",
+          keterangan:
+            "Setelah putaran keenam selesai dan kembali ke Hajar Aswad, mulai putaran ketujuh (terakhir). Baca basmalah menghadap/isyarat ke Hajar Aswad, lalu mulai berjalan dengan Ka'bah tetap di sebelah kiri. Setelah putaran ketujuh selesai, thawaf ditutup dengan shalat sunnah dua rakaat di dekat Maqam Ibrahim bila memungkinkan.",
+          arab: "بِسْمِ اللهِ، اللهُ أَكْبَرُ. اللّهُمَّ إِنِّي أَسْأَلُكَ إِيمَانًا كَامِلًا وَيَقِينًا صَادِقًا وَرِزْقًا وَاسِعًا وَقَلْبًا خَاشِعًا وَلِسَانًا ذَاكِرًا وَحَلَالًا طَيِّبًا وَتَوْبَةً نَصُوحًا وَتَوْبَةً قَبْلَ الْمَوْتِ وَرَحْمَةً عِنْدَ الْمَوْتِ وَمَغْفِرَةً بَعْدَ الْمَوْتِ وَالْعَفْوَ عِنْدَ الْحِسَابِ وَالْفَوْزَ بِالْجَنَّةِ وَالنَّجَاةَ مِنَ النَّارِ بِرَحْمَتِكَ يَا عَزِيزُ يَا غَفَّارُ. رَبِّ زِدْنِي عِلْمًا وَأَلْحِقْنِي بِالصَّالِحِينَ.",
+          latin:
+            "Bismillāhi, Allāhu akbar. Allāhumma innī as'aluka īmānan kāmilan wa yaqīnan ṣādiqan wa rizqan wāsi'an wa qalban khāsyi'an wa lisānan dzākiran wa ḥalālan ṭayyiban wa taubatan naṣūḥan wa taubatan qablal-maut wa raḥmatan 'indal-maut wa maghfiratan ba'dal-maut wal-'afwa 'indal-ḥisāb wal-fawza bil-jannati wan-najāta minan-nāri biraḥmatika yā 'azīzu yā ghaffār. Rabbi zidnī 'ilman wa alḥiqnī biṣ-ṣāliḥīn.",
+          arti: "Dengan nama Allah, Allah Mahabesar. Ya Allah, aku memohon kepada-Mu iman yang sempurna, keyakinan yang benar, rezeki yang luas, hati yang khusyuk, lidah yang selalu berzikir, rezeki yang halal dan baik, tobat yang diterima, tobat sebelum mati, rahmat ketika mati, ampunan setelah mati, ampunan ketika dihisab, keberuntungan memperoleh surga, dan keselamatan dari neraka, dengan kasih sayang-Mu, wahai Yang Maha Perkasa, wahai Yang Maha Pengampun. Ya Tuhanku, berilah aku tambahan ilmu pengetahuan dan masukkanlah aku ke dalam golongan orang-orang yang saleh.",
+          status: "Publish",
+        },
+        {
+          id: "dp-014",
+          kategori: "Tawaf",
+          putaran: 7,
+          urutan: 2,
+          judul_bagian: "Do'a Rukun Yamani menuju Hajar Aswad",
+          keterangan:
+            "Saat sampai Rukun Yamani, jika memungkinkan dan tidak mengganggu jamaah lain, sentuh Rukun Yamani dengan tangan kanan sambil membaca basmalah. Tidak perlu memaksakan diri saat ramai. Lanjutkan dengan bacaan berikut sambil berjalan menuju Hajar Aswad.",
+          arab: "بِسْمِ اللهِ، اللهُ أَكْبَرُ. رَبَّنَا آتِنَا فِي الدُّنْيَا حَسَنَةً وَفِي الْآخِرَةِ حَسَنَةً وَقِنَا عَذَابَ النَّارِ، وَأَدْخِلْنَا الْجَنَّةَ مَعَ الْأَبْرَارِ، يَا عَزِيزُ يَا غَفَّارُ، يَا رَبَّ الْعَالَمِينَ",
+          latin:
+            "Bismillāhi, Allāhu akbar. Rabbanā ātinā fid-dunyā ḥasanatan wa fil-ākhirati ḥasanatan wa qinā 'adzāban-nār, wa adkhilnal-jannata ma'al-abrār, yā 'azīzu yā ghaffār, yā rabbal-'ālamīn.",
+          arti: "Dengan nama Allah, Allah Mahabesar. Ya Tuhan kami, berilah kami kebaikan di dunia dan kebaikan di akhirat, dan lindungilah kami dari azab neraka. Dan masukkanlah kami ke dalam surga bersama orang-orang yang berbakti, wahai Yang Mahaperkasa, wahai Yang Maha Pengampun, wahai Tuhan seluruh alam.",
+          status: "Publish",
         },
       ],
-      Umrah: [
+    };
+    try {
+      const data = await requestJson({ action: "doaputaran", kategori });
+      const rows = onlyPublished(data.data || data).sort(
+        (a, b) =>
+          Number(a.putaran || 0) - Number(b.putaran || 0) ||
+          Number(a.urutan || 0) - Number(b.urutan || 0),
+      );
+      return rows.length ? rows : fallbackPutaran[kategori] || [];
+    } catch (error) {
+      console.info(error.message);
+      return fallbackPutaran[kategori] || [];
+    }
+  },
+  async getDoaList(kategori, kategoriDoa) {
+    // Fallback contoh (Sa'i) supaya tampilan tetap berisi sebelum sheet
+    // DoaList diisi lengkap lewat Google Sheets.
+    const fallback = {
+      "Sa'i": [
         {
-          judul: "Niat Umrah",
-          arab: "لَبَّيْكَ اللَّهُمَّ عُمْرَةً",
-          latin: "Labbaikallahumma umratan.",
-          arti: "Aku penuhi panggilan-Mu ya Allah untuk berumrah.",
-        },
-        {
-          judul: "Talbiyah",
-          arab: "لَبَّيْكَ اللَّهُمَّ لَبَّيْكَ، لَبَّيْكَ لَا شَرِيكَ لَكَ لَبَّيْكَ",
-          latin:
-            "Labbaikallahumma labbaik, labbaika laa syariika laka labbaik.",
-          arti: "Aku penuhi panggilan-Mu ya Allah, tiada sekutu bagi-Mu.",
-        },
-        {
+          id: "dl-001",
+          kategori: "Sa'i",
+          kategori_doa: "Doa Pribadi",
           judul: "Doa Saat Sa'i",
           arab: "رَبِّ اغْفِرْ وَارْحَمْ إِنَّكَ أَنْتَ الْأَعَزُّ الْأَكْرَمُ",
           latin: "Rabbighfir warham, innaka antal a'azzul akram.",
           arti: "Ya Tuhanku, ampunilah dan rahmatilah; sesungguhnya Engkau Maha Perkasa lagi Maha Mulia.",
+          status: "Publish",
         },
         {
+          id: "dl-002",
+          kategori: "Sa'i",
+          kategori_doa: "Doa Ortu",
+          judul: "Doa untuk Orang Tua di Safa dan Marwah",
+          arab: "رَبِّ ارْحَمْهُمَا كَمَا رَبَّيَانِي صَغِيرًا",
+          latin: "Rabbir-hamhumaa kamaa rabbayaanii shaghiiraa.",
+          arti: "Ya Tuhanku, sayangilah keduanya sebagaimana mereka telah mendidikku sewaktu kecil.",
+          status: "Publish",
+        },
+        {
+          id: "dl-003",
+          kategori: "Sa'i",
+          kategori_doa: "Umum",
           judul: "Doa Minum Zamzam",
           arab: "اللَّهُمَّ إِنِّي أَسْأَلُكَ عِلْمًا نَافِعًا وَرِزْقًا وَاسِعًا وَشِفَاءً مِنْ كُلِّ دَاءٍ",
           latin:
             "Allahumma innii as-aluka ilman naafi'an, wa rizqan waasi'an, wa syifaa-an min kulli daa'.",
           arti: "Ya Allah, aku memohon ilmu yang bermanfaat, rezeki yang luas, dan kesembuhan dari setiap penyakit.",
+          status: "Publish",
+        },
+      ],
+      Arafah: [
+        {
+          id: "dl-004",
+          kategori: "Arafah",
+          kategori_doa: "Umum",
+          judul: "Dzikir Wukuf Arafah",
+          arab: "لَا إِلٰهَ إِلَّا اللَّهُ وَحْدَهُ لَا شَرِيكَ لَهُ، لَهُ الْمُلْكُ وَلَهُ الْحَمْدُ وَهُوَ عَلَى كُلِّ شَيْءٍ قَدِيرٌ",
+          latin:
+            "Laa ilaaha illallaahu wahdahu laa syariika lah, lahul mulku wa lahul hamdu wa huwa 'alaa kulli syai-in qadiir.",
+          arti: "Tiada Tuhan selain Allah semata, tiada sekutu bagi-Nya. Milik-Nya segala kerajaan dan pujian, dan Dia Mahakuasa atas segala sesuatu.",
+          status: "Publish",
+        },
+        {
+          id: "dl-005",
+          kategori: "Arafah",
+          kategori_doa: "Doa Ortu",
+          judul: "Doa untuk Orang Tua Saat Wukuf",
+          arab: "رَبَّنَا اغْفِرْ لِي وَلِوَالِدَيَّ وَلِلْمُؤْمِنِينَ يَوْمَ يَقُومُ الْحِسَابُ",
+          latin:
+            "Rabbanaghfir lii wa liwaalidayya wa lil mu'miniina yauma yaquumul hisaab.",
+          arti: "Ya Tuhan kami, ampunilah aku dan kedua orang tuaku serta orang-orang mukmin pada hari perhitungan.",
+          status: "Publish",
         },
       ],
     };
     try {
-      const data = await requestJson({ action: "doa", jenis });
+      const data = await requestJson({
+        action: "doalist",
+        kategori,
+        kategori_doa: kategoriDoa,
+      });
       const rows = onlyPublished(data.data || data);
-      return rows.length ? rows : fallback[jenis] || [];
+      if (rows.length) return rows;
+      const list = fallback[kategori] || [];
+      return kategoriDoa
+        ? list.filter((row) => row.kategori_doa === kategoriDoa)
+        : list;
     } catch (error) {
       console.info(error.message);
-      return fallback[jenis] || [];
+      const list = fallback[kategori] || [];
+      return kategoriDoa
+        ? list.filter((row) => row.kategori_doa === kategoriDoa)
+        : list;
     }
   },
 

@@ -2,9 +2,15 @@ const initTataCara = () => {
   const target = document.querySelector("[data-tatacara-list]");
   if (!target) return;
   const tabs = document.querySelectorAll("[data-jenis-tab]");
+  const fixedJenis = target.getAttribute("data-jenis");
   const render = async (jenis) => {
     target.innerHTML = '<div class="skeleton"></div>';
     const steps = await HCApi.getTataCara(jenis);
+    if (!steps || !steps.length) {
+      target.innerHTML =
+        '<p class="lead-muted mb-0">Belum ada data tahapan untuk kategori ini.</p>';
+      return;
+    }
     target.innerHTML = steps
       .map(
         (step, index) => `
@@ -25,6 +31,17 @@ const initTataCara = () => {
       .join("");
     HCUtils?.initAnimations?.();
   };
+
+  // Mode 1: container sudah menentukan jenis tetap lewat atribut
+  // data-jenis (dipakai di tata-cara-haji.html / tata-cara-umrah.html,
+  // tidak butuh tab pemilih jenis karena satu halaman = satu jenis).
+  if (fixedJenis) {
+    render(fixedJenis);
+    return;
+  }
+
+  // Mode 2: jenis dipilih lewat tombol/tab [data-jenis-tab] (mis. dipakai
+  // di halaman yang menampilkan Haji & Umrah sekaligus dalam satu tab).
   tabs.forEach((tab) => {
     tab.addEventListener("click", () => {
       tabs.forEach((item) => item.classList.remove("active"));

@@ -218,6 +218,45 @@ const renderDownloadCategoryFilter = (items) => {
   });
 };
 
+// Carousel generik (geser kiri/kanan + tombol) untuk pratinjau homepage:
+// "Dokumen & Panduan Unduhan" dan "Short Edukasi". Menggeser dengan sentuh
+// atau scroll tetap jalan lewat overflow-x biasa; tombol panah cuma
+// mempercepat & dinonaktifkan otomatis kalau sudah mentok ujung.
+const bindHcCarousel = (wrap) => {
+  if (!wrap || wrap.dataset.carouselBound === "true") return;
+  wrap.dataset.carouselBound = "true";
+
+  const track = wrap.querySelector("[data-carousel-track]");
+  const prevBtn = wrap.querySelector("[data-carousel-prev]");
+  const nextBtn = wrap.querySelector("[data-carousel-next]");
+  if (!track) return;
+
+  const getStep = () => {
+    const firstSlide =
+      track.querySelector(".hc-carousel-slide") || track.firstElementChild;
+    if (!firstSlide) return track.clientWidth;
+    const gap = parseFloat(getComputedStyle(track).columnGap || "0") || 16;
+    return firstSlide.getBoundingClientRect().width + gap;
+  };
+
+  const updateNavState = () => {
+    if (!prevBtn || !nextBtn) return;
+    const maxScroll = track.scrollWidth - track.clientWidth - 1;
+    prevBtn.disabled = track.scrollLeft <= 0;
+    nextBtn.disabled = maxScroll <= 0 || track.scrollLeft >= maxScroll;
+  };
+
+  prevBtn?.addEventListener("click", () => {
+    track.scrollBy({ left: -getStep(), behavior: "smooth" });
+  });
+  nextBtn?.addEventListener("click", () => {
+    track.scrollBy({ left: getStep(), behavior: "smooth" });
+  });
+  track.addEventListener("scroll", updateNavState, { passive: true });
+  window.addEventListener("resize", updateNavState);
+  updateNavState();
+};
+
 const renderInfographics = async () => {
   const target = document.querySelector("[data-infographics]");
   if (!target) return;
@@ -235,28 +274,31 @@ const renderInfographics = async () => {
 const renderDownloadCenterPreview = async () => {
   const target = document.querySelector("[data-download-preview]");
   if (!target) return;
-  const items = (await HCApi.getDownloads()).slice(0, 4);
+  const items = (await HCApi.getDownloads()).slice(0, 8);
   target.innerHTML = items
     .map(
       (item) => `
-    <div class="col-6 col-lg-3">
-      <a class="download-preview-card d-block h-100 fade-up" href="download.html">
-        <span class="download-preview-media">
+    <a class="hc-carousel-slide download-preview-card fade-up" href="download.html">
+      <span class="download-preview-top">
+        <span class="download-preview-icon">
           ${
             item.gambar
               ? `<img src="${item.gambar}" alt="${item.judul}" loading="lazy">`
-              : `<span class="download-preview-fallback"><i class="bi bi-file-earmark-pdf"></i></span>`
+              : `<i class="bi bi-file-earmark-pdf"></i>`
           }
         </span>
-        <span class="download-preview-body">
-          <span class="download-preview-tag"><i class="bi bi-download"></i> Unduhan</span>
-          <span class="download-preview-title">${item.judul}</span>
-        </span>
-      </a>
-    </div>
+        <span class="download-preview-tag">PDF</span>
+      </span>
+      <span class="download-preview-title">${item.judul}</span>
+      <span class="download-preview-meta">${item.kategori || "Panduan"}</span>
+      <span class="download-preview-cta"
+        ><i class="bi bi-download"></i> Unduh Gratis</span
+      >
+    </a>
   `,
     )
     .join("");
+  bindHcCarousel(target.closest("[data-carousel-wrap]"));
   HCUtils?.initAnimations?.();
 };
 
@@ -271,27 +313,26 @@ const renderVideoPreview = async () => {
   if (!target) return;
   const items = (await HCApi.getVideos())
     .filter((item) => item.tipe !== "Short")
-    .slice(0, 3);
+    .slice(0, 6);
   target.innerHTML = items
     .map((item) => {
       const icon = VIDEO_PLATFORM_ICON[item.platform] || "bi-play-circle";
       return `
-      <div class="col-lg-4">
-        <article class="video-card fade-up">
-          ${
-            item.embedUrl
-              ? `<iframe class="video-frame" src="${item.embedUrl}" title="${item.judul}" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>`
-              : `<a class="video-frame d-flex align-items-center justify-content-center text-center p-3 small lead-muted text-reset" href="video.html">Link video belum valid.<br>Lihat menu Video.</a>`
-          }
-          <div class="p-4">
-            <span class="badge-soft mb-3"><i class="bi ${icon} video-platform-icon"></i>${item.kategori}</span>
-            <h3 class="h6 fw-bold mb-0">${item.judul}</h3>
-          </div>
-        </article>
-      </div>
+      <article class="hc-carousel-slide video-preview-slide video-card fade-up">
+        ${
+          item.embedUrl
+            ? `<iframe class="video-frame" src="${item.embedUrl}" title="${item.judul}" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>`
+            : `<a class="video-frame d-flex align-items-center justify-content-center text-center p-3 small lead-muted text-reset" href="video.html">Link video belum valid.<br>Lihat menu Video.</a>`
+        }
+        <div class="p-4">
+          <span class="badge-soft mb-3"><i class="bi ${icon} video-platform-icon"></i>${item.kategori}</span>
+          <h3 class="h6 fw-bold mb-0">${item.judul}</h3>
+        </div>
+      </article>
     `;
     })
     .join("");
+  bindHcCarousel(target.closest("[data-carousel-wrap]"));
   HCUtils?.initAnimations?.();
 };
 
@@ -312,23 +353,21 @@ const renderShortPreview = async () => {
     target.closest("section")?.classList.add("d-none");
     return;
   }
-  const items = allShorts.slice(0, 4);
+  const items = allShorts.slice(0, 8);
   target.innerHTML = items
     .map((item, index) => {
       const icon = VIDEO_PLATFORM_ICON[item.platform] || "bi-play-circle";
       return `
-      <div class="col-lg-3 col-6">
-        <article class="video-card is-short fade-up" data-short-index="${index}" role="button" tabindex="0" aria-label="Buka ${item.judul} fullscreen">
-          <div class="video-frame is-short">
-            ${window.HCVideoThumb?.html(item, index) || ""}
-            <div class="video-short-play-badge"><i class="bi bi-arrows-fullscreen"></i></div>
-          </div>
-          <div class="p-3 text-center">
-            <span class="badge-soft mb-2"><i class="bi ${icon} video-platform-icon"></i>${item.kategori} &middot; Short</span>
-            <h3 class="h6 fw-bold mb-0">${item.judul}</h3>
-          </div>
-        </article>
-      </div>
+      <article class="hc-carousel-slide short-preview-slide video-card is-short fade-up" data-short-index="${index}" role="button" tabindex="0" aria-label="Buka ${item.judul} fullscreen">
+        <div class="video-frame is-short">
+          ${window.HCVideoThumb?.html(item, index) || ""}
+          <div class="video-short-play-badge"><i class="bi bi-arrows-fullscreen"></i></div>
+        </div>
+        <div class="p-3 text-center">
+          <span class="badge-soft mb-2"><i class="bi ${icon} video-platform-icon"></i>${item.kategori} &middot; Short</span>
+          <h3 class="h6 fw-bold mb-0">${item.judul}</h3>
+        </div>
+      </article>
     `;
     })
     .join("");
@@ -344,6 +383,7 @@ const renderShortPreview = async () => {
     });
   });
   window.HCVideoThumb?.load(target, items);
+  bindHcCarousel(target.closest("[data-carousel-wrap]"));
   HCUtils?.initAnimations?.();
 };
 
@@ -357,4 +397,7 @@ document.addEventListener("DOMContentLoaded", () => {
   renderDownloadCenterPreview();
   renderVideoPreview();
   renderShortPreview();
+  document
+    .querySelectorAll("[data-carousel-wrap]")
+    .forEach((wrap) => bindHcCarousel(wrap));
 });

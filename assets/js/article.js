@@ -488,12 +488,13 @@ const createArticleListItem = (article, { showViews = false } = {}) => `
       <img src="${article.gambar || "assets/images/article-placeholder.svg"}" alt="" loading="lazy" onerror="this.src='assets/images/article-placeholder.svg'">
     </span>
     <span class="article-list-body">
+      ${article.kategori ? `<span class="article-list-category">${safeText(article.kategori)}</span>` : ""}
       <span class="article-list-title">${safeText(article.judul)}</span>
       <span class="article-list-author">${authorAvatarHtml(article)} ${safeText(article.penulis || "Redaksi")}</span>
       <span class="article-list-date">
         <i class="bi bi-calendar3"></i> ${HCUtils.formatDate(article.tanggal)}${
           showViews
-            ? `<span class="article-list-dot">&middot;</span><i class="bi bi-eye"></i> ${Number(article.views || 0).toLocaleString("id-ID")}x`
+            ? `<span class="article-list-dot">&middot;</span><i class="bi bi-eye"></i> ${Number(article.views || 0).toLocaleString("id-ID")}x dilihat`
             : ""
         }</span>
     </span>
@@ -600,7 +601,7 @@ const renderHomeContent = async () => {
       .filter((item) => item.slug !== featuredSlug)
       .slice()
       .sort((a, b) => (Number(b.views) || 0) - (Number(a.views) || 0))
-      .slice(0, 5);
+      .slice(0, 4);
     articleList.innerHTML = mostViewed
       .map((article) => createArticleListItem(article, { showViews: true }))
       .join("");

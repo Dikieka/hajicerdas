@@ -30,7 +30,8 @@
       "</div>" +
       '<div class="col-6 col-lg-2">' +
       '<h3 class="h6 text-white">Panduan Ibadah</h3>' +
-      '<a class="d-block" href="tata-cara.html">Tata Cara Ibadah</a>' +
+      '<a class="d-block" href="tata-cara-haji.html">Tata Cara Haji</a>' +
+      '<a class="d-block" href="tata-cara-umrah.html">Tata Cara Umrah</a>' +
       '<a class="d-block" href="doa.html">Kumpulan Doa</a>' +
       '<a class="d-block" href="persiapan.html">Persiapan</a>' +
       '<a class="d-block" href="panduan-waktu.html">Waktu Ibadah</a>' +

@@ -271,14 +271,23 @@ const initNavClock = async () => {
   setInterval(tick, 30000);
 };
 
-// Saran pencarian ringan untuk kotak pencarian di hero Beranda: tampil
-// begitu user mengetik minimal 2 karakter, mengambil data artikel yang
-// sama dengan halaman Artikel, dan mengarah langsung ke halaman detail.
-const initHeroSearch = async () => {
-  const input = qs("[data-hero-search-input]");
-  const box = qs("[data-hero-search-suggestions]");
-  if (!input || !box || !window.HCApi) return;
-  let articles = null;
+// Saran pencarian ringan untuk kotak pencarian: tampil begitu user mulai
+// mengetik, mengambil data artikel yang sama dengan halaman Artikel, dan
+// mengarah langsung ke halaman detail. Beranda punya DUA kotak pencarian
+// dengan markup identik (hero & versi ringkas yang "mengalir" di sticky
+// bar begitu discroll, lihat navbar.js) -- keduanya dipasangi atribut
+// data-hero-search-input/data-hero-search-suggestions yang sama, jadi di
+// sini kita pasang logic yang sama ke SETIAP pasangan input+box yang ada
+// (bukan cuma yang pertama ditemukan), supaya suggestion jalan konsisten
+// baik dari hero maupun dari search bar sticky.
+const initHeroSearch = () => {
+  const inputs = qsa("[data-hero-search-input]");
+  if (!inputs.length || !window.HCApi) return;
+  let articlesPromise = null;
+  const getArticles = () => {
+    if (!articlesPromise) articlesPromise = HCApi.getArticles();
+    return articlesPromise;
+  };
   const escapeHtml = (value = "") =>
     value
       .toString()
@@ -286,73 +295,88 @@ const initHeroSearch = async () => {
       .replace(/</g, "&lt;")
       .replace(/>/g, "&gt;")
       .replace(/"/g, "&quot;");
-  const render = async () => {
-    const keyword = input.value.trim().toLowerCase();
-    if (!keyword) {
-      box.innerHTML = "";
-      box.classList.remove("show");
-      return;
-    }
-    if (!articles) articles = await HCApi.getArticles();
-    const matches = articles
-      .map((article) => {
-        const title = (article.judul || "").toLowerCase();
-        const haystack = [article.judul, article.ringkasan, article.kategori, article.penulis, article.slug]
-          .filter(Boolean)
-          .join(" ")
-          .toLowerCase();
-        const terms = keyword.split(/\s+/).filter(Boolean);
-        let score = 0;
 
-        if (title.includes(keyword)) score += 24;
-        if (haystack.includes(keyword)) score += 10;
-        terms.forEach((term) => {
-          if (title.includes(term)) score += 10;
-          if (haystack.includes(term)) score += 4;
-          if (title.startsWith(term)) score += 4;
-        });
-        if (terms.every((term) => title.includes(term))) score += 8;
-        if (terms.every((term) => haystack.includes(term))) score += 6;
+  inputs.forEach((input) => {
+    // Kotak suggestion untuk input ini: cari di dalam wrapper yang sama
+    // (.search-field-wrap membungkus ikon + input + kotak suggestion di
+    // markup hero maupun sticky), supaya tiap search bar dipasangkan ke
+    // kotak suggestion miliknya sendiri, bukan tertukar dengan yang lain.
+    const wrap = input.closest(".search-field-wrap") || input.parentElement;
+    const box = wrap?.querySelector("[data-hero-search-suggestions]");
+    if (!box) return;
 
-        return { article, score };
-      })
-      .filter(({ score }) => score > 0)
-      .sort((a, b) => b.score - a.score)
-      .slice(0, 6)
-      .map(({ article }) => article);
-    if (!matches.length) {
-      box.innerHTML = "";
+    const render = async () => {
+      const keyword = input.value.trim().toLowerCase();
+      if (!keyword) {
+        box.innerHTML = "";
+        box.classList.remove("show");
+        return;
+      }
+      const articles = await getArticles();
+      const matches = articles
+        .map((article) => {
+          const title = (article.judul || "").toLowerCase();
+          const haystack = [article.judul, article.ringkasan, article.kategori, article.penulis, article.slug]
+            .filter(Boolean)
+            .join(" ")
+            .toLowerCase();
+          const terms = keyword.split(/\s+/).filter(Boolean);
+          let score = 0;
+
+          if (title.includes(keyword)) score += 24;
+          if (haystack.includes(keyword)) score += 10;
+          terms.forEach((term) => {
+            if (title.includes(term)) score += 10;
+            if (haystack.includes(term)) score += 4;
+            if (title.startsWith(term)) score += 4;
+          });
+          if (terms.every((term) => title.includes(term))) score += 8;
+          if (terms.every((term) => haystack.includes(term))) score += 6;
+
+          return { article, score };
+        })
+        .filter(({ score }) => score > 0)
+        .sort((a, b) => b.score - a.score)
+        .slice(0, 6)
+        .map(({ article }) => article);
+      // Kalau input ini sempat kehilangan fokus/berubah lagi selagi
+      // menunggu data artikel (fetch async), jangan render hasil basi.
+      if (input.value.trim().toLowerCase() !== keyword) return;
+      if (!matches.length) {
+        box.innerHTML = "";
+        box.classList.remove("show");
+        return;
+      }
+      box.innerHTML = matches
+        .map(
+          (article) => `
+        <a
+          class="search-suggest-item"
+          href="detail.html?slug=${encodeURIComponent(article.slug)}"
+          role="option"
+          aria-label="Buka artikel ${escapeHtml(article.judul)}"
+          title="Buka artikel ${escapeHtml(article.judul)}"
+        >
+          <i class="bi bi-file-earmark-text"></i>
+          <span class="d-flex flex-column align-items-start">
+            <span class="fw-semibold">${escapeHtml(article.judul)}</span>
+            <small class="text-muted">${escapeHtml(article.kategori || "Artikel")}</small>
+          </span>
+        </a>
+      `,
+        )
+        .join("");
+      box.setAttribute("aria-label", keyword ? `Saran pencarian untuk "${keyword}"` : "Saran pencarian");
+      positionSuggestBox(input, box);
+      box.classList.add("show");
+    };
+
+    input.addEventListener("input", render);
+    input.addEventListener("focus", render);
+    document.addEventListener("click", (event) => {
+      if (event.target.closest("[data-hero-search-input]") || event.target.closest("[data-hero-search-suggestions]")) return;
       box.classList.remove("show");
-      return;
-    }
-    box.innerHTML = matches
-      .map(
-        (article) => `
-      <a
-        class="search-suggest-item"
-        href="detail.html?slug=${encodeURIComponent(article.slug)}"
-        role="option"
-        aria-label="Buka artikel ${escapeHtml(article.judul)}"
-        title="Buka artikel ${escapeHtml(article.judul)}"
-      >
-        <i class="bi bi-file-earmark-text"></i>
-        <span class="d-flex flex-column align-items-start">
-          <span class="fw-semibold">${escapeHtml(article.judul)}</span>
-          <small class="text-muted">${escapeHtml(article.kategori || "Artikel")}</small>
-        </span>
-      </a>
-    `,
-      )
-      .join("");
-    box.setAttribute("aria-label", keyword ? `Saran pencarian untuk "${keyword}"` : "Saran pencarian hero");
-    positionSuggestBox(input, box);
-    box.classList.add("show");
-  };
-  input.addEventListener("input", render);
-  input.addEventListener("focus", render);
-  document.addEventListener("click", (event) => {
-    if (event.target.closest("[data-hero-search-input]") || event.target.closest("[data-hero-search-suggestions]")) return;
-    box.classList.remove("show");
+    });
   });
 };
 
