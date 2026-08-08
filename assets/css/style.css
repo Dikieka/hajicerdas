@@ -308,17 +308,32 @@ img {
     padding-top: 0.6rem;
     padding-bottom: 0.6rem;
   }
+  /* Tombol ganti tema di sidebar mobile: dilepas dari alur baris
+     navbar-actions (yang isinya jadi cuma menu akun/Masuk) dan
+     "ditempel" langsung di pojok kiri-bawah panel sidebar -- posisinya
+     dihitung relatif terhadap .offcanvas (sudah position: fixed dari
+     Bootstrap) supaya selalu di pojok yang sama persis, tidak ikut
+     terdorong turun walau daftar menu di atasnya berubah panjang. */
   .navbar-actions .nav-item-theme {
-    flex: 0 0 auto;
+    position: absolute;
+    left: 1.1rem;
+    bottom: 1.1rem;
+    z-index: 5;
   }
   .navbar-actions [data-theme-toggle] {
-    flex: 0 0 auto;
-    width: 48px;
+    width: 44px;
     height: 44px;
     padding: 0.5rem;
+    border-radius: 999px;
   }
   .navbar-actions [data-theme-toggle] .navbar-actions-label {
     display: none;
+  }
+  /* Ruang kosong di bawah offcanvas-body diberi padding supaya daftar
+     menu/isi akun tidak pernah tertutup oleh tombol tema yang mengambang
+     di pojok kiri-bawah. */
+  .offcanvas-body {
+    padding-bottom: 4.5rem;
   }
 
   /* Menu akun (dropdown) saat user sudah login: sebelumnya berbagi baris

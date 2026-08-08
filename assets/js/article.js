@@ -472,7 +472,7 @@ const createFeaturedArticleCard = (article) => `
       <p class="lead-muted mb-3">${safeText(buildFeaturedExcerpt(article))}</p>
       <div class="meta">
         <span>${authorAvatarHtml(article)} ${safeText(article.penulis || "Redaksi")}</span>
-        <span><i class="bi bi-eye"></i> ${Number(article.views || 0).toLocaleString("id-ID")}x dibaca</span>
+        <span><i class="bi bi-eye"></i> ${Number(article.views || 0).toLocaleString("id-ID")}x dilihat</span>
       </div>
       <div class="meta mt-2 article-time" title="${HCUtils.formatDateTime(article.tanggal)}">
         <span><i class="bi bi-calendar3"></i> ${HCUtils.formatDate(article.tanggal)}</span>

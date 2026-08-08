@@ -421,9 +421,18 @@
     font-size: 1.05rem;
   }
 
-  /* Artikel Populer: kartu list lebih ramping */
+  /* Artikel Populer: kartu list lebih ramping. Sebelumnya rule ini
+     me-reset padding-left ke 0.55rem lewat shorthand "padding", padahal
+     ruang itu dipakai untuk nomor urut dekoratif (::before) -- akibatnya
+     angka "01/02/dst" jadi menumpuk/menabrak label kategori & judul,
+     terlihat semrawut. Nomor dekoratif itu dihapus saja khusus di
+     mobile (tidak terlalu penting di lebar sempit), sehingga konten bisa
+     rapat rapi tanpa perlu ruang sisa untuknya. */
   .article-list-item {
-    padding: 0.55rem;
+    padding: 0.7rem 0.6rem;
+  }
+  .article-list-item::before {
+    display: none;
   }
 }
 

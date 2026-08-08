@@ -665,12 +665,14 @@
 
 /* ---------- Responsive ---------- */
 @media (max-width: 767.98px) {
-  .tabbar-wrap {
-    top: 56px;
-  }
-
+  /* Di mobile tab bar sudah tidak sticky (position: relative), jadi
+     "top: 56px" peninggalan dari mode sticky (offset dari navbar) TIDAK
+     boleh ikut terbawa -- kalau ikut, kotak tab jadi kegeser turun 56px
+     dari posisi normalnya, meninggalkan ruang kosong lebar persis di
+     atasnya (celah besar antara header halaman & kartu tab). */
   .tabbar-wrap {
     position: relative;
+    top: 0;
   }
 
   /* Redesain tab bar mobile: sebelumnya satu baris yang digeser
