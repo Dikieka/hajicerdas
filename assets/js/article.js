@@ -322,7 +322,7 @@ const createStoryCard = (
       <article class="story-card p-4 fade-up">
         <span class="badge-soft mb-3"><i class="bi bi-chat-heart"></i>${safeText(story.kategori || "Cerita Jamaah")}</span>
         <${Heading} class="${compact ? "h5" : "h4"} article-title">
-          <a class="stretched-link text-reset text-decoration-none" href="detail-pengalaman.html?id=${encodeURIComponent(id)}">${safeText(story.judul)}</a>
+          <a class="stretched-link text-reset text-decoration-none" href="${HCRoutes.buildUrl('cerita', id)}">${safeText(story.judul)}</a>
         </${Heading}>
         <p class="lead-muted">${safeText(story.pengalaman)}</p>
         <p class="small"><strong>Tips:</strong> ${safeText(story.tips || "Ikuti arahan pembimbing dan simpan kontak rombongan.")}</p>
@@ -463,12 +463,12 @@ const buildFeaturedExcerpt = (article, maxLength = 100) => {
 
 const createFeaturedArticleCard = (article) => `
   <article class="featured-article-card fade-up">
-    <a class="featured-article-media" href="detail.html?slug=${encodeURIComponent(article.slug)}" aria-label="Baca ${safeText(article.judul)}">
+    <a class="featured-article-media" href="${HCRoutes.buildUrl('artikel', article.slug)}" aria-label="Baca ${safeText(article.judul)}">
       <img src="${article.gambar || "assets/images/article-placeholder.svg"}" alt="${safeText(article.judul)}" loading="eager" onerror="this.src='assets/images/article-placeholder.svg'">
       <span class="badge-soft featured-article-badge"><i class="bi bi-bookmark"></i>${safeText(article.kategori)}</span>
     </a>
     <div class="card-body-pad">
-      <h3 class="article-title mb-2"><a class="text-reset" href="detail.html?slug=${encodeURIComponent(article.slug)}">${safeText(article.judul)}</a></h3>
+      <h2 class="article-title mb-2"><a class="text-reset" href="${HCRoutes.buildUrl('artikel', article.slug)}">${safeText(article.judul)}</a></h2>
       <p class="lead-muted mb-3">${safeText(buildFeaturedExcerpt(article))}</p>
       <div class="meta">
         <span>${authorAvatarHtml(article)} ${safeText(article.penulis || "Redaksi")}</span>
@@ -483,7 +483,7 @@ const createFeaturedArticleCard = (article) => `
 `;
 
 const createArticleListItem = (article, { showViews = false } = {}) => `
-  <a class="article-list-item fade-up" href="detail.html?slug=${encodeURIComponent(article.slug)}">
+  <a class="article-list-item fade-up" href="${HCRoutes.buildUrl('artikel', article.slug)}">
     <span class="article-list-thumb">
       <img src="${article.gambar || "assets/images/article-placeholder.svg"}" alt="" loading="lazy" onerror="this.src='assets/images/article-placeholder.svg'">
     </span>
@@ -608,10 +608,14 @@ const renderHomeContent = async () => {
   }
 
   if (stories) {
+    // Sebelumnya dipotong ke 15 cerita paling disukai saja -- landing page
+    // jadi terasa sedikit isinya padahal ini slider horizontal (scroll
+    // kanan/kiri), bukan grid yang makan banyak tempat vertikal. Sekarang
+    // semua cerita published ditampilkan (diurutkan dari yang paling
+    // disukai) supaya "Cerita Jemaah" di beranda terasa lebih ramai/banyak.
     const mostLiked = experiences
       .slice()
-      .sort((a, b) => getStoryLike(b) - getStoryLike(a))
-      .slice(0, 15);
+      .sort((a, b) => getStoryLike(b) - getStoryLike(a));
     stories.innerHTML = mostLiked
       .map((story) => createStoryCard(story, { headingLevel: 3, slider: true }))
       .join("");
@@ -641,7 +645,8 @@ const markArticleViewedOnce = async (slug) => {
 const renderDetail = async () => {
   const target = document.querySelector("[data-article-detail]");
   if (!target) return;
-  const slug = getParam("slug") || "checklist-persiapan-haji";
+  const slug =
+    HCRoutes.getSlug("artikel", "slug") || "checklist-persiapan-haji";
   const [article, allArticles] = await Promise.all([
     HCApi.getArticle(slug),
     HCApi.getArticles(),
@@ -654,6 +659,38 @@ const renderDetail = async () => {
   document
     .querySelector("meta[name='description']")
     ?.setAttribute("content", article.ringkasan);
+  // SEO: sebelumnya canonical/OG/JSON-LD statis dan SAMA untuk setiap
+  // artikel (semua menunjuk ke /detail.html tanpa slug) -- ini bikin
+  // Google menganggap semua artikel sebagai duplikat satu sama lain dan
+  // cuma mengindeks salah satu (atau tidak sama sekali). Set per-artikel
+  // di sini supaya tiap URL (?slug=...) py title/description/canonical
+  // sendiri yang unik.
+  const pageUrl = `https://dikieka.github.io/hajicerdas/${HCRoutes.buildUrl("artikel", article.slug)}`;
+  const ogImage = article.gambar
+    ? new URL(article.gambar, "https://dikieka.github.io/hajicerdas/").href
+    : "https://dikieka.github.io/hajicerdas/assets/images/logo.png";
+  document.getElementById("metaCanonical")?.setAttribute("href", pageUrl);
+  document.getElementById("metaOgUrl")?.setAttribute("content", pageUrl);
+  document.getElementById("metaOgTitle")?.setAttribute("content", article.judul);
+  document.getElementById("metaOgDescription")?.setAttribute("content", article.ringkasan || "");
+  document.getElementById("metaOgImage")?.setAttribute("content", ogImage);
+  document.getElementById("metaTwitterTitle")?.setAttribute("content", article.judul);
+  document.getElementById("metaTwitterDescription")?.setAttribute("content", article.ringkasan || "");
+  const jsonLdEl = document.getElementById("articleJsonLd");
+  if (jsonLdEl) {
+    try {
+      const data = JSON.parse(jsonLdEl.textContent);
+      data.headline = article.judul;
+      data.description = article.ringkasan;
+      data.image = ogImage;
+      data.datePublished = article.tanggal || undefined;
+      data.author = { "@type": "Person", name: article.penulis || "Redaksi HajiCerdas" };
+      data.mainEntityOfPage = { "@type": "WebPage", "@id": pageUrl };
+      jsonLdEl.textContent = JSON.stringify(data);
+    } catch (error) {
+      console.info(error.message);
+    }
+  }
   const related = getRelatedArticles(allArticles, article, 3);
   target.innerHTML = `
     <nav aria-label="Breadcrumb" class="mb-4">
@@ -723,7 +760,7 @@ const renderDetail = async () => {
           .map(
             (item) => `
           <div class="col-md-4">
-            <a class="related-article-card fade-up" href="detail.html?slug=${encodeURIComponent(item.slug)}">
+            <a class="related-article-card fade-up" href="${HCRoutes.buildUrl('artikel', item.slug)}">
               <img src="${item.gambar || "assets/images/article-placeholder.svg"}" alt="" loading="lazy" onerror="this.src='assets/images/article-placeholder.svg'">
               <div class="card-body-pad">
                 <span class="badge-soft mb-2"><i class="bi bi-bookmark"></i>${safeText(item.kategori)}</span>
@@ -789,7 +826,7 @@ const getRelatedStories = (all, current, limit = 3) => {
 const renderCeritaDetail = async () => {
   const target = document.querySelector("[data-cerita-detail]");
   if (!target) return;
-  const id = getParam("id");
+  const id = HCRoutes.getSlug("cerita", "id");
   const [story, allStories] = await Promise.all([
     HCApi.getExperience(id),
     HCApi.getExperiences(),
@@ -804,6 +841,13 @@ const renderCeritaDetail = async () => {
   document
     .querySelector("meta[name='description']")
     ?.setAttribute("content", String(story.pengalaman || "").slice(0, 160));
+  // SEO: canonical/OG per cerita, sama seperti detail artikel & istilah.
+  const storyPageUrl = `https://dikieka.github.io/hajicerdas/${HCRoutes.buildUrl("cerita", storyId)}`;
+  const storyExcerpt = String(story.pengalaman || "").slice(0, 160);
+  document.getElementById("metaCanonical")?.setAttribute("href", storyPageUrl);
+  document.getElementById("metaOgUrl")?.setAttribute("content", storyPageUrl);
+  document.getElementById("metaOgTitle")?.setAttribute("content", `${story.judul} | Cerita Jamaah HajiCerdas`);
+  document.getElementById("metaOgDescription")?.setAttribute("content", storyExcerpt);
   const related = getRelatedStories(allStories, story, 3);
   target.innerHTML = `
     <nav aria-label="Breadcrumb" class="mb-4">
@@ -873,7 +917,7 @@ const renderCeritaDetail = async () => {
           .map(
             (item) => `
           <div class="col-md-4">
-            <a class="related-article-card fade-up" href="detail-pengalaman.html?id=${encodeURIComponent(getStoryId(item))}">
+            <a class="related-article-card fade-up" href="${HCRoutes.buildUrl('cerita', getStoryId(item))}">
               <div class="card-body-pad">
                 <span class="badge-soft mb-2"><i class="bi bi-chat-heart"></i>${safeText(item.kategori || "Cerita Jamaah")}</span>
                 <p class="article-title h6 mb-1">${safeText(item.judul)}</p>
@@ -899,7 +943,7 @@ const renderCeritaDetail = async () => {
     shareContent({
       title: story.judul,
       text: story.pengalaman,
-      url: `detail-pengalaman.html?id=${encodeURIComponent(storyId)}`,
+      url: `${HCRoutes.buildUrl("cerita", storyId)}`,
     }),
   );
   HCUtils.initAnimations();

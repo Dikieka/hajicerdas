@@ -199,6 +199,55 @@
     height: 26px;
     font-size: 0.85rem;
   }
+
+  /* Header tiap section di mobile: deskripsi (paragraf .lead-muted) di
+     bawah judul disembunyikan supaya section header cuma tampil eyebrow +
+     judul saja, lebih ringkas untuk layar sempit. Konten paragrafnya tetap
+     ada di HTML (tetap tampil normal di tablet/desktop), cuma disembunyikan
+     lewat CSS di breakpoint ini. */
+  .section-heading p.lead-muted,
+  .services-section-header p.lead-muted,
+  #cerita-jemaah p.lead-muted {
+    display: none;
+  }
+
+  /* Eyebrow + judul tiap section header rata tengah di mobile (bukan rata
+     kiri seperti di desktop/tablet). Baris header (.section-header-row)
+     pakai utility Bootstrap "d-flex/justify-content-between/align-items-
+     start" yang semuanya !important, jadi override-nya di sini juga perlu
+     !important supaya benar-benar menang (kalau tidak, baris header tetap
+     jadi flex-row seperti semula dan teksnya tidak kelihatan di tengah). */
+  .section-heading,
+  #cerita-jemaah .col-lg-4 {
+    text-align: center;
+  }
+  .section-header-row {
+    flex-direction: column !important;
+    align-items: center !important;
+  }
+  .section-header-row .section-heading {
+    width: 100%;
+  }
+
+  /* Tombol "Lihat Semua" di baris header (sejajar eyebrow) disembunyikan
+     di mobile, diganti salinannya yang sudah ditaruh di HTML tepat di
+     akhir section (setelah konten utama: carousel/artikel/slider) --
+     lihat class .section-view-all-mobile. Jadi urutannya di mobile jadi:
+     eyebrow + judul (rata tengah) → konten utama → tombol Lihat Semua. */
+  .section-header-row > .btn {
+    display: none;
+  }
+  .section-view-all-mobile {
+    display: block;
+    width: max-content;
+    max-width: 100%;
+    margin: 1rem auto 0;
+  }
+
+  /* Section "Cerita Jamaah": grup tombol (Bagikan Cerita + Lihat Semua)
+     sekarang cuma ada satu salinan di HTML, diletakkan di akhir section
+     (di bawah slider cerita) dan rata tengah -- sudah tampil sama baik di
+     mobile maupun desktop, jadi tidak perlu override tambahan di sini. */
 }
 
 /* Phones */
@@ -232,6 +281,15 @@
   .form-control,
   .form-select {
     min-height: 46px;
+  }
+  /* Tombol "Lihat Semua" (btn-sm) di sebelah label eyebrow (mis. "Short
+     Edukasi") ikut tertarik ke tinggi minimum 46px di atas, jadi terlihat
+     jauh lebih tinggi dibanding badge eyebrow di sebelahnya. Turunkan
+     lagi khusus untuk btn-sm supaya tingginya sejajar dengan badge
+     eyebrow (~31px). */
+  .btn-sm {
+    min-height: 31px;
+    padding: 0.3rem 0.85rem;
   }
   .surface {
     border-radius: 8px;
@@ -282,6 +340,13 @@
   }
   .footer {
     text-align: center;
+  }
+  /* Baris logo + "HajiCerdas" di footer memakai flexbox, jadi
+     text-align:center di atas tidak berlaku untuknya (flex item rata
+     kiri secara default). Pusatkan juga secara horizontal supaya
+     sejajar dengan paragraf lain yang sudah rata tengah. */
+  .footer-brand-row {
+    justify-content: center;
   }
   .footer-social {
     justify-content: center;
@@ -343,10 +408,13 @@
 
   /* Baris judul + tombol "Lihat Semua": kalau kepanjangan, tombol turun
      ke baris baru alih-alih memepetkan judul. */
-  main .section .d-flex.flex-wrap.justify-content-between.align-items-end {
+  main .section .d-flex.flex-wrap.justify-content-between.align-items-end,
+  main .section .d-flex.flex-wrap.justify-content-between.align-items-start {
     row-gap: 0.6rem;
   }
   main .section .d-flex.flex-wrap.justify-content-between.align-items-end
+    > .btn,
+  main .section .d-flex.flex-wrap.justify-content-between.align-items-start
     > .btn {
     margin-left: auto;
   }
@@ -429,10 +497,27 @@
      mobile (tidak terlalu penting di lebar sempit), sehingga konten bisa
      rapat rapi tanpa perlu ruang sisa untuknya. */
   .article-list-item {
-    padding: 0.7rem 0.6rem;
+    margin: 0;
+    padding: 0.85rem 1rem;
+    gap: 0.75rem;
   }
   .article-list-item::before {
     display: none;
+  }
+  .article-list-thumb {
+    display: block;
+    flex: 0 0 64px;
+    width: 64px;
+    height: 64px;
+    border-radius: 10px;
+    overflow: hidden;
+    background: var(--border);
+  }
+  .article-list-thumb img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
   }
 }
 

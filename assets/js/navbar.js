@@ -23,12 +23,12 @@
     '<div class="site-header fixed-top">' +
       '<nav class="navbar navbar-expand-lg" aria-label="Navigasi utama">' +
       '<div class="container">' +
-      '<a class="navbar-brand d-flex align-items-center" href="index.html"><span class="brand-mark"><i class="bi bi-compass"></i></span>HajiCerdas</a>' +
+      '<a class="navbar-brand d-flex align-items-center" href="index.html"><img src="assets/images/logo.png" alt="HajiCerdas" class="brand-logo" height="32" /><span class="brand-name">HajiCerdas</span></a>' +
       '<a class="nav-clock d-none d-lg-block" data-nav-clock href="waktu.html" aria-label="Lihat jadwal shalat dan waktu lengkap"><strong>--:--</strong> WIB &middot; <span class="nav-clock-next">Memuat...</span></a>' +
       '<button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#mainNav" aria-controls="mainNav" aria-label="Buka navigasi"><span class="navbar-toggler-icon"></span></button>' +
       '<div class="offcanvas offcanvas-start" tabindex="-1" id="mainNav" aria-labelledby="mainNavLabel">' +
       '<div class="offcanvas-header">' +
-      '<a class="navbar-brand d-flex align-items-center mb-0" id="mainNavLabel" href="index.html"><span class="brand-mark"><i class="bi bi-compass"></i></span>HajiCerdas</a>' +
+      '<a class="navbar-brand d-flex align-items-center mb-0" id="mainNavLabel" href="index.html"><img src="assets/images/logo.png" alt="HajiCerdas" class="brand-logo" height="32" /><span class="brand-name">HajiCerdas</span></a>' +
       '<button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Tutup navigasi"></button>' +
       "</div>" +
       '<div class="offcanvas-body">' +

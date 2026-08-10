@@ -700,12 +700,28 @@
      biasa, jadi diberi baris penuh sendiri supaya nama jenis terpilih
      (mis. "Haji Tamattu'") + panah tetap nyaman dibaca dan tombolnya
      tidak berebut tempat dengan tab lain di grid 2 kolom. */
+  /* Tab "Pengertian" dilebarkan jadi satu baris penuh (bukan cuma
+     setengah kolom grid) supaya sejajar dengan lebar baris "Jenis Haji"
+     di bawahnya - dengan begitu teksnya yang sudah center terlihat
+     benar-benar di tengah kartu, bukan menempel ke kiri. */
+  .tabbar > .tab-btn[data-tab="pengertian"] {
+    grid-column: 1 / -1;
+  }
+
   .dropdown-wrap {
     grid-column: 1 / -1;
   }
   .dropdown-wrap .tab-btn {
     justify-content: flex-start;
     text-align: left;
+  }
+
+  /* Teks nama jenis haji terpilih (mis. "Haji Tamattu'") dipusatkan di
+     tampilan mobile, sejajar dengan tab "Pengertian" yang juga rata
+     tengah. Ikon tetap di kiri & panah tetap di kanan sebagai penanda
+     dropdown, hanya teksnya yang dipusatkan pada ruang yang tersisa. */
+  .tab-btn .jenis-label {
+    text-align: center;
   }
 
   /* Label "Jenis Haji" / nama jenis terpilih dipaksa satu baris supaya

@@ -26,9 +26,9 @@
       content="Sertifikat resmi bukti pelaksanaan jasa Badal Umroh HajiCerdas, lengkap dengan nama petugas pelaksana, tanda tangan, dan kode QR verifikasi."
     />
     <meta name="robots" content="noindex, follow" />
-    <link rel="canonical" href="https://www.hajicerdas.id/sertifikat-badal.html" />
+    <link rel="canonical" href="https://dikieka.github.io/hajicerdas/sertifikat-badal.html" /><meta property="og:type" content="website"><meta property="og:title" content="Sertifikat Badal Umroh | HajiCerdas"><meta property="og:description" content="Panduan Haji dan Umrah HajiCerdas."><meta property="og:image" content="https://dikieka.github.io/hajicerdas/assets/images/logo.png"><meta property="og:url" content="https://dikieka.github.io/hajicerdas/sertifikat-badal.html"><meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="Sertifikat Badal Umroh | HajiCerdas"><meta name="twitter:description" content="Panduan Haji dan Umrah HajiCerdas."><meta name="twitter:image" content="https://dikieka.github.io/hajicerdas/assets/images/logo.png">
     <link rel="manifest" href="manifest.json" />
-    <link rel="icon" href="assets/icons/favicon.svg" type="image/svg+xml" />
+    <link rel="icon" href="assets/images/logo.png" type="image/png"><link rel="apple-touch-icon" href="assets/images/logo.png">
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -449,7 +449,7 @@
               <p class="cert-footer-note mb-0">
                 Diterbitkan otomatis oleh sistem HajiCerdas pada
                 <span id="certTanggalTerbit">-</span> &middot;
-                www.hajicerdas.id/verifikasi-sertifikat.html
+                dikieka.github.io/hajicerdas/verifikasi-sertifikat.html
               </p>
             </div>
           </div>
@@ -477,7 +477,7 @@
     ></script>
     <script src="assets/js/api.js" defer></script>
     <script src="assets/js/auth.js" defer></script>
-    <script src="assets/js/app.js" defer></script>
+    <script src="assets/js/seo-routes.js" defer></script><script src="assets/js/app.js" defer></script>
     <script src="assets/js/darkmode.js" defer></script>
     <script>
       document.addEventListener("DOMContentLoaded", function () {
@@ -551,13 +551,15 @@
           var qrBox = document.getElementById("certQrBox");
           qrBox.innerHTML = "";
           if (typeof QRCode !== "undefined") {
-            var siteUrl =
-              (window.HC_CONFIG && window.HC_CONFIG.siteUrl) ||
-              window.location.origin;
-            var verifyUrl =
-              siteUrl +
-              "/verifikasi-sertifikat.html?id=" +
-              encodeURIComponent(data.id || id);
+            // Dibangun relatif terhadap URL halaman ini (bukan digabung
+            // manual dengan HC_CONFIG.siteUrl) supaya tetap benar di
+            // hosting apa pun, termasuk saat file ini berada di subpath
+            // seperti https://dikieka.github.io/hajicerdas/.
+            var verifyUrl = new URL(
+              "verifikasi-sertifikat.html?id=" +
+                encodeURIComponent(data.id || id),
+              window.location.href,
+            ).href;
             new QRCode(qrBox, {
               text: verifyUrl,
               width: 56,

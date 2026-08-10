@@ -108,7 +108,7 @@ appsScriptUrl: "PASTE_YOUR_GOOGLE_APPS_SCRIPT_WEB_APP_URL_HERE"
 
 ## Cara Optimasi SEO
 
-1. Ubah domain placeholder `https://www.hajicerdas.id` pada meta canonical, sitemap, dan konfigurasi JS sesuai domain final.
+1. Ubah domain placeholder `https://dikieka.github.io/hajicerdas` pada meta canonical, sitemap, dan konfigurasi JS sesuai domain final.
 2. Gunakan judul artikel yang jelas, slug pendek, dan ringkasan unik.
 3. Isi kolom `gambar` dengan URL gambar yang relevan dan ringan.
 4. Pastikan setiap artikel memiliki heading `h2` dan `h3` yang rapi pada kolom `isi`.
@@ -350,7 +350,7 @@ Di dalam file tersebut terdapat konfigurasi:
 ```js
 const HC_CONFIG = {
   appsScriptUrl: "URL_APPS_SCRIPT_KAMU",
-  siteUrl: "https://www.hajicerdas.id"
+  siteUrl: "https://dikieka.github.io/hajicerdas"
 };
 ```
 

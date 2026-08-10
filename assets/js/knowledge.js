@@ -17,7 +17,7 @@ const renderTermCards = async () => {
         <span class="badge-soft mb-3">${term.category}</span>
         <h2 class="h5 article-title">${term.title}</h2>
         <p class="lead-muted">${term.summary}</p>
-        <a class="btn btn-outline-primary" href="istilah-detail.html?slug=${term.slug}">Baca Detail</a>
+        <a class="btn btn-outline-primary" href="${HCRoutes.buildUrl('istilah', term.slug)}">Baca Detail</a>
       </article>
     </div>
   `,
@@ -29,11 +29,23 @@ const renderTermCards = async () => {
 const renderTermDetail = async () => {
   const target = document.querySelector("[data-term-detail]");
   if (!target) return;
-  const slug =
-    new URLSearchParams(location.search).get("slug") || "apa-itu-haji";
+  const slug = HCRoutes.getSlug("istilah", "slug") || "apa-itu-haji";
   const allTerms = await HCApi.getTerms();
   const term = allTerms.find((item) => item.slug === slug) || allTerms[0];
   document.title = `${term.title} | HajiCerdas`;
+  // SEO: sama seperti halaman detail artikel -- canonical/description/OG
+  // sebelumnya statis (sama untuk semua istilah), bikin Google anggap
+  // semua halaman istilah duplikat satu sama lain. Isi per-istilah di sini.
+  const pageUrl = `https://dikieka.github.io/hajicerdas/${HCRoutes.buildUrl("istilah", term.slug)}`;
+  document
+    .getElementById("metaDescription")
+    ?.setAttribute("content", term.summary || `Penjelasan istilah ${term.title} dalam ibadah Haji dan Umrah.`);
+  document.getElementById("metaCanonical")?.setAttribute("href", pageUrl);
+  document.getElementById("metaOgUrl")?.setAttribute("content", pageUrl);
+  document.getElementById("metaOgTitle")?.setAttribute("content", `${term.title} | Kamus Istilah HajiCerdas`);
+  document
+    .getElementById("metaOgDescription")
+    ?.setAttribute("content", term.summary || `Penjelasan istilah ${term.title} dalam ibadah Haji dan Umrah.`);
   const isi =
     term.isi ||
     `
@@ -78,7 +90,7 @@ const renderAlphaTerms = async () => {
       (letter) => `
     <section id="huruf-${letter}" class="mb-4">
       <h2 class="h3 fw-bold">${letter}</h2>
-      <div class="info-list">${grouped[letter].map((term) => `<a class="info-item text-reset" href="istilah-detail.html?slug=${term.slug}"><strong>${term.title}</strong><br><span class="lead-muted">${term.summary}</span></a>`).join("")}</div>
+      <div class="info-list">${grouped[letter].map((term) => `<a class="info-item text-reset" href="${HCRoutes.buildUrl('istilah', term.slug)}"><strong>${term.title}</strong><br><span class="lead-muted">${term.summary}</span></a>`).join("")}</div>
     </section>
   `,
     )

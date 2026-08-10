@@ -1,7 +1,7 @@
 const HC_CONFIG = {
   appsScriptUrl:
     "https://script.google.com/macros/s/AKfycbwmA9_2u401HLsSkMx9ofK6LNF7QqY350UolsOxqO4h9ApMdK7hCydopZgzlfJ5Psohgw/exec",
-  siteUrl: "https://www.hajicerdas.id",
+  siteUrl: "https://dikieka.github.io/hajicerdas",
   // Nomor WhatsApp admin (format 62xxxxxxxxxx, tanpa +/spasi/tanda hubung).
   // Satu-satunya tempat pengaturan — dipakai di badal.html, wakaf-quran.html,
   // rekrutmen-petugas.html, dan akun.html supaya cukup diganti di sini saja.

@@ -123,12 +123,12 @@ const authorAvatarHtml = (article) => {
 const createArticleCard = (article) => `
   <div class="col-md-6 col-lg-4">
     <article class="article-card fade-up">
-      <a href="detail.html?slug=${encodeURIComponent(article.slug)}" aria-label="Baca ${article.judul}">
+      <a href="${HCRoutes.buildUrl('artikel', article.slug)}" aria-label="Baca ${article.judul}">
         <img src="${article.gambar || "assets/images/article-placeholder.svg"}" alt="${article.judul}" loading="lazy" onerror="this.src='assets/images/article-placeholder.svg'">
       </a>
       <div class="card-body-pad">
         <span class="badge-soft mb-3"><i class="bi bi-bookmark"></i>${article.kategori}</span>
-        <h3 class="h5 article-title"><a class="text-reset" href="detail.html?slug=${encodeURIComponent(article.slug)}">${article.judul}</a></h3>
+        <h3 class="h5 article-title"><a class="text-reset" href="${HCRoutes.buildUrl('artikel', article.slug)}">${article.judul}</a></h3>
         <p class="lead-muted mb-3">${article.ringkasan}</p>
         <div class="meta">
           <span>${authorAvatarHtml(article)} ${article.penulis || "Redaksi"}</span>
@@ -288,6 +288,17 @@ const initHeroSearch = () => {
     if (!articlesPromise) articlesPromise = HCApi.getArticles();
     return articlesPromise;
   };
+  // Placeholder di kotak pencarian menjanjikan "checklist panduan, doa,
+  // hotel, transportasi..." tapi sebelumnya pencarian cuma menyisir
+  // artikel -- ketik "wukuf" atau istilah lain yang cuma ada di Kamus
+  // Istilah (bukan judul artikel) akan kosong padahal datanya ada.
+  // Tambahkan Kamus Istilah sebagai sumber kedua supaya sesuai janji
+  // placeholder-nya sendiri.
+  let termsPromise = null;
+  const getTerms = () => {
+    if (!termsPromise) termsPromise = HCApi.getTerms();
+    return termsPromise;
+  };
   const escapeHtml = (value = "") =>
     value
       .toString()
@@ -295,6 +306,23 @@ const initHeroSearch = () => {
       .replace(/</g, "&lt;")
       .replace(/>/g, "&gt;")
       .replace(/"/g, "&quot;");
+
+  // Skor kecocokan generik: dipakai untuk artikel maupun istilah, supaya
+  // logic pemberian bobot (judul persis > judul mengandung kata > isi
+  // mengandung kata) konsisten di kedua sumber data.
+  const scoreMatch = (title, haystack, keyword, terms) => {
+    let score = 0;
+    if (title.includes(keyword)) score += 24;
+    if (haystack.includes(keyword)) score += 10;
+    terms.forEach((term) => {
+      if (title.includes(term)) score += 10;
+      if (haystack.includes(term)) score += 4;
+      if (title.startsWith(term)) score += 4;
+    });
+    if (terms.every((term) => title.includes(term))) score += 8;
+    if (terms.every((term) => haystack.includes(term))) score += 6;
+    return score;
+  };
 
   inputs.forEach((input) => {
     // Kotak suggestion untuk input ini: cari di dalam wrapper yang sama
@@ -312,33 +340,49 @@ const initHeroSearch = () => {
         box.classList.remove("show");
         return;
       }
-      const articles = await getArticles();
-      const matches = articles
-        .map((article) => {
-          const title = (article.judul || "").toLowerCase();
-          const haystack = [article.judul, article.ringkasan, article.kategori, article.penulis, article.slug]
-            .filter(Boolean)
-            .join(" ")
-            .toLowerCase();
-          const terms = keyword.split(/\s+/).filter(Boolean);
-          let score = 0;
+      const terms = keyword.split(/\s+/).filter(Boolean);
+      const [articles, glossaryTerms] = await Promise.all([
+        getArticles(),
+        getTerms().catch(() => []),
+      ]);
 
-          if (title.includes(keyword)) score += 24;
-          if (haystack.includes(keyword)) score += 10;
-          terms.forEach((term) => {
-            if (title.includes(term)) score += 10;
-            if (haystack.includes(term)) score += 4;
-            if (title.startsWith(term)) score += 4;
-          });
-          if (terms.every((term) => title.includes(term))) score += 8;
-          if (terms.every((term) => haystack.includes(term))) score += 6;
+      const articleMatches = articles.map((article) => {
+        const title = (article.judul || "").toLowerCase();
+        const haystack = [article.judul, article.ringkasan, article.kategori, article.penulis, article.slug]
+          .filter(Boolean)
+          .join(" ")
+          .toLowerCase();
+        return {
+          type: "artikel",
+          href: `${HCRoutes.buildUrl('artikel', article.slug)}`,
+          title: article.judul,
+          label: article.kategori || "Artikel",
+          icon: "bi-file-earmark-text",
+          score: scoreMatch(title, haystack, keyword, terms),
+        };
+      });
 
-          return { article, score };
-        })
-        .filter(({ score }) => score > 0)
+      const termMatches = (glossaryTerms || []).map((item) => {
+        const title = (item.title || "").toLowerCase();
+        const haystack = [item.title, item.summary, item.category, item.slug]
+          .filter(Boolean)
+          .join(" ")
+          .toLowerCase();
+        return {
+          type: "istilah",
+          href: `${HCRoutes.buildUrl('istilah', item.slug)}`,
+          title: item.title,
+          label: "Kamus Istilah",
+          icon: "bi-bookmark",
+          score: scoreMatch(title, haystack, keyword, terms),
+        };
+      });
+
+      const matches = articleMatches
+        .concat(termMatches)
+        .filter((item) => item.score > 0)
         .sort((a, b) => b.score - a.score)
-        .slice(0, 6)
-        .map(({ article }) => article);
+        .slice(0, 6);
       // Kalau input ini sempat kehilangan fokus/berubah lagi selagi
       // menunggu data artikel (fetch async), jangan render hasil basi.
       if (input.value.trim().toLowerCase() !== keyword) return;
@@ -349,18 +393,18 @@ const initHeroSearch = () => {
       }
       box.innerHTML = matches
         .map(
-          (article) => `
+          (item) => `
         <a
           class="search-suggest-item"
-          href="detail.html?slug=${encodeURIComponent(article.slug)}"
+          href="${item.href}"
           role="option"
-          aria-label="Buka artikel ${escapeHtml(article.judul)}"
-          title="Buka artikel ${escapeHtml(article.judul)}"
+          aria-label="Buka ${item.type === "istilah" ? "istilah" : "artikel"} ${escapeHtml(item.title)}"
+          title="Buka ${item.type === "istilah" ? "istilah" : "artikel"} ${escapeHtml(item.title)}"
         >
-          <i class="bi bi-file-earmark-text"></i>
+          <i class="bi ${item.icon}"></i>
           <span class="d-flex flex-column align-items-start">
-            <span class="fw-semibold">${escapeHtml(article.judul)}</span>
-            <small class="text-muted">${escapeHtml(article.kategori || "Artikel")}</small>
+            <span class="fw-semibold">${escapeHtml(item.title)}</span>
+            <small class="text-muted">${escapeHtml(item.label)}</small>
           </span>
         </a>
       `,

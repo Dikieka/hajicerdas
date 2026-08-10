@@ -401,7 +401,7 @@ const initArticleSearch = async () => {
       const slug = button.dataset.suggestSlug;
       if (slug) {
         // Navigate to detail page with slug param
-        window.location.href = `detail.html?slug=${encodeURIComponent(slug)}`;
+        window.location.href = HCRoutes.buildUrl("artikel", slug);
         return;
       }
     } else if (button.dataset.suggestQuery) {

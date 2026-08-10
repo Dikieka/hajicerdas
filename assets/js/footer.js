@@ -12,7 +12,10 @@
       '<div class="container">' +
       '<div class="row g-4">' +
       '<div class="col-lg-4">' +
-      '<h2 class="h4 text-white">HajiCerdas</h2>' +
+      '<div class="d-flex align-items-center mb-2 footer-brand-row">' +
+      '<img src="assets/images/logo.png" alt="HajiCerdas" class="footer-logo" height="36" />' +
+      '<span class="footer-brand-name">HajiCerdas</span>' +
+      "</div>" +
       "<p>Portal edukasi Haji dan Umrah yang membantu jamaah Indonesia mempersiapkan ibadah dengan informasi yang rapi dan mudah dipahami.</p>" +
       '<div class="footer-social mt-3" aria-label="Ikuti HajiCerdas di media sosial">' +
       '<a href="https://www.facebook.com/hajicerdas" target="_blank" rel="noopener" aria-label="Facebook HajiCerdas"><i class="bi bi-facebook"></i></a>' +

@@ -2,7 +2,7 @@
   "name": "HajiCerdas",
   "short_name": "HajiCerdas",
   "description": "Portal informasi Haji dan Umrah untuk jamaah Indonesia.",
-  "start_url": "/index.html",
+  "start_url": "./index.html",
   "display": "standalone",
   "background_color": "#f8fafc",
   "theme_color": "#0f766e",

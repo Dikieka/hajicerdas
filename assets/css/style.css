@@ -126,6 +126,40 @@ img {
   font-size: 0.95rem;
   box-shadow: 0 6px 14px -6px rgba(201, 168, 106, 0.6);
 }
+.brand-logo {
+  height: 32px;
+  width: auto;
+  display: block;
+}
+.footer-logo {
+  height: 36px;
+  width: auto;
+  display: block;
+}
+.brand-name {
+  margin-left: 0.55rem;
+  font-family: var(--font-display);
+  font-size: 1.35rem;
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: 0.01em;
+  color: #fff;
+  white-space: nowrap;
+}
+.footer-brand-name {
+  margin-left: 0.55rem;
+  font-family: var(--font-display);
+  font-size: 1.3rem;
+  font-weight: 700;
+  line-height: 1;
+  color: #fff;
+  white-space: nowrap;
+}
+@media (max-width: 400px) {
+  .brand-name {
+    font-size: 1.1rem;
+  }
+}
 .nav-link {
   font-weight: 600;
   color: rgba(255, 255, 255, 0.82);
@@ -768,6 +802,29 @@ body.dark-mode .section.bg-white::before,
 }
 .lead-muted {
   color: var(--muted);
+}
+/* Link di dalam teks paragraf .lead-muted (mis. "buka halaman Waktu")
+   perlu underline supaya tidak cuma mengandalkan warna untuk dibedakan
+   dari teks di sekitarnya (accessibility: link-in-text-block). */
+.lead-muted a {
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+.lead-muted a:hover {
+  text-decoration-thickness: 2px;
+}
+/* Jarak badge eyebrow "Cerita Jamaah" ke judul di bawahnya sebelumnya
+   terlalu mepet (~3px, cuma mengandalkan line-height bawaan teks),
+   sehingga terasa kurang simetris dibanding jarak judul ke paragraf di
+   bawahnya. Disamakan ritme spacing-nya di sini. */
+#cerita-jemaah .eyebrow {
+  margin-bottom: 0.5rem;
+}
+/* Grup tombol "Bagikan Cerita" + "Lihat Semua" section Cerita Jamaah
+   sekarang cuma ada satu, diletakkan di akhir section (di bawah slider
+   cerita), berlaku sama di semua ukuran layar. */
+#cerita-jemaah .cerita-jemaah-actions {
+  margin-top: 0.5rem;
 }
 
 /* Hero: layered emerald field with a faint Islamic geometric motif and a
@@ -1444,6 +1501,34 @@ body.dark-mode .article-list-item:hover,
   grid-area: text;
   max-width: 640px;
 }
+/* Blok judul section (eyebrow + judul + deskripsi) yang dipakai berulang
+   di beberapa section landing page: Artikel Terbaru, Artikel Terpopuler,
+   Panduan Ibadah, Infografis, Video Edukasi, Short Edukasi. Formatnya
+   disamakan dengan pola di section "Cerita Jamaah" - eyebrow, judul,
+   lalu deskripsi, dengan jarak antar elemen yang konsisten. */
+.section-heading .eyebrow {
+  margin-bottom: 0.5rem;
+}
+.section-heading .section-title {
+  display: block;
+  margin-top: 0;
+  margin-bottom: 0.4rem;
+}
+.section-heading p.lead-muted {
+  margin-bottom: 0;
+}
+/* Salinan tombol "Lihat Semua" di akhir section (Artikel Terbaru,
+   Infografis, Video Edukasi, Short Edukasi) -- cuma dipakai di tampilan
+   mobile (lihat responsive.css), disembunyikan secara default di sini
+   supaya di tablet/desktop tetap pakai tombol yang di baris header. */
+.section-view-all-mobile {
+  display: none;
+}
+/* Sebelumnya eyebrow "Panduan Ibadah" cuma dipisah dari paragraf di
+   bawahnya oleh <br />, tanpa margin - jaraknya jadi nyaris 0px (badge
+   dan teks paragraf terlihat menempel, kurang rapi). Sekarang section
+   ini sudah punya judul (h2) di antaranya, spacing diatur lewat class
+   .section-heading di atas. */
 .panduan-cards {
   grid-area: cards;
 }
@@ -1652,8 +1737,8 @@ body.dark-mode .panduan-list-item:hover,
   font-size: 2rem;
 }
 /* Grid kartu "Topik yang Jarang Orang Tahu": 4 kolom di desktop (lg+),
-   2 kolom di tablet, lalu di layar mobile (<576px) berubah jadi satu
-   baris horizontal yang bisa digeser kiri/kanan (scroll-snap + swipe). */
+   2 kolom di tablet, lalu di layar mobile (<576px) berubah jadi list
+   vertikal satu kolom (lihat @media (max-width: 575.98px) di bawah). */
 .services-cards-row {
   display: flex;
   flex-wrap: wrap;
@@ -1670,39 +1755,43 @@ body.dark-mode .panduan-list-item:hover,
   }
 }
 @media (max-width: 575.98px) {
+  /* Mobile (<576px): bukan carousel lagi, tapi list vertikal satu kolom.
+     flex-direction diubah ke column, semua sisa properti carousel
+     (nowrap/overflow-x/scroll-snap) dilepas. */
   .services-cards-row {
+    flex-direction: column;
     flex-wrap: nowrap;
-    overflow-x: auto;
-    scroll-snap-type: x mandatory;
-    scroll-behavior: smooth;
-    scrollbar-width: none;
-    margin: -0.25rem -0.25rem -0.75rem;
-    padding: 0.25rem 0.25rem 0.75rem;
-    -webkit-overflow-scrolling: touch;
+    gap: 0.6rem;
+    overflow-x: visible;
+    scroll-snap-type: none;
+    scroll-behavior: auto;
+    margin: 0;
+    padding: 0;
   }
-  .services-cards-row::-webkit-scrollbar {
-    display: none;
-  }
-  /* Satu kartu penuh ke tengah per geseran (bukan 78% yang menyisakan
-     "bocoran" kartu berikutnya terlihat di tepi), dipadukan dengan tombol
-     panah kiri/kanan dari .hc-carousel-wrap di bawah. */
   .service-card-col {
     flex: 0 0 100%;
     max-width: 100%;
-    scroll-snap-align: center;
+    scroll-snap-align: none;
   }
 }
-/* Wrapper carousel khusus section "Seputar Haji & Umrah": tombol panah
-   cuma tampil di layar <576px (lihat class d-sm-none di HTML), karena di
-   >=576px kartunya sudah tampil sebagai grid biasa (tidak digeser). */
+/* Wrapper carousel khusus section "Seputar Haji & Umrah": di >=576px
+   kartunya tampil sebagai grid biasa (tidak digeser). Di <576px sudah
+   berupa list vertikal, jadi tombol panah (.hc-carousel-nav) disembunyikan
+   lewat override di bawah, dan padding kiri/kanan yang tadinya untuk
+   ruang tombol panah tidak lagi diperlukan. */
 .services-carousel-wrap {
   padding: 0;
 }
 @media (max-width: 575.98px) {
   .services-carousel-wrap .services-cards-row {
-    padding-left: 2.75rem;
-    padding-right: 2.75rem;
-    scroll-padding-inline: 2.75rem;
+    padding-left: 0;
+    padding-right: 0;
+    scroll-padding-inline: 0;
+  }
+  /* Tombol panah prev/next carousel dimatikan total di mobile (sebelumnya
+     ditampilkan lewat class d-sm-none di HTML untuk mode carousel lama). */
+  .services-carousel-wrap .hc-carousel-nav {
+    display: none !important;
   }
 }
 .service-card {
@@ -1820,6 +1909,71 @@ body.dark-mode .service-card-cta,
 .theme-dark-preload body .service-card-cta {
   color: #9fd3a8;
   border-top-color: rgba(216, 188, 129, 0.18);
+}
+/* Mobile (<576px): kartu vertikal (icon atas, label, desc, cta dengan
+   border-top) diubah jadi satu baris list horizontal lewat CSS Grid —
+   icon bulat kiri | judul+desc di tengah (2 baris) | chevron kanan.
+   Tidak perlu wrapper HTML tambahan: label & desc yang tadinya berdiri
+   sendiri cukup ditempatkan ke grid-area yang sama secara vertikal. */
+@media (max-width: 575.98px) {
+  .service-card {
+    display: grid;
+    grid-template-columns: 44px 1fr 18px;
+    grid-template-areas:
+      "icon label chevron"
+      "icon desc chevron";
+    align-items: center;
+    column-gap: 0.85rem;
+    row-gap: 0.1rem;
+    min-height: 56px;
+    width: 100%;
+    padding: 0.65rem 0.9rem;
+    border-radius: var(--radius);
+  }
+  .service-card:hover,
+  .service-card:focus-visible {
+    /* Hover-lift efek desktop tidak relevan untuk baris list mobile. */
+    transform: none;
+    box-shadow: none;
+  }
+  .service-card-icon {
+    grid-area: icon;
+    width: 40px;
+    height: 40px;
+    font-size: 1.2rem;
+    flex-shrink: 0;
+  }
+  .service-card-label {
+    grid-area: label;
+    font-size: 0.96rem;
+    line-height: 1.25;
+  }
+  .service-card-desc {
+    grid-area: desc;
+    font-size: 0.8rem;
+    line-height: 1.4;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  .service-card-cta {
+    grid-area: chevron;
+    margin-top: 0;
+    padding-top: 0;
+    border-top: none;
+    width: auto;
+    justify-content: flex-end;
+    color: var(--muted);
+  }
+  .service-card:hover .service-card-cta,
+  .service-card:focus-visible .service-card-cta {
+    color: var(--primary-strong);
+  }
+  .service-card:hover .service-card-cta i,
+  .service-card:focus-visible .service-card-cta i {
+    transform: none;
+  }
 }
 body.dark-mode .eyebrow,
 .theme-dark-preload body .eyebrow {
@@ -2205,6 +2359,15 @@ body.dark-mode .search-suggest-item:hover,
   border-bottom: 1px solid var(--border);
   position: relative;
   isolation: isolate;
+}
+/* Header halaman (breadcrumb + eyebrow + judul + deskripsi) dipakai di
+   hampir semua halaman selain beranda. Sebelumnya eyebrow menempel
+   langsung ke judul (gap 0px) karena tidak ada margin di antara
+   keduanya - hanya mengandalkan <h1> yang otomatis pindah baris tanpa
+   jarak tambahan. Beri jarak yang jelas dan konsisten di semua
+   halaman. */
+.page-header .eyebrow {
+  margin-bottom: 0.7rem;
 }
 .page-header::before {
   content: "";
