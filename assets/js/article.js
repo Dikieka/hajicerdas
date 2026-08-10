@@ -844,10 +844,18 @@ const renderCeritaDetail = async () => {
   // SEO: canonical/OG per cerita, sama seperti detail artikel & istilah.
   const storyPageUrl = `https://dikieka.github.io/hajicerdas/${HCRoutes.buildUrl("cerita", storyId)}`;
   const storyExcerpt = String(story.pengalaman || "").slice(0, 160);
+  // Foto cerita jemaah (kalau ada) dipakai sebagai gambar preview link
+  // share, sama seperti artikel. Kalau jamaah tidak melampirkan foto,
+  // fallback ke logo HajiCerdas supaya tetap ada gambar di preview.
+  const storyOgImage = story.foto
+    ? new URL(story.foto, "https://dikieka.github.io/hajicerdas/").href
+    : "https://dikieka.github.io/hajicerdas/assets/images/logo.png";
   document.getElementById("metaCanonical")?.setAttribute("href", storyPageUrl);
   document.getElementById("metaOgUrl")?.setAttribute("content", storyPageUrl);
   document.getElementById("metaOgTitle")?.setAttribute("content", `${story.judul} | Cerita Jamaah HajiCerdas`);
   document.getElementById("metaOgDescription")?.setAttribute("content", storyExcerpt);
+  document.getElementById("metaOgImage")?.setAttribute("content", storyOgImage);
+  document.getElementById("metaTwitterImage")?.setAttribute("content", storyOgImage);
   const related = getRelatedStories(allStories, story, 3);
   target.innerHTML = `
     <nav aria-label="Breadcrumb" class="mb-4">
