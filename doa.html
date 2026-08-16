@@ -16,6 +16,14 @@
           if (t === "dark") {
             document.documentElement.classList.add("theme-dark-preload");
           }
+          var hash = (location.hash || "").replace("#", "").toLowerCase();
+          if (hash === "tawaf") {
+            location.replace("doa-tawaf.html");
+          } else if (hash === "sai" || hash === "sa'i") {
+            location.replace("doa-sai.html");
+          } else if (hash === "arafah") {
+            location.replace("doa-arafah.html");
+          }
         } catch (e) {}
       })();
     </script>
@@ -23,10 +31,20 @@
     <title>Kumpulan Doa Haji dan Umrah | HajiCerdas</title>
     <meta
       name="description"
-      content="Kumpulan doa yang dianjurkan selama pelaksanaan ibadah haji dan umrah, lengkap dengan lafal Arab, latin, dan arti. Tawaf dipandu per putaran."
+      content="Kumpulan doa yang dianjurkan selama pelaksanaan ibadah haji dan umrah, lengkap dengan lafal Arab, latin, dan arti. Tersedia panduan Doa Tawaf, Doa Sa'i, dan Doa Arafah."
     />
-    <link rel="canonical" href="https://dikieka.github.io/hajicerdas/doa.html" /><meta property="og:type" content="website"><meta property="og:title" content="Kumpulan Doa Haji dan Umrah | HajiCerdas"><meta property="og:description" content="Panduan Haji dan Umrah HajiCerdas."><meta property="og:image" content="https://dikieka.github.io/hajicerdas/assets/images/logo.png"><meta property="og:url" content="https://dikieka.github.io/hajicerdas/doa.html"><meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="Kumpulan Doa Haji dan Umrah | HajiCerdas"><meta name="twitter:description" content="Panduan Haji dan Umrah HajiCerdas."><meta name="twitter:image" content="https://dikieka.github.io/hajicerdas/assets/images/logo.png">
-    <link rel="icon" href="assets/images/logo.png" type="image/png"><link rel="apple-touch-icon" href="assets/images/logo.png">
+    <link rel="canonical" href="https://dikieka.github.io/hajicerdas/doa.html" />
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Kumpulan Doa Haji dan Umrah | HajiCerdas">
+    <meta property="og:description" content="Panduan doa haji dan umrah lengkap dengan teks Arab, latin, dan artinya.">
+    <meta property="og:image" content="https://dikieka.github.io/hajicerdas/assets/images/logo.png">
+    <meta property="og:url" content="https://dikieka.github.io/hajicerdas/doa.html">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Kumpulan Doa Haji dan Umrah | HajiCerdas">
+    <meta name="twitter:description" content="Panduan doa haji dan umrah lengkap dengan teks Arab, latin, dan artinya.">
+    <meta name="twitter:image" content="https://dikieka.github.io/hajicerdas/assets/images/logo.png">
+    <link rel="icon" href="assets/images/logo.png" type="image/png">
+    <link rel="apple-touch-icon" href="assets/images/logo.png">
     <link rel="manifest" href="manifest.json" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -64,24 +82,102 @@
           </ol>
         </nav>
         <span class="eyebrow">Panduan Ibadah</span>
-        <h1 class="display-5 fw-bold">Kumpulan Doa</h1>
+        <h1 class="display-5 fw-bold">Kumpulan Doa Haji &amp; Umrah</h1>
         <p class="lead lead-muted">
-          Pilih tahapan ibadah di bawah. Untuk Tawaf, bacaan dipandu per putaran
-          lengkap dengan lafal Arab, latin, dan arti — cukup tekan Lanjut
-          setelah selesai membaca tiap putaran.
+          Pilih panduan doa ibadah di bawah ini. Dilengkapi lafal Arab, transliterasi Latin, terjemahan Indonesia, serta alur panduan bacaan interaktif yang nyaman dibaca selama ibadah.
         </p>
       </div>
     </header>
 
     <main id="main" class="section">
       <div class="container">
-        <div data-doa-tabs class="mb-2"><div class="skeleton"></div></div>
-        <div data-doa-content><div class="skeleton"></div></div>
+        <div class="row g-4">
+          <!-- Card 1: Doa Tawaf -->
+          <div class="col-12 col-md-6 col-lg-4">
+            <a
+              class="doa-feature-card doa-feature-card--tawaf fade-up"
+              href="doa-tawaf.html"
+            >
+              <span class="doa-feature-badge">7 Putaran Ka'bah</span>
+              <span class="doa-feature-icon">
+                <img
+                  src="assets/images/kaabah2.png"
+                  alt=""
+                  loading="lazy"
+                />
+              </span>
+              <span class="doa-feature-content">
+                <h2 class="doa-feature-title">Doa Tawaf</h2>
+                <p class="doa-feature-desc">
+                  Urutan bacaan doa dan dzikir tawaf dipandu putaran 1 hingga 7 dari Hajar Aswad sampai Rukun Yamani.
+                </p>
+                <span class="doa-feature-link"
+                  >Panduan Doa Tawaf
+                  <i class="bi bi-chevron-right ms-auto"></i
+                ></span>
+              </span>
+            </a>
+          </div>
+
+          <!-- Card 2: Doa Sa'i -->
+          <div class="col-12 col-md-6 col-lg-4">
+            <a
+              class="doa-feature-card doa-feature-card--sai fade-up"
+              href="doa-sai.html"
+            >
+              <span class="doa-feature-badge">Safa &amp; Marwah</span>
+              <span class="doa-feature-icon">
+                <img
+                  src="assets/images/kaabah.png"
+                  alt=""
+                  loading="lazy"
+                />
+              </span>
+              <span class="doa-feature-content">
+                <h2 class="doa-feature-title">Doa Sa'i</h2>
+                <p class="doa-feature-desc">
+                  Panduan bacaan doa dan dzikir lengkap selama 7 kali perjalanan antara bukit Safa dan bukit Marwah.
+                </p>
+                <span class="doa-feature-link"
+                  >Panduan Doa Sa'i
+                  <i class="bi bi-chevron-right ms-auto"></i
+                ></span>
+              </span>
+            </a>
+          </div>
+
+          <!-- Card 3: Doa Arafah -->
+          <div class="col-12 col-md-6 col-lg-4">
+            <a
+              class="doa-feature-card doa-feature-card--arafah fade-up"
+              href="doa-arafah.html"
+            >
+              <span class="doa-feature-badge">Puncak Ibadah Haji</span>
+              <span class="doa-feature-icon">
+                <img
+                  src="assets/images/kaabah2.png"
+                  alt=""
+                  loading="lazy"
+                />
+              </span>
+              <span class="doa-feature-content">
+                <h2 class="doa-feature-title">Doa Arafah</h2>
+                <p class="doa-feature-desc">
+                  Kumpulan doa mustajab dan dzikir pilihan saat melaksanakan wukuf di Padang Arafah.
+                </p>
+                <span class="doa-feature-link"
+                  >Panduan Doa Arafah
+                  <i class="bi bi-chevron-right ms-auto"></i
+                ></span>
+              </span>
+            </a>
+          </div>
+        </div>
 
         <div class="surface p-4 mt-4">
           <h2 class="h5 fw-bold">Lihat Juga</h2>
           <p class="lead-muted mb-3">
-            Pelajari urutan pelaksanaannya dan estimasi durasi setiap tahapan.
+            Pelajari urutan pelaksanaannya dan estimasi durasi setiap tahapan ibadah.
           </p>
           <div class="d-flex gap-2 flex-wrap">
             <a class="btn btn-outline-primary" href="tata-cara-haji.html"
@@ -117,8 +213,8 @@
     ></script>
     <script src="assets/js/api.js" defer></script>
     <script src="assets/js/auth.js" defer></script>
-    <script src="assets/js/seo-routes.js" defer></script><script src="assets/js/app.js" defer></script>
+    <script src="assets/js/seo-routes.js" defer></script>
+    <script src="assets/js/app.js" defer></script>
     <script src="assets/js/darkmode.js" defer></script>
-    <script src="assets/js/doa.js" defer></script>
   </body>
 </html>

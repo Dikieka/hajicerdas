@@ -545,17 +545,50 @@ const renderListMode = async (container, kategoriNama) => {
   renderCards("");
 };
 
-// === Tab utama (dibaca dari sheet DoaKategori) ======================
+// === Inisialisasi halaman doa ======================================
 
 const initDoaPage = async () => {
-  const tabsWrap = document.querySelector("[data-doa-tabs]");
   const content = document.querySelector("[data-doa-content]");
-  if (!tabsWrap || !content) return;
+  if (!content) return;
 
   syncDoaStickyOffset();
   window.addEventListener("resize", syncDoaStickyOffset);
   window.addEventListener("orientationchange", syncDoaStickyOffset);
   window.addEventListener("load", syncDoaStickyOffset);
+
+  // 1. Mode Halaman Mandiri (mis. doa-tawaf.html, doa-sai.html, doa-arafah.html)
+  const singleCategory =
+    content.getAttribute("data-kategori") ||
+    document.body.getAttribute("data-doa-kategori");
+
+  if (singleCategory) {
+    content.innerHTML = '<div class="skeleton"></div>';
+    const kategoriList = await HCApi.getDoaKategori();
+    const matched = kategoriList.find(
+      (k) =>
+        String(k.nama).toLowerCase() === singleCategory.trim().toLowerCase(),
+    );
+    const tipe = matched ? String(matched.tipe).toLowerCase() : "";
+
+    if (tipe === "putaran") {
+      await renderPutaranMode(content, matched ? matched.nama : singleCategory);
+      return;
+    }
+
+    const listRows = await HCApi.getDoaList(
+      matched ? matched.nama : singleCategory,
+    );
+    if (looksLikePutaranList(listRows)) {
+      await renderPutaranMode(content, matched ? matched.nama : singleCategory);
+      return;
+    }
+    await renderListMode(content, matched ? matched.nama : singleCategory);
+    return;
+  }
+
+  // 2. Mode Tab (Koleksi banyak kategori pada satu halaman)
+  const tabsWrap = document.querySelector("[data-doa-tabs]");
+  if (!tabsWrap) return;
 
   tabsWrap.innerHTML = '<div class="skeleton"></div>';
   const kategoriList = await HCApi.getDoaKategori();
@@ -572,9 +605,6 @@ const initDoaPage = async () => {
       await renderPutaranMode(content, item.nama);
       return;
     }
-    // tipe "list" di sheet, tapi cek dulu apakah datanya sebenarnya
-    // berpola putaran (lihat looksLikePutaranList) — kalau iya, tetap
-    // tampilkan sebagai mode putaran walau kolom `tipe` belum diubah.
     const listRows = await HCApi.getDoaList(item.nama);
     if (looksLikePutaranList(listRows)) {
       await renderPutaranMode(content, item.nama);

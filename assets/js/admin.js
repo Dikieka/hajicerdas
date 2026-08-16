@@ -546,6 +546,13 @@ const state = {
 
 const ADMIN_ROLES = ["super_admin", "penulis"];
 
+// Sheet konten yang boleh diakses role "penulis" (label tampilan: "Pengelola
+// Konten"). Dicerminkan juga di backend (appscript/Code.gs, PENULIS_CONTENT_SHEETS)
+// supaya pembatasan bukan cuma sembunyi-sembunyi di sidebar. Artikel &
+// Pengalaman (Cerita Jemaah) diutamakan -- ditampilkan di grup "Prioritas".
+const PENULIS_CONTENT_SHEETS = ["Artikel", "Pengalaman", "Kategori", "FAQ"];
+const PENULIS_PRIORITY_SHEETS = ["Artikel", "Pengalaman"];
+
 const els = {};
 const qs = (selector) => document.querySelector(selector);
 
@@ -591,9 +598,11 @@ const initLogin = async () => {
 const tryEnterApp = async () => {
   qs("#authCheckScreen").classList.add("d-none");
   qs("#adminApp").classList.remove("d-none");
+  renderUserChip();
   await loadDynamicCategories();
   try {
     buildSidebar();
+    navigateToView("dashboard");
   } catch (error) {
     console.error("Gagal membangun menu admin:", error);
     showAlert(
@@ -602,67 +611,279 @@ const tryEnterApp = async () => {
   }
 };
 
+const renderUserChip = () => {
+  const user = state.currentUser;
+  if (!user) return;
+  const initial = (user.nama || "?").trim().charAt(0).toUpperCase() || "?";
+  qs("#adminUserChipAvatar").textContent = initial;
+  qs("#adminUserChipName").textContent = user.nama || "-";
+  qs("#adminUserChipRole").textContent = roleLabel(user.role);
+  qs("#adminUserChip").classList.toggle(
+    "admin-user-chip--super",
+    user.role === "super_admin",
+  );
+};
+
 const showView = (view) => {
+  qs("#dashboardView").classList.toggle("d-none", view !== "dashboard");
   qs("#contentView").classList.toggle("d-none", view !== "content");
   qs("#usersView").classList.toggle("d-none", view !== "users");
   qs("#profileView").classList.toggle("d-none", view !== "profile");
 };
 
+// Dipakai bareng oleh tombol sidebar & kartu aksi cepat di dashboard supaya
+// tidak ada logika navigasi yang dobel.
+const setActiveSidebarButton = (matcher) => {
+  const sidebar = qs("#adminSidebar");
+  sidebar
+    .querySelectorAll("button[data-sheet], button[data-view]")
+    .forEach((button) => {
+      button.classList.toggle("active", matcher(button));
+    });
+};
+
+const navigateToSheet = (sheet) => {
+  setActiveSidebarButton((button) => button.dataset.sheet === sheet);
+  showView("content");
+  selectSheet(sheet);
+  qs("#adminSidebar").classList.remove("show");
+};
+
+const navigateToView = (view) => {
+  setActiveSidebarButton((button) => button.dataset.view === view);
+  showView(view);
+  if (view === "users") loadUsers();
+  if (view === "profile") loadProfile();
+  if (view === "dashboard") loadDashboard();
+  qs("#adminSidebar").classList.remove("show");
+};
+
+// === Sidebar: tampilan berbeda untuk Super Admin vs Pengelola Konten ===
+// Super Admin: grup "Prioritas" berisi Pengguna & Pesanan (paling sering
+// dipakai), lalu seluruh grup konten/panduan/info/layanan lain di bawahnya.
+// Pengelola Konten: HANYA melihat menu konten (Artikel & Pengalaman
+// diutamakan di grup "Prioritas", sisanya di "Konten Lainnya") -- tidak ada
+// menu Pengguna/Pesanan/Layanan/Panduan/Info Praktis sama sekali, sejalan
+// dengan pembatasan yang juga ditegakkan di backend (requireContentAccess_).
 const buildSidebar = () => {
   const sidebar = qs("#adminSidebar");
-  const groups = {};
-  Object.entries(ADMIN_SCHEMA).forEach(([sheet, config]) => {
-    groups[config.group] = groups[config.group] || [];
-    groups[config.group].push({ sheet, ...config });
-  });
-  let html = Object.entries(groups)
-    .map(
-      ([group, items]) => `
-    <div class="admin-sidebar-group-title">${group}</div>
-    ${items.map((item) => `<button type="button" data-sheet="${item.sheet}"><i class="bi ${item.icon}"></i> ${item.label}</button>`).join("")}
-  `,
-    )
-    .join("");
+  const isSuperAdmin = state.currentUser && state.currentUser.role === "super_admin";
+
+  let html = `<button type="button" data-view="dashboard"><i class="bi bi-grid-1x2-fill"></i> Beranda</button>`;
+
+  if (isSuperAdmin) {
+    html += `
+      <div class="admin-sidebar-group-title admin-sidebar-group-title--priority"><i class="bi bi-star-fill"></i> Prioritas</div>
+      <button type="button" data-view="users" class="admin-sidebar-priority"><i class="bi bi-people-fill"></i> Pengguna</button>
+      <button type="button" data-sheet="Pesanan" class="admin-sidebar-priority"><i class="bi bi-cart-check-fill"></i> Pesanan Masuk</button>
+    `;
+    const groups = {};
+    Object.entries(ADMIN_SCHEMA).forEach(([sheet, config]) => {
+      if (sheet === "Pesanan") return; // sudah tampil di grup Prioritas di atas
+      groups[config.group] = groups[config.group] || [];
+      groups[config.group].push({ sheet, ...config });
+    });
+    html += Object.entries(groups)
+      .map(
+        ([group, items]) => `
+      <div class="admin-sidebar-group-title">${group}</div>
+      ${items.map((item) => `<button type="button" data-sheet="${item.sheet}"><i class="bi ${item.icon}"></i> ${item.label}</button>`).join("")}
+    `,
+      )
+      .join("");
+  } else {
+    const priorityItems = PENULIS_PRIORITY_SHEETS.map(
+      (sheet) => ({ sheet, ...ADMIN_SCHEMA[sheet] }),
+    );
+    const otherItems = PENULIS_CONTENT_SHEETS.filter(
+      (sheet) => !PENULIS_PRIORITY_SHEETS.includes(sheet),
+    ).map((sheet) => ({ sheet, ...ADMIN_SCHEMA[sheet] }));
+    html += `
+      <div class="admin-sidebar-group-title admin-sidebar-group-title--priority"><i class="bi bi-star-fill"></i> Prioritas</div>
+      ${priorityItems.map((item) => `<button type="button" data-sheet="${item.sheet}" class="admin-sidebar-priority"><i class="bi ${item.icon}"></i> ${item.label}</button>`).join("")}
+      <div class="admin-sidebar-group-title">Konten Lainnya</div>
+      ${otherItems.map((item) => `<button type="button" data-sheet="${item.sheet}"><i class="bi ${item.icon}"></i> ${item.label}</button>`).join("")}
+    `;
+  }
+
   html += `
     <div class="admin-sidebar-group-title">Akun</div>
     <button type="button" data-view="profile"><i class="bi bi-person-circle"></i> Profil Saya</button>
   `;
-  // Menu "Pengguna" khusus super_admin: BUKAN bagian dari ADMIN_SCHEMA/CRUD
-  // generik, karena sheet Users memang tidak dikelola lewat aksi
-  // admin_list/create/update/delete di backend (supaya password_hash tidak
-  // pernah ikut terkirim lewat aksi generik itu). Ditangani terpisah lewat
-  // aksi users_list/users_create/users_update/users_delete.
-  if (state.currentUser && state.currentUser.role === "super_admin") {
-    html += `
-    <div class="admin-sidebar-group-title">Manajemen</div>
-    <button type="button" data-view="users"><i class="bi bi-people"></i> Pengguna</button>
-  `;
-  }
+
   sidebar.innerHTML = html;
   sidebar.querySelectorAll("button[data-sheet]").forEach((button) => {
-    button.addEventListener("click", () => {
-      sidebar
-        .querySelectorAll("button[data-sheet], button[data-view]")
-        .forEach((b) => b.classList.remove("active"));
-      button.classList.add("active");
-      showView("content");
-      selectSheet(button.dataset.sheet);
-      sidebar.classList.remove("show");
-    });
+    button.addEventListener("click", () => navigateToSheet(button.dataset.sheet));
   });
   sidebar.querySelectorAll("button[data-view]").forEach((button) => {
-    button.addEventListener("click", () => {
-      sidebar
-        .querySelectorAll("button[data-sheet], button[data-view]")
-        .forEach((b) => b.classList.remove("active"));
-      button.classList.add("active");
-      const view = button.dataset.view;
-      showView(view);
-      if (view === "users") loadUsers();
-      if (view === "profile") loadProfile();
-      sidebar.classList.remove("show");
-    });
+    button.addEventListener("click", () => navigateToView(button.dataset.view));
   });
+};
+
+// === Beranda / Dashboard: ringkasan berbeda untuk Super Admin vs
+// Pengelola Konten, dibangun dari data yang sama yang dipakai menu konten
+// (HCApi.adminList) supaya tidak perlu endpoint baru di backend. ===
+const statCard = (icon, value, label, tone = "primary") => `
+  <div class="admin-stat-card admin-stat-card--${tone}">
+    <div class="admin-stat-card-icon"><i class="bi ${icon}"></i></div>
+    <div class="admin-stat-card-value">${value}</div>
+    <div class="admin-stat-card-label">${label}</div>
+  </div>
+`;
+
+const quickAction = (view, sheet, icon, title, desc) => `
+  <button type="button" class="admin-quick-card" ${view ? `data-dash-view="${view}"` : `data-dash-sheet="${sheet}"`}>
+    <span class="admin-quick-card-icon"><i class="bi ${icon}"></i></span>
+    <span class="admin-quick-card-body">
+      <span class="admin-quick-card-title">${title}</span>
+      <span class="admin-quick-card-desc">${desc}</span>
+    </span>
+    <i class="bi bi-arrow-right admin-quick-card-arrow"></i>
+  </button>
+`;
+
+const wireDashboardActions = () => {
+  qs("#dashboardQuick")
+    .querySelectorAll("[data-dash-view]")
+    .forEach((el) =>
+      el.addEventListener("click", () => navigateToView(el.dataset.dashView)),
+    );
+  qs("#dashboardQuick")
+    .querySelectorAll("[data-dash-sheet]")
+    .forEach((el) =>
+      el.addEventListener("click", () => navigateToSheet(el.dataset.dashSheet)),
+    );
+  qs("#dashboardRecent")
+    .querySelectorAll("[data-dash-sheet]")
+    .forEach((el) =>
+      el.addEventListener("click", () => navigateToSheet(el.dataset.dashSheet)),
+    );
+};
+
+const pesananRow = (row) => `
+  <button type="button" class="admin-recent-row" data-dash-sheet="Pesanan">
+    <span class="admin-recent-row-icon admin-recent-row-icon--warning"><i class="bi bi-hourglass-split"></i></span>
+    <span class="admin-recent-row-body">
+      <span class="admin-recent-row-title">${escapeHtml(row.nama_pemesan || "Tanpa nama")}</span>
+      <span class="admin-recent-row-meta">${escapeHtml(row.layanan || "-")} &middot; ${escapeHtml(row.whatsapp_pemesan || "-")}</span>
+    </span>
+    <span class="badge-soft">Menunggu</span>
+  </button>
+`;
+
+const contentRow = (row) => `
+  <button type="button" class="admin-recent-row" data-dash-sheet="${row.__type === "Artikel" ? "Artikel" : "Pengalaman"}">
+    <span class="admin-recent-row-icon"><i class="bi ${row.__type === "Artikel" ? "bi-newspaper" : "bi-people"}"></i></span>
+    <span class="admin-recent-row-body">
+      <span class="admin-recent-row-title">${escapeHtml(row.judul || "Tanpa judul")}</span>
+      <span class="admin-recent-row-meta">${row.__type} &middot; ${escapeHtml(row.status || "-")}</span>
+    </span>
+    <i class="bi bi-chevron-right lead-muted"></i>
+  </button>
+`;
+
+const loadDashboard = async () => {
+  const user = state.currentUser;
+  const isSuperAdmin = user.role === "super_admin";
+  qs("#dashboardGreeting").textContent = `Halo, ${user.nama || ""}`;
+  qs("#dashboardSubtitle").textContent = isSuperAdmin
+    ? "Ringkasan Pengguna & Pesanan masuk, plus seluruh konten HajiCerdas."
+    : "Ringkasan Artikel & Cerita Jemaah yang Anda kelola.";
+  const statsGrid = qs("#dashboardStats");
+  const quick = qs("#dashboardQuick");
+  const recentWrap = qs("#dashboardRecent");
+  statsGrid.innerHTML = `<div class="text-center py-5 w-100"><div class="spinner-border text-primary"></div></div>`;
+  quick.innerHTML = "";
+  recentWrap.innerHTML = "";
+
+  try {
+    if (isSuperAdmin) {
+      const [users, pesanan, artikel, pengalaman] = await Promise.all([
+        HCApi.usersList(state.token),
+        HCApi.adminList("Pesanan", state.token),
+        HCApi.adminList("Artikel", state.token),
+        HCApi.adminList("Pengalaman", state.token),
+      ]);
+      const pendingCount = pesanan.filter((p) => p.status === "pending").length;
+      const selesaiCount = pesanan.filter((p) => p.status === "selesai").length;
+      const memberCount = users.filter((u) => u.role === "member").length;
+      statsGrid.innerHTML = [
+        statCard("bi-people-fill", users.length, "Total Pengguna", "primary"),
+        statCard("bi-person-check-fill", memberCount, "Member Terdaftar", "gold"),
+        statCard("bi-hourglass-split", pendingCount, "Pesanan Menunggu", "warning"),
+        statCard("bi-check-circle-fill", selesaiCount, "Pesanan Selesai", "success"),
+        statCard("bi-newspaper", artikel.length, "Total Artikel", "muted"),
+        statCard("bi-people", pengalaman.length, "Total Cerita Jemaah", "muted"),
+      ].join("");
+      quick.innerHTML = [
+        quickAction(
+          "users",
+          null,
+          "bi-people-fill",
+          "Kelola Pengguna",
+          "Atur akun Super Admin, Pengelola Konten, dan Member.",
+        ),
+        quickAction(
+          null,
+          "Pesanan",
+          "bi-cart-check-fill",
+          "Kelola Pesanan",
+          "Tinjau & proses pesanan Badal Umroh, Wakaf, dan Panitia.",
+        ),
+      ].join("");
+      const recentPending = pesanan
+        .filter((p) => p.status === "pending")
+        .slice(0, 5);
+      recentWrap.innerHTML = recentPending.length
+        ? `<h2 class="h6 fw-bold mb-3"><i class="bi bi-hourglass-split text-warning"></i> Pesanan Menunggu Diproses</h2>${recentPending.map(pesananRow).join("")}`
+        : `<p class="lead-muted small mb-0">Tidak ada pesanan yang menunggu diproses saat ini.</p>`;
+    } else {
+      const [artikel, pengalaman] = await Promise.all([
+        HCApi.adminList("Artikel", state.token),
+        HCApi.adminList("Pengalaman", state.token),
+      ]);
+      const artikelPublish = artikel.filter((a) => a.status === "Publish").length;
+      const artikelDraft = artikel.filter((a) => a.status === "Draft").length;
+      const pengalamanPublish = pengalaman.filter(
+        (a) => a.status === "Publish",
+      ).length;
+      const pengalamanDraft = pengalaman.filter((a) => a.status === "Draft").length;
+      statsGrid.innerHTML = [
+        statCard("bi-newspaper", artikel.length, "Total Artikel", "primary"),
+        statCard("bi-check-circle-fill", artikelPublish, "Artikel Publish", "success"),
+        statCard("bi-pencil-square", artikelDraft, "Artikel Draft", "warning"),
+        statCard("bi-people-fill", pengalaman.length, "Total Cerita Jemaah", "gold"),
+        statCard("bi-check-circle", pengalamanPublish, "Cerita Publish", "success"),
+        statCard("bi-pencil", pengalamanDraft, "Cerita Draft", "warning"),
+      ].join("");
+      quick.innerHTML = [
+        quickAction(
+          null,
+          "Artikel",
+          "bi-file-earmark-plus-fill",
+          "Tulis Artikel Baru",
+          "Tambahkan artikel edukasi seputar haji & umrah.",
+        ),
+        quickAction(
+          null,
+          "Pengalaman",
+          "bi-chat-heart-fill",
+          "Tulis Cerita Jemaah",
+          "Bagikan pengalaman & tips dari jemaah.",
+        ),
+      ].join("");
+      const recentItems = [
+        ...artikel.map((a) => ({ ...a, __type: "Artikel" })),
+        ...pengalaman.map((a) => ({ ...a, __type: "Cerita Jemaah" })),
+      ].slice(-6).reverse();
+      recentWrap.innerHTML = recentItems.length
+        ? `<h2 class="h6 fw-bold mb-3"><i class="bi bi-clock-history"></i> Konten Terbaru</h2>${recentItems.map(contentRow).join("")}`
+        : `<p class="lead-muted small mb-0">Belum ada konten. Mulai tulis artikel atau cerita jemaah pertama Anda.</p>`;
+    }
+  } catch (error) {
+    statsGrid.innerHTML = `<div class="alert alert-danger py-2 small w-100">${error.message || "Gagal memuat ringkasan dashboard."}</div>`;
+  }
+  wireDashboardActions();
 };
 
 const selectSheet = async (sheet) => {

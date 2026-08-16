@@ -66,6 +66,20 @@
             >HajiCerdas <span class="badge-soft ms-2">Admin</span></a
           >
           <div class="d-flex align-items-center gap-2">
+            <div class="admin-user-chip d-none d-sm-flex" id="adminUserChip">
+              <span class="admin-user-chip-avatar" id="adminUserChipAvatar"
+                >?</span
+              >
+              <span class="admin-user-chip-info">
+                <span class="admin-user-chip-name" id="adminUserChipName"
+                  >Memuat...</span
+                >
+                <span
+                  class="admin-user-chip-role"
+                  id="adminUserChipRole"
+                ></span>
+              </span>
+            </div>
             <button
               class="btn btn-outline-light btn-sm"
               type="button"
@@ -98,7 +112,24 @@
         <aside class="admin-sidebar" id="adminSidebar"></aside>
 
         <main class="admin-content">
-          <div id="contentView">
+          <div id="dashboardView">
+            <div class="mb-4">
+              <span class="eyebrow">Beranda</span>
+              <h1 class="h4 fw-bold mb-1" id="dashboardGreeting">
+                Selamat datang
+              </h1>
+              <p class="lead-muted small mb-0" id="dashboardSubtitle"></p>
+            </div>
+            <div class="admin-stat-grid" id="dashboardStats">
+              <div class="text-center py-5 w-100">
+                <div class="spinner-border text-primary"></div>
+              </div>
+            </div>
+            <div class="admin-quick-grid" id="dashboardQuick"></div>
+            <div class="surface p-3 p-md-4" id="dashboardRecent"></div>
+          </div>
+
+          <div id="contentView" class="d-none">
             <div
               class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3"
             >

@@ -58,6 +58,10 @@ const STATIC_PAGES = [
   { loc: "/kurs.html", priority: "0.7" },
   { loc: "/peta.html", priority: "0.7" },
   { loc: "/video.html", priority: "0.6" },
+  { loc: "/doa.html", priority: "0.8" },
+  { loc: "/doa-tawaf.html", priority: "0.8" },
+  { loc: "/doa-sai.html", priority: "0.8" },
+  { loc: "/doa-arafah.html", priority: "0.8" },
 ];
 
 const fetchJson = async (action) => {

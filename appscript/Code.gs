@@ -480,8 +480,9 @@ function doPost(e) {
       });
     }
     if (action === "admin_list") {
-      requireRole_(payload, ["super_admin", "penulis"]);
+      const actor = requireRole_(payload, ["super_admin", "penulis"]);
       const sheet = requireManagedSheet(payload.sheet);
+      requireContentAccess_(actor, sheet);
       return jsonResponse({
         success: true,
         data: getRows(sheet),
@@ -493,8 +494,9 @@ function doPost(e) {
       return jsonResponse({ success: true, data: MANAGED_SHEETS });
     }
     if (action === "create") {
-      requireRole_(payload, ["super_admin", "penulis"]);
+      const actor = requireRole_(payload, ["super_admin", "penulis"]);
       const sheet = requireManagedSheet(payload.sheet);
+      requireContentAccess_(actor, sheet);
       const row = createRow(sheet, payload.data || {});
       return jsonResponse({
         success: true,
@@ -503,8 +505,9 @@ function doPost(e) {
       });
     }
     if (action === "update") {
-      requireRole_(payload, ["super_admin", "penulis"]);
+      const actor = requireRole_(payload, ["super_admin", "penulis"]);
       const sheet = requireManagedSheet(payload.sheet);
+      requireContentAccess_(actor, sheet);
       const row = updateRow(sheet, payload.id, payload.data || {});
       return jsonResponse({
         success: true,
@@ -513,8 +516,9 @@ function doPost(e) {
       });
     }
     if (action === "delete") {
-      requireRole_(payload, ["super_admin", "penulis"]);
+      const actor = requireRole_(payload, ["super_admin", "penulis"]);
       const sheet = requireManagedSheet(payload.sheet);
+      requireContentAccess_(actor, sheet);
       deleteRow(sheet, payload.id);
       return jsonResponse({ success: true, message: "Data berhasil dihapus." });
     }
@@ -727,7 +731,7 @@ function doPost(e) {
     }
     // === Pesanan (order dari member dashboard) ===
     if (action === "pesanan_list") {
-      requireRole_(payload, ["super_admin", "penulis", "member"]);
+      requireRole_(payload, ["super_admin", "member"]);
       const all = getRows("Pesanan");
       if (payload.user_id) {
         const filtered = all.filter(function (r) {
@@ -738,7 +742,7 @@ function doPost(e) {
       return jsonResponse({ success: true, data: all });
     }
     if (action === "pesanan_create") {
-      requireRole_(payload, ["super_admin", "penulis", "member"]);
+      requireRole_(payload, ["super_admin", "member"]);
       const sheet = getSpreadsheet().getSheetByName("Pesanan");
       if (!sheet) throw new Error("Sheet Pesanan tidak ditemukan.");
       const id = "psn-" + new Date().getTime();
@@ -760,7 +764,7 @@ function doPost(e) {
       });
     }
     if (action === "pesanan_update") {
-      requireRole_(payload, ["super_admin", "penulis"]);
+      requireRole_(payload, ["super_admin"]);
       const sheet = getSpreadsheet().getSheetByName("Pesanan");
       if (!sheet) throw new Error("Sheet Pesanan tidak ditemukan.");
       const headers = findHeaderRow(sheet);
@@ -838,6 +842,24 @@ function requireManagedSheet(sheetName) {
     );
   }
   return sheetName;
+}
+
+// Role "penulis" (label tampilan: "Pengelola Konten") hanya boleh
+// membuat/mengubah/menghapus/melihat sheet konten murni -- TIDAK boleh
+// menyentuh Pesanan, Layanan, PetugasBadal, Peta, Download, Video, dsb
+// walau tahu nama sheet-nya (mis. lewat DevTools), supaya pembatasan akses
+// di Admin Panel (sidebar) benar-benar ditegakkan di server, bukan cuma
+// disembunyikan di tampilan. super_admin selalu bebas mengakses semua sheet.
+var PENULIS_CONTENT_SHEETS = ["Artikel", "Pengalaman", "Kategori", "FAQ"];
+function requireContentAccess_(user, sheetName) {
+  if (
+    user.role === "penulis" &&
+    PENULIS_CONTENT_SHEETS.indexOf(sheetName) === -1
+  ) {
+    throw new Error(
+      "Pengelola Konten hanya dapat mengakses menu Artikel, Cerita Jemaah, Kategori, dan FAQ.",
+    );
+  }
 }
 
 function getSpreadsheet() {
