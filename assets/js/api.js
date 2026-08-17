@@ -1,11 +1,11 @@
 const HC_CONFIG = {
   appsScriptUrl:
-    "https://script.google.com/macros/s/AKfycbwmA9_2u401HLsSkMx9ofK6LNF7QqY350UolsOxqO4h9ApMdK7hCydopZgzlfJ5Psohgw/exec",
+    "https://script.google.com/macros/s/AKfycbw0MxKKAQ7yE3xPE8M_AT2uRDBd5q_4AvBtkVGPZe-QJTx3-ViXHyPm0OtsL6-QRAXcjA/exec",
   siteUrl: "https://dikieka.github.io/hajicerdas",
   // Nomor WhatsApp admin (format 62xxxxxxxxxx, tanpa +/spasi/tanda hubung).
   // Satu-satunya tempat pengaturan — dipakai di badal.html, wakaf-quran.html,
   // rekrutmen-petugas.html, dan akun.html supaya cukup diganti di sini saja.
-  waNumber: "6285732674201",
+  waNumber: "#",
 };
 
 const fallbackArticles = [
@@ -1363,18 +1363,6 @@ const HCApi = {
       return getInstagramThumbnail(item.sourceUrl);
     return "";
   },
-  async getPanduanWaktu() {
-    try {
-      const data = await requestJson({ action: "panduanwaktu" });
-      const rows = onlyPublished(data.data || data);
-      return rows.length
-        ? rows.map((row) => [row.aktivitas, row.durasi, row.catatan])
-        : window.HCContent.worshipDurations;
-    } catch (error) {
-      console.info(error.message);
-      return window.HCContent.worshipDurations;
-    }
-  },
   async getPersiapan() {
     try {
       const data = await requestJson({ action: "persiapan" });
@@ -1990,6 +1978,42 @@ const HCApi = {
     if (!result.success)
       throw new Error(result.message || "Gagal mengunggah gambar.");
     return result.url;
+  },
+  // Upload generik untuk video/audio (dan gambar juga bisa) ke Cloudinary
+  // lewat action "uploadmedia" di Code.gs. Beda dengan adminUploadImage di
+  // atas, fungsi ini mengembalikan objek { url, resourceType, format,
+  // bytes, durationSeconds } supaya pemanggilnya tahu jenis file hasil
+  // upload (berguna untuk menampilkan <video>/<audio>/<img> yang sesuai).
+  async adminUploadMedia(file, token) {
+    const base64 = await new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(String(reader.result).split(",")[1]);
+      reader.onerror = () => reject(new Error("Gagal membaca file."));
+      reader.readAsDataURL(file);
+    });
+    const response = await fetch(HC_CONFIG.appsScriptUrl, {
+      method: "POST",
+      body: JSON.stringify({
+        action: "uploadmedia",
+        filename: file.name,
+        mimeType: file.type,
+        base64,
+        token,
+      }),
+    });
+    const result = await parseJsonSafely(response);
+    if (!result.success)
+      throw new Error(result.message || "Gagal mengunggah media.");
+    return result.media;
+  },
+  // Hapus satu file dari Cloudinary lewat action "deletemedia" di
+  // Code.gs. Dipakai tombol "Hapus file" di field gambar/video/audio.
+  async adminDeleteMedia(url, token) {
+    if (!url) return { success: true, skipped: true };
+    const data = await requestJsonPost({ action: "deletemedia", url, token });
+    if (!data.success)
+      throw new Error(data.message || "Gagal menghapus file.");
+    return data;
   },
   // === Manajemen pengguna (khusus role super_admin) ===
   async usersList(token) {

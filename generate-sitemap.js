@@ -51,7 +51,6 @@ const STATIC_PAGES = [
   { loc: "/tata-cara-haji.html", priority: "0.9" },
   { loc: "/tata-cara-umrah.html", priority: "0.9" },
   { loc: "/waktu.html", priority: "0.7" },
-  { loc: "/panduan-waktu.html", priority: "0.7" },
   { loc: "/download.html", priority: "0.7" },
   { loc: "/persiapan.html", priority: "0.8" },
   { loc: "/budget.html", priority: "0.7" },

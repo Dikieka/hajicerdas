@@ -102,9 +102,6 @@ const renderGenericList = async () => {
   for (const target of targets) {
     const key = target.dataset.contentList;
     let data = window.HCContent ? window.HCContent[key] || [] : [];
-    if (key === "worshipDurations") {
-      data = await HCApi.getPanduanWaktu();
-    }
     target.innerHTML = data
       .map((item) => {
         const title = Array.isArray(item) ? item[0] : item;

@@ -37,7 +37,6 @@
       '<a class="d-block" href="tata-cara-umrah.html">Tata Cara Umrah</a>' +
       '<a class="d-block" href="doa.html">Kumpulan Doa</a>' +
       '<a class="d-block" href="persiapan.html">Persiapan</a>' +
-      '<a class="d-block" href="panduan-waktu.html">Waktu Ibadah</a>' +
       '<a class="d-block" href="waktu.html#jadwal">Jadwal Shalat &amp; Waktu</a>' +
       "</div>" +
       '<div class="col-6 col-lg-2">' +

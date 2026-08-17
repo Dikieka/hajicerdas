@@ -257,22 +257,6 @@ const ADMIN_SCHEMA = {
       },
     ],
   },
-  PanduanWaktu: {
-    label: "Panduan Waktu Ibadah",
-    icon: "bi-hourglass-split",
-    group: "Panduan",
-    fields: [
-      { key: "aktivitas", label: "Aktivitas", type: "text", required: true },
-      { key: "durasi", label: "Estimasi Durasi", type: "text" },
-      { key: "catatan", label: "Catatan", type: "textarea", rows: 2 },
-      {
-        key: "status",
-        label: "Status",
-        type: "select",
-        options: ["Publish", "Draft"],
-      },
-    ],
-  },
   Persiapan: {
     label: "Checklist Persiapan",
     icon: "bi-suitcase2",
@@ -1012,6 +996,9 @@ const openForm = (config, row = null) => {
     .filter((field) => field.type === "image")
     .forEach((field) => wireImageField(field));
   config.fields
+    .filter((field) => field.type === "video" || field.type === "audio")
+    .forEach((field) => wireMediaField(field));
+  config.fields
     .filter((field) => field.type === "textarea" && field.richHtml)
     .forEach((field) => wireHtmlEditorField(field));
   new bootstrap.Modal(qs("#formModal")).show();
@@ -1067,13 +1054,90 @@ const renderFieldInput = (field, row) => {
           <img class="image-field-preview" src="${value || "assets/images/article-placeholder.svg"}" alt="Pratinjau">
           <div class="flex-grow-1" style="min-width:220px;">
             <input class="form-control form-control-sm mb-2" type="text" name="${field.key}" value="${escapeHtml(value)}" placeholder="Tempel link gambar (https://...)">
-            <input class="form-control form-control-sm" type="file" accept="image/*" data-image-upload>
+            <div class="d-flex gap-2 align-items-center">
+              <input class="form-control form-control-sm" type="file" accept="image/*" data-image-upload>
+              <button type="button" class="btn btn-sm btn-outline-danger flex-shrink-0" data-media-delete-btn ${value ? "" : "disabled"} title="Hapus file dari Cloudinary"><i class="bi bi-trash"></i></button>
+            </div>
+            <div class="small text-muted mt-1 d-none" data-media-progress><span class="spinner-border spinner-border-sm"></span> Mengunggah ke Cloudinary...</div>
           </div>
         </div>
-        <div class="form-text">Tempel link gambar dari internet (termasuk link share Google Drive), atau unggah file langsung dari perangkat.</div>
+        <div class="form-text">Tempel link gambar dari internet (termasuk link share Google Drive), atau unggah file langsung dari perangkat. Tombol <i class="bi bi-trash"></i> menghapus file dari Cloudinary (hanya aktif untuk file hasil upload, bukan link eksternal).</div>
+      </div>`;
+  }
+  if (field.type === "video" || field.type === "audio") {
+    const accept = field.type === "video" ? "video/*" : "audio/*";
+    const previewTag =
+      field.type === "video"
+        ? `<video class="media-field-preview" controls style="max-width:260px;max-height:160px;background:#000;" ${value ? `src="${escapeHtml(value)}"` : ""}></video>`
+        : `<audio class="media-field-preview" controls style="width:260px;" ${value ? `src="${escapeHtml(value)}"` : ""}></audio>`;
+    return `
+      <div class="mb-3" data-media-field="${field.key}">
+        <label class="form-label small fw-bold">${field.label}</label>
+        <div class="d-flex align-items-center gap-3 flex-wrap">
+          ${previewTag}
+          <div class="flex-grow-1" style="min-width:220px;">
+            <input class="form-control form-control-sm mb-2" type="text" name="${field.key}" value="${escapeHtml(value)}" placeholder="Tempel link ${field.type === "video" ? "video" : "audio"} (https://...)">
+            <div class="d-flex gap-2 align-items-center">
+              <input class="form-control form-control-sm" type="file" accept="${accept}" data-media-upload>
+              <button type="button" class="btn btn-sm btn-outline-danger flex-shrink-0" data-media-delete-btn ${value ? "" : "disabled"} title="Hapus file dari Cloudinary"><i class="bi bi-trash"></i></button>
+            </div>
+            <div class="small text-muted mt-1 d-none" data-media-progress><span class="spinner-border spinner-border-sm"></span> Mengunggah ke Cloudinary...</div>
+          </div>
+        </div>
+        <div class="form-text">Tempel link ${field.type === "video" ? "video" : "audio"} dari internet, atau unggah file langsung dari perangkat (otomatis tersimpan ke Cloudinary). Tombol <i class="bi bi-trash"></i> menghapus file dari Cloudinary (hanya aktif untuk file hasil upload, bukan link eksternal).</div>
       </div>`;
   }
   return `<div class="mb-3"><label class="form-label small fw-bold">${field.label}</label><input class="form-control" type="text" name="${field.key}" value="${escapeHtml(value)}" ${requiredAttr}>${hint}</div>`;
+};
+
+// Cek di sisi client apakah sebuah URL adalah hasil upload Cloudinary
+// (dipakai untuk menentukan apakah tombol "Hapus file" perlu memanggil
+// API penghapusan, atau cukup mengosongkan field kalau isinya link
+// eksternal seperti YouTube/Drive).
+const isCloudinaryUrlClient_ = (url) =>
+  typeof url === "string" && url.indexOf("res.cloudinary.com/") !== -1;
+
+// Dipakai bersama oleh wireImageField & wireMediaField: mengaktifkan
+// tombol "Hapus file". Kalau isi field adalah URL Cloudinary, tombol
+// memanggil action "deletemedia" (file benar-benar dihapus dari akun
+// Cloudinary) baru mengosongkan field. Kalau isinya link eksternal
+// (bukan upload Cloudinary), tombol cukup mengosongkan field tanpa
+// memanggil API apa pun.
+const wireMediaDeleteButton = (wrapper, urlInput, preview, placeholderSrc) => {
+  const deleteBtn = wrapper.querySelector("[data-media-delete-btn]");
+  if (!deleteBtn) return;
+  const syncState = () => {
+    deleteBtn.disabled = !urlInput.value;
+  };
+  urlInput.addEventListener("input", syncState);
+  syncState();
+  deleteBtn.addEventListener("click", async () => {
+    const currentUrl = urlInput.value;
+    if (!currentUrl) return;
+    if (!isCloudinaryUrlClient_(currentUrl)) {
+      urlInput.value = "";
+      preview.src = placeholderSrc;
+      syncState();
+      return;
+    }
+    if (
+      !confirm(
+        "Hapus file ini dari Cloudinary? File akan hilang permanen dan tidak bisa dikembalikan.",
+      )
+    )
+      return;
+    deleteBtn.disabled = true;
+    try {
+      await HCApi.adminDeleteMedia(currentUrl, state.token);
+      urlInput.value = "";
+      preview.src = placeholderSrc;
+      showToast("File berhasil dihapus dari Cloudinary.");
+    } catch (error) {
+      showToast(error.message || "Gagal menghapus file.", "danger");
+    } finally {
+      syncState();
+    }
+  });
 };
 
 const wireImageField = (field) => {
@@ -1102,6 +1166,49 @@ const wireImageField = (field) => {
       showToast(error.message || "Gagal mengunggah gambar.", "danger");
     }
   });
+  wireMediaDeleteButton(
+    wrapper,
+    urlInput,
+    preview,
+    "assets/images/article-placeholder.svg",
+  );
+};
+
+// Sama seperti wireImageField, tapi untuk field bertipe "video"/"audio":
+// file dipilih -> tampil preview lokal (URL.createObjectURL) -> diunggah
+// ke Cloudinary lewat adminUploadMedia -> input link diisi otomatis
+// dengan URL Cloudinary hasil upload.
+const wireMediaField = (field) => {
+  const wrapper = qs(`[data-media-field="${field.key}"]`);
+  if (!wrapper) return;
+  const urlInput = wrapper.querySelector(`input[name="${field.key}"]`);
+  const fileInput = wrapper.querySelector("[data-media-upload]");
+  const preview = wrapper.querySelector(".media-field-preview");
+  const progress = wrapper.querySelector("[data-media-progress]");
+  urlInput.addEventListener("change", () => {
+    preview.src = urlInput.value || "";
+  });
+  fileInput.addEventListener("change", async () => {
+    const file = fileInput.files[0];
+    if (!file) return;
+    preview.src = URL.createObjectURL(file);
+    progress?.classList.remove("d-none");
+    try {
+      const media = await HCApi.adminUploadMedia(file, state.token);
+      urlInput.value = media.url;
+      preview.src = media.url;
+      showToast(
+        field.type === "video"
+          ? "Video berhasil diunggah."
+          : "Audio berhasil diunggah.",
+      );
+    } catch (error) {
+      showToast(error.message || "Gagal mengunggah file.", "danger");
+    } finally {
+      progress?.classList.add("d-none");
+    }
+  });
+  wireMediaDeleteButton(wrapper, urlInput, preview, "");
 };
 
 // === Editor "Isi (HTML)": toolbar heading H2-H4 + pratinjau struktur TOC ===

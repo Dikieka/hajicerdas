@@ -174,43 +174,6 @@ const HCContent = {
     summary,
     category,
   })),
-  worshipDurations: [
-    [
-      "Tawaf",
-      "45-120 menit",
-      "Durasi bergantung kepadatan area mataf, kondisi fisik, dan rute masuk keluar masjid.",
-    ],
-    [
-      "Sa'i",
-      "60-120 menit",
-      "Jamaah lansia atau pengguna kursi roda dapat membutuhkan waktu lebih panjang.",
-    ],
-    [
-      "Tahallul",
-      "5-20 menit",
-      "Biasanya singkat, tetapi antrean layanan cukur dapat memengaruhi waktu.",
-    ],
-    [
-      "Wukuf",
-      "Sejak tergelincir matahari hingga malam",
-      "Ikuti jadwal resmi pembimbing dan petugas haji.",
-    ],
-    [
-      "Lempar Jumrah",
-      "30-120 menit",
-      "Sangat dipengaruhi rekayasa arus jamaah dan jadwal maktab.",
-    ],
-    [
-      "Mabit",
-      "Semalam sesuai ketentuan",
-      "Ikuti penempatan dan jadwal resmi rombongan.",
-    ],
-    [
-      "Tawaf Wada",
-      "45-150 menit",
-      "Rencanakan dengan mempertimbangkan jadwal kepulangan dan kepadatan Masjidil Haram.",
-    ],
-  ],
   prep: {
     Dokumen: [
       "Paspor",

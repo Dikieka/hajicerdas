@@ -1,3 +1,27 @@
+// ============================================================
+// KONFIGURASI CLOUDINARY -- dipakai untuk menyimpan semua file
+// media (gambar, video, audio) yang diunggah lewat Admin Panel.
+// Ganti tiga nilai di bawah dengan kredensial akun Cloudinary
+// Anda (buka https://cloudinary.com/console, kredensial ada di
+// bagian atas Dashboard): Cloud Name, API Key, API Secret.
+//
+// CATATAN KEAMANAN: API Secret di bawah ini AMAN ditulis di sini
+// karena Code.gs hanya berjalan di server Apps Script dan tidak
+// pernah dikirim ke browser pengguna. Yang tidak aman adalah
+// menaruh API Secret di file JavaScript sisi client (assets/js).
+// Kalau nanti mau lebih rapi, nilai-nilai ini juga bisa dipindah
+// ke Script Properties (menu Project Settings di editor Apps
+// Script) dengan pola yang sama seperti getSessionSecret_() di
+// bawah, tapi menaruhnya langsung di sini seperti sekarang juga
+// sudah cukup aman selama file ini tidak dibagikan ke publik.
+// ============================================================
+const CLOUDINARY_CONFIG = {
+  cloudName: "f82xrdas", // contoh: "dxyzabc12"
+  apiKey: "512546983649782", // contoh: "123456789012345"
+  apiSecret: "SgKYsBigt2Zs_HTNYXiJSy6l0cA",
+  folder: "DataMedia", // folder utama tempat semua upload disimpan di Cloudinary
+};
+
 // === Sesi login multi-role (super admin / penulis / member) ===
 // Ini SATU-SATUNYA sistem login di seluruh situs (dulu ada 2: sistem
 // password admin tunggal di sini + sistem role di Users. Sekarang sistem
@@ -124,7 +148,6 @@ const SHEETS = {
   peta: "Peta",
   download: "Download",
   video: "Video",
-  panduanWaktu: "PanduanWaktu",
   persiapan: "Persiapan",
   persiapanTimeline: "PersiapanTimeline",
   tataCara: "TataCara",
@@ -268,7 +291,6 @@ const MANAGED_SHEETS = {
     "tanggal_pelaksanaan_hijri",
   ],
   PetugasBadal: ["id", "nama", "ttd", "status"],
-  PanduanWaktu: ["id", "aktivitas", "durasi", "catatan", "status"],
   Persiapan: ["id", "kategori", "item", "status"],
   PersiapanTimeline: ["id", "waktu", "deskripsi", "status"],
   TataCara: [
@@ -365,11 +387,6 @@ function doGet(e) {
       return jsonResponse({
         success: true,
         data: getPublishedRows(SHEETS.video),
-      });
-    if (action === "panduanwaktu")
-      return jsonResponse({
-        success: true,
-        data: getPublishedRows(SHEETS.panduanWaktu),
       });
     if (action === "persiapan")
       return jsonResponse({
@@ -531,6 +548,26 @@ function doPost(e) {
       );
       return jsonResponse({ success: true, url: url });
     }
+    // Upload generik untuk gambar/video/audio (dipakai field bertipe
+    // "video"/"audio"/"media" di Admin Panel). Beda dengan "uploadimage"
+    // di atas, action ini menerima segala jenis media dan memberi tahu
+    // frontend resource_type + format hasil uploadnya.
+    if (action === "uploadmedia") {
+      requireRole_(payload, ["super_admin", "penulis"]);
+      const media = uploadMedia(
+        payload.filename,
+        payload.mimeType,
+        payload.base64,
+      );
+      return jsonResponse({ success: true, url: media.url, media: media });
+    }
+    // Hapus satu file dari Cloudinary secara manual -- dipakai tombol
+    // "Hapus file" di field gambar/video/audio pada Admin Panel.
+    if (action === "deletemedia") {
+      requireRole_(payload, ["super_admin", "penulis"]);
+      deleteFromCloudinaryByUrl_(payload.url);
+      return jsonResponse({ success: true, message: "File berhasil dihapus." });
+    }
     // === Login/registrasi multi-role (navbar "Masuk", halaman daftar member) ===
     if (action === "user_register") {
       const user = registerUser_(payload);
@@ -567,11 +604,7 @@ function doPost(e) {
     // data akun milik diri sendiri (tidak menerima "id" dari payload sama
     // sekali, role diambil dari token), dan tidak bisa mengubah role/status.
     if (action === "user_update_profile") {
-      const actor = requireRole_(payload, [
-        "super_admin",
-        "penulis",
-        "member",
-      ]);
+      const actor = requireRole_(payload, ["super_admin", "penulis", "member"]);
       const sheet = getUsersSheet_();
       const headers = findHeaderRow(sheet);
       const rowIndex = findRowIndexById(sheet, headers, actor.id);
@@ -1229,30 +1262,250 @@ function deleteRow(sheetName, id) {
     throw new Error(
       "Data dengan id '" + id + "' tidak ditemukan di " + sheetName + ".",
     );
+  // Sebelum baris dihapus, cek semua kolomnya -- kalau ada URL Cloudinary
+  // (foto/video/audio yang diunggah lewat Admin Panel), hapus juga filenya
+  // dari Cloudinary supaya tidak jadi sampah (orphan file) yang numpuk.
+  const rowValues = sheet
+    .getRange(rowIndex, 1, 1, headers.length)
+    .getValues()[0];
+  deleteRowMediaFromCloudinary_(rowValues);
   sheet.deleteRow(rowIndex);
 }
 
-// Simpan gambar yang diunggah (base64) ke folder Drive "HajiCerdas Uploads"
-// dan kembalikan URL yang bisa dipakai langsung sebagai src gambar.
-function uploadImage(filename, mimeType, base64Data) {
-  if (!base64Data) throw new Error("Data gambar kosong.");
-  const folder = getOrCreateUploadFolder();
+// ============================================================
+// UPLOAD MEDIA (GAMBAR / VIDEO / AUDIO) KE CLOUDINARY
+// ============================================================
+// Semua file yang diunggah dari Admin Panel (foto artikel, avatar,
+// tanda tangan, video, audio, dll) disimpan di Cloudinary, bukan lagi
+// di Google Drive. Alurnya:
+//   1. Browser membaca file jadi base64 (lihat adminUploadImage /
+//      adminUploadMedia di assets/js/api.js) lalu kirim ke sini lewat
+//      action "uploadimage" (khusus gambar, kompatibel dengan kode
+//      lama) atau "uploadmedia" (gambar/video/audio, generik).
+//   2. uploadToCloudinary_() menandatangani request pakai API Secret
+//      (SHA1) lalu mengirim file ke Cloudinary lewat UrlFetchApp.
+//   3. Untuk gambar, parameter format:"webp" disertakan supaya
+//      Cloudinary OTOMATIS mengonversi & menyimpan gambar sebagai
+//      .webp (lebih ringan) begitu selesai diupload -- jadi konversinya
+//      terjadi sekali saat upload, bukan setiap kali gambar diakses.
+
+// Menentukan resource_type Cloudinary dari MIME type file.
+// Cloudinary menyimpan file audio (mp3, wav, m4a, dst) di bawah
+// resource_type "video" (tidak ada resource_type "audio" tersendiri).
+function cloudinaryResourceType_(mimeType) {
+  const mime = String(mimeType || "").toLowerCase();
+  if (mime.indexOf("image/") === 0) return "image";
+  if (mime.indexOf("video/") === 0) return "video";
+  if (mime.indexOf("audio/") === 0) return "video";
+  return "raw"; // dokumen/file lain (pdf, dll) kalau suatu saat dibutuhkan
+}
+
+// Bikin signature SHA1 sesuai spesifikasi Cloudinary: semua parameter
+// (selain file, cloud_name, resource_type, api_key, signature) diurutkan
+// alfabetis, digabung "key=value&key=value...", ditambah API Secret di
+// akhir, lalu di-hash SHA1 dan diubah ke heksadesimal.
+function cloudinarySignature_(params, apiSecret) {
+  const sortedKeys = Object.keys(params).sort();
+  const toSign = sortedKeys.map((key) => key + "=" + params[key]).join("&");
+  const digestBytes = Utilities.computeDigest(
+    Utilities.DigestAlgorithm.SHA_1,
+    toSign + apiSecret,
+    Utilities.Charset.UTF_8,
+  );
+  return digestBytes
+    .map((b) => {
+      const hex = (b < 0 ? b + 256 : b).toString(16);
+      return hex.length === 1 ? "0" + hex : hex;
+    })
+    .join("");
+}
+
+// Fungsi inti: unggah satu file (base64) ke Cloudinary lewat signed
+// upload. Mengembalikan objek JSON asli dari Cloudinary (berisi
+// secure_url, public_id, resource_type, format, bytes, duration, dst).
+function uploadToCloudinary_(filename, mimeType, base64Data, options) {
+  if (!base64Data) throw new Error("Data file kosong.");
+  if (
+    !CLOUDINARY_CONFIG.cloudName ||
+    CLOUDINARY_CONFIG.cloudName.indexOf("GANTI_DENGAN") === 0
+  ) {
+    throw new Error(
+      "Cloudinary belum dikonfigurasi. Isi CLOUDINARY_CONFIG di Code.gs dengan Cloud Name, API Key, dan API Secret dari akun Cloudinary Anda.",
+    );
+  }
+  options = options || {};
+  const resourceType =
+    options.resourceType || cloudinaryResourceType_(mimeType);
   const bytes = Utilities.base64Decode(base64Data);
   const blob = Utilities.newBlob(
     bytes,
-    mimeType || "image/jpeg",
-    filename || "upload.jpg",
+    mimeType || "application/octet-stream",
+    filename || "upload",
   );
-  const file = folder.createFile(blob);
-  file.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
-  return "https://drive.google.com/uc?export=view&id=" + file.getId();
+
+  const timestamp = Math.floor(Date.now() / 1000);
+  // paramsToSign HARUS berisi persis parameter (selain file/api_key)
+  // yang nanti benar-benar dikirim di body request, karena signature
+  // dihitung dari kombinasi parameter ini.
+  const paramsToSign = {
+    timestamp: timestamp,
+    folder: CLOUDINARY_CONFIG.folder,
+  };
+  // Gambar otomatis dikonversi & disimpan sebagai .webp saat upload.
+  if (resourceType === "image") {
+    paramsToSign.format = "webp";
+  }
+
+  const signature = cloudinarySignature_(
+    paramsToSign,
+    CLOUDINARY_CONFIG.apiSecret,
+  );
+
+  const payload = {
+    file: blob,
+    api_key: CLOUDINARY_CONFIG.apiKey,
+    timestamp: String(timestamp),
+    signature: signature,
+    folder: paramsToSign.folder,
+  };
+  if (paramsToSign.format) payload.format = paramsToSign.format;
+
+  const response = UrlFetchApp.fetch(
+    "https://api.cloudinary.com/v1_1/" +
+      CLOUDINARY_CONFIG.cloudName +
+      "/" +
+      resourceType +
+      "/upload",
+    { method: "post", payload: payload, muteHttpExceptions: true },
+  );
+
+  const result = JSON.parse(response.getContentText());
+  if (result.error) {
+    throw new Error("Upload Cloudinary gagal: " + result.error.message);
+  }
+  return result;
 }
 
-function getOrCreateUploadFolder() {
-  const name = "HajiCerdas Uploads";
-  const folders = DriveApp.getFoldersByName(name);
-  if (folders.hasNext()) return folders.next();
-  return DriveApp.createFolder(name);
+// Simpan gambar yang diunggah (base64) ke Cloudinary, otomatis
+// dikonversi ke format WebP saat upload (lihat uploadToCloudinary_).
+// Dipakai oleh action "uploadimage" -- dipanggil dari setiap field
+// bertipe "image" di Admin Panel, jadi tetap kompatibel tanpa perlu
+// mengubah pemanggilnya.
+function uploadImage(filename, mimeType, base64Data) {
+  const result = uploadToCloudinary_(filename, mimeType, base64Data, {
+    resourceType: "image",
+  });
+  return result.secure_url;
+}
+
+// Simpan file media apa pun (gambar/video/audio) ke Cloudinary. Dipakai
+// oleh action "uploadmedia" (field bertipe "video"/"audio"/"media" di
+// Admin Panel). Mengembalikan info lengkap supaya frontend tahu jenis
+// filenya dan bisa menampilkan preview yang sesuai (img/video/audio).
+function uploadMedia(filename, mimeType, base64Data) {
+  const result = uploadToCloudinary_(filename, mimeType, base64Data);
+  return {
+    url: result.secure_url,
+    resourceType: result.resource_type, // "image" | "video" (video & audio sama-sama "video" di Cloudinary)
+    format: result.format,
+    bytes: result.bytes,
+    durationSeconds: result.duration || null, // hanya ada untuk video/audio
+  };
+}
+
+// ============================================================
+// HAPUS FILE DARI CLOUDINARY
+// ============================================================
+// Dipakai oleh dua alur:
+//   1. Tombol "Hapus file" manual di field gambar/video/audio pada Admin
+//      Panel (action "deletemedia") -- penulis/admin sengaja menghapus
+//      satu file media dari sebuah data.
+//   2. Otomatis lewat deleteRow() di atas -- saat sebuah BARIS DATA
+//      dihapus dari Admin Panel, semua URL Cloudinary yang ada di
+//      baris itu ikut dihapus filenya, supaya tidak jadi sampah (orphan
+//      file) yang numpuk terus di akun Cloudinary.
+
+// Cek apakah sebuah nilai adalah URL Cloudinary -- supaya tidak salah
+// hapus kalau isi field ternyata link lain (YouTube, TikTok, link Drive
+// lama, dll).
+function isCloudinaryUrl_(value) {
+  return (
+    typeof value === "string" && value.indexOf("res.cloudinary.com/") !== -1
+  );
+}
+
+// Ambil resource_type & public_id dari secure_url Cloudinary. Format URL
+// standar (tanpa transformasi, sesuai cara kita upload di atas):
+// https://res.cloudinary.com/<cloud>/<resource_type>/upload/v<versi>/<public_id>.<ext>
+function parseCloudinaryUrl_(url) {
+  const match = String(url).match(
+    /res\.cloudinary\.com\/[^/]+\/(image|video|raw)\/upload\/(?:[^/]+\/)*?v\d+\/([^?#]+)\.[a-zA-Z0-9]+(?:[?#].*)?$/,
+  );
+  if (!match) return null;
+  return { resourceType: match[1], publicId: match[2] };
+}
+
+// Hapus satu file Cloudinary berdasarkan URL-nya (signed request ke
+// endpoint /destroy). Kalau URL-nya bukan URL Cloudinary atau polanya
+// tidak dikenali, fungsi ini diam saja (dianggap "skip", bukan error) --
+// supaya aman dipanggil untuk field yang isinya campuran link eksternal
+// & upload Cloudinary.
+function deleteFromCloudinaryByUrl_(url) {
+  if (!isCloudinaryUrl_(url)) return { skipped: true };
+  const parsed = parseCloudinaryUrl_(url);
+  if (!parsed) return { skipped: true };
+
+  const timestamp = Math.floor(Date.now() / 1000);
+  const paramsToSign = { public_id: parsed.publicId, timestamp: timestamp };
+  const signature = cloudinarySignature_(
+    paramsToSign,
+    CLOUDINARY_CONFIG.apiSecret,
+  );
+
+  const response = UrlFetchApp.fetch(
+    "https://api.cloudinary.com/v1_1/" +
+      CLOUDINARY_CONFIG.cloudName +
+      "/" +
+      parsed.resourceType +
+      "/destroy",
+    {
+      method: "post",
+      payload: {
+        public_id: parsed.publicId,
+        api_key: CLOUDINARY_CONFIG.apiKey,
+        timestamp: String(timestamp),
+        signature: signature,
+      },
+      muteHttpExceptions: true,
+    },
+  );
+  const result = JSON.parse(response.getContentText());
+  // Cloudinary balas result:"ok" kalau berhasil, result:"not found" kalau
+  // filenya memang sudah tidak ada -- keduanya dianggap sukses di sini.
+  if (result.result !== "ok" && result.result !== "not found") {
+    throw new Error(
+      "Gagal menghapus file Cloudinary: " + (result.result || "unknown"),
+    );
+  }
+  return result;
+}
+
+// Dipanggil dari deleteRow(): scan semua kolom satu baris data, hapus
+// setiap URL Cloudinary yang ditemukan. Kalau salah satu gagal dihapus
+// (mis. Cloudinary sedang bermasalah), proses tetap lanjut ke URL
+// berikutnya -- baris data di sheet tetap terhapus seperti biasa, error
+// cuma dicatat di log (Executions) supaya tidak mengganggu pengguna.
+function deleteRowMediaFromCloudinary_(rowValues) {
+  rowValues.forEach((value) => {
+    if (!isCloudinaryUrl_(value)) return;
+    try {
+      deleteFromCloudinaryByUrl_(value);
+    } catch (error) {
+      console.error(
+        "Gagal menghapus media Cloudinary saat hapus baris: " + error.message,
+      );
+    }
+  });
 }
 
 // Proxy oEmbed Instagram: Apps Script server-to-server tidak punya
