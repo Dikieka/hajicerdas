@@ -915,7 +915,19 @@ const renderTableHead = (config) => {
 
 const renderTableBody = (config, filterText = "") => {
   const fields = visibleFields(config);
-  const hasStatus = config.fields.some((field) => field.key === "status");
+  // Tombol toggle cepat (Publish/Draft) HANYA relevan untuk sheet yang
+  // memang memakai kosakata status Publish/Draft (Artikel, FAQ, dll).
+  // Sheet seperti Pesanan punya kosakata status sendiri
+  // (pending/diproses/selesai/ditolak) yang harus diubah lewat form Edit
+  // biasa -- kalau tombol ini dipaksa tampil, klik "Publish sekarang"
+  // pada baris Pesanan akan menimpa status pesanan (mis. "selesai")
+  // menjadi "Publish", yang membuat verifikasi sertifikat gagal.
+  const statusField = config.fields.find((field) => field.key === "status");
+  const hasStatus =
+    !!statusField &&
+    Array.isArray(statusField.options) &&
+    statusField.options.includes("Publish") &&
+    statusField.options.includes("Draft");
   let rows = state.rows;
   if (filterText) {
     const keyword = filterText.toLowerCase();
