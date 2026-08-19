@@ -40,6 +40,7 @@
       '<li class="nav-item dropdown">' +
       '<a class="nav-link dropdown-toggle" href="#" id="layananDropdown" role="button" data-bs-toggle="dropdown" data-bs-display="static" aria-expanded="false">Layanan</a>' +
       '<ul class="dropdown-menu" aria-labelledby="layananDropdown">' +
+      '<li><a class="dropdown-item" href="badal.html">Kumpulan Doa</a></li>' +
       '<li><a class="dropdown-item" href="badal.html">Badal Umroh</a></li>' +
       '<li><a class="dropdown-item" href="wakaf-quran.html">Wakaf Al-Qur\'an</a></li>' +
       '<li><a class="dropdown-item" href="rekrutmen-petugas.html">Informasi Rekrutmen PPIH</a></li>' +
