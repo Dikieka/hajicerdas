@@ -119,7 +119,7 @@
       '<div class="col-lg">' +
       '<div class="search-field-wrap">' +
       '<span class="search-field-icon"><i class="bi bi-search"></i></span>' +
-      '<input class="form-control" name="q" type="search" placeholder="Cari checklist panduan, doa, hotel, transportasi..." aria-label="Kata kunci pencarian" aria-controls="searchSuggestionsSticky" data-hero-search-input spellcheck="false" enterkeyhint="search" tabindex="-1" />' +
+      '<input class="form-control" name="q" type="search" placeholder="Cari informasi seputar haji &amp; umrah..." aria-label="Kata kunci pencarian" aria-controls="searchSuggestionsSticky" data-hero-search-input spellcheck="false" enterkeyhint="search" tabindex="-1" />' +
       '<div class="search-suggest-box" data-hero-search-suggestions id="searchSuggestionsSticky" role="listbox" aria-label="Saran pencarian" aria-live="polite"></div>' +
       "</div>" +
       "</div>" +

@@ -1,14 +1,17 @@
 // Halaman Kumpulan Doa (doa.html) — tab per ibadah (Tawaf, Sa'i, Arafah,
-// dst) diambil dari sheet "DoaKategori". Tab bertipe "putaran" (mis.
+// dst) diambil dari DoaStaticData.kategori. Tab bertipe "putaran" (mis.
 // Tawaf, Sa'i) dirender sebagai alur baca per putaran dengan indikator
 // angka + garis penghubung sticky di bawah tab, dan tombol "Lanjut" di
 // akhir halaman (tidak sticky, supaya tidak gampang kepencet tanpa
 // sengaja). Tab bertipe "list" (mis. Arafah) dirender sebagai daftar
 // kartu doa dengan filter kategori (dropdown + chip, chip disembunyikan
 // di mobile).
-// Semua isi bacaan (arab/latin/arti) diambil dari Google Sheets lewat
-// HCApi, TIDAK di-hardcode di file ini (lihat assets/js/api.js untuk
-// fallback darurat kalau sheet belum terisi).
+// Semua isi bacaan (arab/latin/arti) STATIS, diambil dari
+// assets/js/doa-data.js (wajib dimuat SEBELUM file ini di HTML). Sistem
+// dinamis lama (Google Sheets DoaKategori/DoaPutaran/DoaList + endpoint
+// Apps Script doakategori/doaputaran/doalist) sudah dihapus — untuk
+// mengubah isi doa, edit langsung assets/js/doa-data.js lalu deploy
+// ulang (lihat PANDUAN_DOA_BARU.md).
 
 const DOA_PROGRESS_PREFIX = "hc-doa-progress:";
 
@@ -36,6 +39,37 @@ const syncDoaStickyOffset = () => {
   if (h > 0) {
     document.documentElement.style.setProperty("--hc-header-h", `${h}px`);
   }
+};
+
+// === Auto-scroll ke atas konten (dipakai tombol Lanjut, jump select, ===
+// === ganti kategori/filter, dll) =====================================
+// container.scrollIntoView({block:"start"}) TIDAK cukup di sini: itu
+// menaruh bagian paling atas konten persis di y=0 viewport, padahal
+// navbar situs selalu fixed-top, jadi judul kartu doa yang seharusnya
+// jadi baris pertama malah tertutup navbar (kepotong). Fungsi ini
+// menghitung posisi scroll manual yang mengurangi tinggi navbar
+// (--hc-header-h, sudah disinkron lewat syncDoaStickyOffset) ditambah
+// sedikit jarak napas, supaya bagian atas konten (indikator putaran /
+// judul kartu doa) selalu tampil utuh tepat di bawah navbar — bukan
+// terpotong olehnya.
+const DOA_SCROLL_EXTRA_GAP = 12;
+const doaScrollToTop = (container) => {
+  if (!container) return;
+  // requestAnimationFrame: tunggu satu frame supaya browser sempat
+  // reflow dulu (konten/tinggi indikator baru saja berubah lewat
+  // innerHTML) sebelum posisi scroll dihitung dari getBoundingClientRect.
+  requestAnimationFrame(() => {
+    const headerH =
+      parseFloat(
+        getComputedStyle(document.documentElement).getPropertyValue(
+          "--hc-header-h",
+        ),
+      ) || 0;
+    const rect = container.getBoundingClientRect();
+    const targetY =
+      window.scrollY + rect.top - headerH - DOA_SCROLL_EXTRA_GAP;
+    window.scrollTo({ top: Math.max(targetY, 0), behavior: "smooth" });
+  });
 };
 
 const doaLoadProgress = (kategori) => {
@@ -146,16 +180,16 @@ const looksLikePutaranList = (listRows) => {
 const renderPutaranMode = async (container, kategoriNama) => {
   doaClearActiveDropdownCleanup();
   container.innerHTML = '<div class="skeleton"></div>';
-  let rows = await HCApi.getDoaPutaran(kategoriNama);
+  let rows = getDoaPutaranStatic(kategoriNama);
   let extras = [];
   if (!rows.length) {
-    const listRows = await HCApi.getDoaList(kategoriNama);
+    const listRows = getDoaListStatic(kategoriNama);
     const parsed = putaranFromListRows(listRows);
     rows = parsed.rows;
     extras = parsed.extras;
   }
   if (!rows.length && !extras.length) {
-    container.innerHTML = `<div class="doa-empty">Bacaan untuk "${kategoriNama}" belum tersedia. Silakan lengkapi di sheet DoaPutaran.</div>`;
+    container.innerHTML = `<div class="doa-empty">Bacaan untuk "${kategoriNama}" belum tersedia. Silakan lengkapi di assets/js/doa-data.js.</div>`;
     return;
   }
 
@@ -280,7 +314,7 @@ const renderPutaranMode = async (container, kategoriNama) => {
           <button type="button" class="btn btn-primary btn-lg doa-lanjut-btn" data-doa-lanjut>
             ${isLast ? "Selesai — Tandai Putaran Ini Selesai" : `Lanjut ke Putaran ${progress.current + 1}`}
           </button>
-          <p class="doa-lanjut-hint">Tombol ini sengaja diletakkan di akhir bacaan, bukan mengambang, supaya tidak tertekan tanpa sengaja.</p>
+          <p class="doa-lanjut-hint">Klik tombol diatas ini untuk melanjutkan putaran</p>
         </div>
       </div>
     `;
@@ -337,7 +371,7 @@ const renderPutaranMode = async (container, kategoriNama) => {
         progress = { current: 1, done: [] };
         doaSaveProgress(kategoriNama, progress);
         renderAll();
-        container.scrollIntoView({ behavior: "smooth", block: "start" });
+        doaScrollToTop(container);
       });
     }
     const lanjutBtn = container.querySelector("[data-doa-lanjut]");
@@ -354,7 +388,7 @@ const renderPutaranMode = async (container, kategoriNama) => {
         }
         doaSaveProgress(kategoriNama, progress);
         renderAll();
-        container.scrollIntoView({ behavior: "smooth", block: "start" });
+        doaScrollToTop(container);
       });
     }
     const jumpSelect = container.querySelector("[data-doa-jump]");
@@ -367,7 +401,7 @@ const renderPutaranMode = async (container, kategoriNama) => {
           progress.current = target;
           doaSaveProgress(kategoriNama, progress);
           renderAll();
-          container.scrollIntoView({ behavior: "smooth", block: "start" });
+          doaScrollToTop(container);
         }
       });
     }
@@ -377,7 +411,7 @@ const renderPutaranMode = async (container, kategoriNama) => {
         const val = kategoriSelect.value;
         extraView = val === "putaran" ? null : Number(val.replace("extra-", ""));
         renderAll();
-        container.scrollIntoView({ behavior: "smooth", block: "start" });
+        doaScrollToTop(container);
       });
     }
     const kembaliBtn = container.querySelector("[data-doa-kembali]");
@@ -385,7 +419,7 @@ const renderPutaranMode = async (container, kategoriNama) => {
       kembaliBtn.addEventListener("click", () => {
         extraView = null;
         renderAll();
-        container.scrollIntoView({ behavior: "smooth", block: "start" });
+        doaScrollToTop(container);
       });
     }
   };
@@ -398,9 +432,9 @@ const renderPutaranMode = async (container, kategoriNama) => {
 const renderListMode = async (container, kategoriNama) => {
   doaClearActiveDropdownCleanup();
   container.innerHTML = '<div class="skeleton"></div>';
-  const allRows = await HCApi.getDoaList(kategoriNama);
+  const allRows = getDoaListStatic(kategoriNama);
   if (!allRows.length) {
-    container.innerHTML = `<div class="doa-empty">Doa untuk "${kategoriNama}" belum tersedia. Silakan lengkapi di sheet DoaList.</div>`;
+    container.innerHTML = `<div class="doa-empty">Doa untuk "${kategoriNama}" belum tersedia. Silakan lengkapi di assets/js/doa-data.js.</div>`;
     return;
   }
 
@@ -500,7 +534,7 @@ const renderListMode = async (container, kategoriNama) => {
         // Auto-scroll ke atas konten tiap ganti kategori, supaya orang
         // langsung lihat kartu doa yang baru tanpa harus scroll manual
         // dari posisi yang mungkin sudah jauh ke bawah.
-        container.scrollIntoView({ behavior: "smooth", block: "start" });
+        doaScrollToTop(container);
       });
     });
 
@@ -537,7 +571,7 @@ const renderListMode = async (container, kategoriNama) => {
         // Sama seperti dropdown: auto-scroll ke atas konten tiap ganti
         // kategori lewat chip supaya lebih efisien, tidak perlu scroll
         // manual.
-        container.scrollIntoView({ behavior: "smooth", block: "start" });
+        doaScrollToTop(container);
       });
     });
   };
@@ -563,7 +597,7 @@ const initDoaPage = async () => {
 
   if (singleCategory) {
     content.innerHTML = '<div class="skeleton"></div>';
-    const kategoriList = await HCApi.getDoaKategori();
+    const kategoriList = getDoaKategoriStatic();
     const matched = kategoriList.find(
       (k) =>
         String(k.nama).toLowerCase() === singleCategory.trim().toLowerCase(),
@@ -575,9 +609,7 @@ const initDoaPage = async () => {
       return;
     }
 
-    const listRows = await HCApi.getDoaList(
-      matched ? matched.nama : singleCategory,
-    );
+    const listRows = getDoaListStatic(matched ? matched.nama : singleCategory);
     if (looksLikePutaranList(listRows)) {
       await renderPutaranMode(content, matched ? matched.nama : singleCategory);
       return;
@@ -591,11 +623,11 @@ const initDoaPage = async () => {
   if (!tabsWrap) return;
 
   tabsWrap.innerHTML = '<div class="skeleton"></div>';
-  const kategoriList = await HCApi.getDoaKategori();
+  const kategoriList = getDoaKategoriStatic();
   if (!kategoriList.length) {
     tabsWrap.innerHTML = "";
     content.innerHTML =
-      '<div class="doa-empty">Belum ada kategori doa. Silakan isi sheet DoaKategori.</div>';
+      '<div class="doa-empty">Belum ada kategori doa. Silakan lengkapi assets/js/doa-data.js.</div>';
     return;
   }
 
@@ -605,7 +637,7 @@ const initDoaPage = async () => {
       await renderPutaranMode(content, item.nama);
       return;
     }
-    const listRows = await HCApi.getDoaList(item.nama);
+    const listRows = getDoaListStatic(item.nama);
     if (looksLikePutaranList(listRows)) {
       await renderPutaranMode(content, item.nama);
       return;
