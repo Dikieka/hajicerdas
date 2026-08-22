@@ -503,6 +503,40 @@
     transform 0.2s ease,
     box-shadow 0.2s ease;
 }
+.doa-card-slider {
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  padding: 0.25rem 0.15rem 1rem;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: thin;
+  scrollbar-color: var(--primary) var(--border);
+}
+.doa-card-slider > [class*="col-"] {
+  flex: 0 0 calc(25% - 1.125rem);
+  max-width: calc(25% - 1.125rem);
+  scroll-snap-align: start;
+}
+.doa-card-slider > [class*="col-"] > .doa-feature-card {
+  height: 100%;
+}
+@media (max-width: 991.98px) {
+  .doa-card-slider > [class*="col-"] {
+    flex-basis: calc(50% - 0.75rem);
+    max-width: calc(50% - 0.75rem);
+  }
+}
+@media (max-width: 575.98px) {
+  .doa-card-slider {
+    margin-right: -0.75rem;
+    margin-left: -0.75rem;
+    padding-right: 0.75rem;
+    padding-left: 0.75rem;
+  }
+  .doa-card-slider > [class*="col-"] {
+    flex-basis: min(86vw, 21rem);
+    max-width: min(86vw, 21rem);
+  }
+}
 .doa-feature-card::after {
   content: "";
   position: absolute;
@@ -561,6 +595,19 @@
   background-position: center;
   background-repeat: no-repeat;
 }
+.doa-feature-card--umum {
+  background-image:
+    linear-gradient(
+      195deg,
+      rgba(10, 20, 15, 0.35) 0%,
+      rgba(10, 20, 15, 0.55) 55%,
+      rgba(10, 20, 15, 0.82) 100%
+    ),
+    url("../images/kaabah.png");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
 
 .doa-feature-badge {
   position: relative;
@@ -596,7 +643,9 @@
 .doa-feature-content {
   position: relative;
   z-index: 1;
-  display: block;
+  display: flex;
+  flex: 1;
+  flex-direction: column;
   margin-top: 1.75rem;
 }
 .doa-feature-title {
@@ -615,6 +664,7 @@
 }
 .doa-feature-link {
   display: inline-flex;
+  margin-top: auto;
   align-items: center;
   gap: 0.4rem;
   font-weight: 700;

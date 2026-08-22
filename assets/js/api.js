@@ -1254,6 +1254,16 @@ const HCApi = {
     return result;
   },
   async getTerms() {
+    const fallbackTerms = (window.HCContent?.terms || []).map((term) =>
+      Array.isArray(term)
+        ? {
+            slug: term[0],
+            title: term[1],
+            summary: term[2],
+            category: term[3],
+          }
+        : term,
+    );
     try {
       const data = await requestJson({ action: "istilah" });
       const rows = onlyPublished(data.data || data);
@@ -1266,10 +1276,10 @@ const HCApi = {
             category: row.kategori,
             source: row.sumber_referensi,
           }))
-        : window.HCContent.terms;
+        : fallbackTerms;
     } catch (error) {
       console.info(error.message);
-      return window.HCContent.terms;
+      return fallbackTerms;
     }
   },
   async getLayanan(halaman) {

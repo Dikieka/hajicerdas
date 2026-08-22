@@ -29,6 +29,13 @@ const DoaStaticData = {
       tipe: "list",
       status: "Publish",
     },
+    {
+      id: "kat-04",
+      nama: "Umum",
+      urutan: 4,
+      tipe: "list",
+      status: "Publish",
+    },
   ],
 
   putaran: {
@@ -54,30 +61,17 @@ const DoaStaticData = {
         urutan: 2,
         judul_bagian: "Do'a Menuju Rukun Yamani (Putaran ke-1)",
         keterangan: "",
-        arab: "سُبْحَانَ اللهِ وَالْحَمْدُ لِلَّهِ وَلَا إِلَهَ إِلَّا اللهُ اللهُ أَكْبَرُ، وَلَا حَوْلَ وَلَا قُوَّةَ إِلَّا بِاللهِ الْعَلِيِّ",
+        arab: "سُبْحَانَ اللهِ وَالْحَمْدُ لِلَّهِ وَلَا إِلَهَ إِلَّا اللهُ اللهُ أَكْبَرُ، وَلَا حَوْلَ وَلَا قُوَّةَ إِلَّا بِاللهِ الْعَلِيِّ الْعَظِيمِ. وَالصَّلَاةُ وَالسَّلَامُ عَلَى رَسُولِ اللهِ صَلَّى اللهُ عَلَيْهِ وَسَلَّمَ. اللَّهُمَّ إِيمَانًا بِكَ، وَتَصْدِيقًا بِكِتَابِكَ، وَوَفَاءً بِعَهْدِكَ، وَاتِّبَاعًا لِسُنَّةِ نَبِيِّكَ مُحَمَّدٍ صَلَّى اللهُ عَلَيْهِ وَسَلَّمَ. اللَّهُمَّ إِنِّي أَسْأَلُكَ الْعَفْوَ وَالْعَافِيَةَ وَالْمُعَافَاةَ الدَّائِمَةَ فِي الدِّينِ وَالدُّنْيَا وَالْآخِرَةِ، وَالْفَوْزَ بِالْجَنَّةِ وَالنَّجَاةَ مِنَ النَّارِ",
         latin:
-          "Subḥānallāhi wal-ḥamdu lillāhi wa lā ilāha illallāhu wallāhu akbar, wa lā ḥawla wa lā quwwata illā billāhil-'aliyyil-'aẓīm.",
-        arti: "Mahasuci Allah, segala puji bagi Allah, tidak ada Tuhan selain Allah, Allah Mahabesar. Tidak ada daya dan kekuatan kecuali dengan pertolongan Allah Yang Mahatinggi lagi Mahabesar.",
-        status: "Publish",
-      },
-            {
-        id: "dp-002",
-        kategori: "Tawaf",
-        putaran: 1,
-        urutan: 3,
-        judul_bagian: "Do'a Menuju Rukun Yamani (Putaran ke-1)",
-        keterangan: "",
-        arab: "وَالصَّلَاةُ وَالسَّلَامُ عَلَى رَسُولِ اللهِ صَلَّى اللهُ عَلَيْهِ وَسَلَّمَ. اللَّهُمَّ إِيمَانًا بِكَ، وَتَصْدِيقًا بِكِتَابِكَ، وَوَفَاءً بِعَهْدِكَ، وَاتِّبَاعًا لِسُنَّةِ نَبِيِّكَ مُحَمَّدٍ صَلَّى اللهُ عَلَيْهِ وَسَلَّمَ. اللَّهُمَّ إِنِّي أَسْأَلُكَ الْعَفْوَ وَالْعَافِيَةَ وَالْمُعَافَاةَ الدَّائِمَةَ فِي الدِّينِ وَالدُّنْيَا وَالْآخِرَةِ، وَالْفَوْزَ بِالْجَنَّةِ وَالنَّجَاةَ مِنَ النَّارِ",
-        latin:
-          "Waṣ-ṣalātu was-salāmu 'alā rasūlillāhi ṣallallāhu 'alaihi wa sallam. Allāhumma īmānan bika, wa taṣdīqan bikitābika, wa wafā'an bi'ahdika, wattibā'an lisunnati nabiyyika Muḥammadin ṣallallāhu 'alaihi wa sallam. Allāhumma innī as'alukal-'afwa wal-'āfiyata wal-mu'āfātad-dā'imata fid-dīni wad-dunyā wal-ākhirah, wal-fawza bil-jannati wan-najāta minan-nār.",
-        arti: "Semoga salawat dan salam tercurah kepada Rasulullah ﷺ. Ya Allah, (aku melakukan thawaf ini) dengan keimanan kepada-Mu, membenarkan kitab-Mu, memenuhi janji-Mu, dan mengikuti sunnah Nabi-Mu Muhammad ﷺ. Ya Allah, sesungguhnya aku memohon kepada-Mu ampunan, kesehatan, keselamatan yang terus-menerus dalam agama, dunia, dan akhirat; serta memperoleh kemenangan dengan masuk surga dan keselamatan dari neraka.",
+          "Subḥānallāhi wal-ḥamdu lillāhi wa lā ilāha illallāhu wallāhu akbar, wa lā ḥawla wa lā quwwata illā billāhil-'aliyyil-'aẓīm. Waṣ-ṣalātu was-salāmu 'alā rasūlillāhi ṣallallāhu 'alaihi wa sallam. Allāhumma īmānan bika, wa taṣdīqan bikitābika, wa wafā'an bi'ahdika, wattibā'an lisunnati nabiyyika Muḥammadin ṣallallāhu 'alaihi wa sallam. Allāhumma innī as'alukal-'afwa wal-'āfiyata wal-mu'āfātad-dā'imata fid-dīni wad-dunyā wal-ākhirah, wal-fawza bil-jannati wan-najāta minan-nār.",
+        arti: "Mahasuci Allah, segala puji bagi Allah, tidak ada Tuhan selain Allah, Allah Mahabesar. Tidak ada daya dan kekuatan kecuali dengan pertolongan Allah Yang Mahatinggi lagi Mahabesar. Semoga salawat dan salam tercurah kepada Rasulullah ﷺ. Ya Allah, (aku melakukan thawaf ini) dengan keimanan kepada-Mu, membenarkan kitab-Mu, memenuhi janji-Mu, dan mengikuti sunnah Nabi-Mu Muhammad ﷺ. Ya Allah, sesungguhnya aku memohon kepada-Mu ampunan, kesehatan, keselamatan yang terus-menerus dalam agama, dunia, dan akhirat; serta memperoleh kemenangan dengan masuk surga dan keselamatan dari neraka.",
         status: "Publish",
       },
       {
         id: "dp-003",
         kategori: "Tawaf",
         putaran: 1,
-        urutan: 4,
+        urutan: 3,
         judul_bagian: "Do'a Saat Sampai di Rukun Yamani",
         keterangan:
           "Jika memungkinkan dan tidak mengganggu jamaah lain, sentuh Rukun Yamani dengan tangan kanan. Tidak perlu mencium atau memaksakan diri ketika keadaan ramai.",
@@ -91,7 +85,7 @@ const DoaStaticData = {
         id: "dp-004",
         kategori: "Tawaf",
         putaran: 1,
-        urutan: 5,
+        urutan: 4,
         judul_bagian: "Do'a Setelah Melewati Rukun Yamani",
         keterangan: "",
         arab: "رَبَّنَا آتِنَا فِي الدُّنْيَا حَسَنَةً وَفِي الْآخِرَةِ حَسَنَةً وَقِنَا عَذَابَ النَّارِ",
@@ -104,7 +98,7 @@ const DoaStaticData = {
         id: "dp-005",
         kategori: "Tawaf",
         putaran: 1,
-        urutan: 6,
+        urutan: 5,
         judul_bagian: "Do'a Tambahan di Rukun Yamani",
         keterangan:
           "Bacaan tambahan (opsional)",
@@ -808,6 +802,59 @@ const DoaStaticData = {
   },
 
   list: {
+    // Doa Umum ditampilkan pada halaman doa-umum.html.
+    Umum: [
+      {
+        id: "du-001",
+        kategori: "Umum",
+        kategori_doa: "Kebaikan Dunia dan Akhirat",
+        judul: "Doa memohon kebaikan dunia dan akhirat",
+        arab: "رَبَّنَا آتِنَا فِي الدُّنْيَا حَسَنَةً وَفِي الْآخِرَةِ حَسَنَةً وَقِنَا عَذَابَ النَّارِ",
+        latin: "Rabbanā ātinā fid-dunyā ḥasanatan wa fil-ākhirati ḥasanatan wa qinā 'adzāban-nār.",
+        arti: "Ya Tuhan kami, berilah kami kebaikan di dunia dan kebaikan di akhirat, serta lindungilah kami dari azab neraka.",
+        status: "Publish",
+      },
+      {
+        id: "du-002",
+        kategori: "Umum",
+        kategori_doa: "Kebaikan Dunia dan Akhirat",
+        judul: "Doa memohon ilmu yang bermanfaat",
+        arab: "رَبِّ زِدْنِي عِلْمًا",
+        latin: "Rabbi zidnī 'ilmā.",
+        arti: "Ya Tuhanku, tambahkanlah kepadaku ilmu.",
+        status: "Publish",
+      },
+      {
+        id: "du-003",
+        kategori: "Umum",
+        kategori_doa: "Ampunan dan Perlindungan",
+        judul: "Doa memohon ampunan dan rahmat",
+        arab: "رَبِّ اغْفِرْ لِي وَارْحَمْنِي وَاهْدِنِي وَعَافِنِي وَارْزُقْنِي",
+        latin: "Rabbighfir lī warḥamnī wahdinī wa 'āfinī warzuqnī.",
+        arti: "Ya Tuhanku, ampunilah aku, rahmatilah aku, berilah aku petunjuk, sehatkanlah aku, dan berilah aku rezeki.",
+        status: "Publish",
+      },
+      {
+        id: "du-004",
+        kategori: "Umum",
+        kategori_doa: "Keluarga",
+        judul: "Doa untuk kebaikan orang tua",
+        arab: "رَبِّ ارْحَمْهُمَا كَمَا رَبَّيَانِي صَغِيرًا",
+        latin: "Rabbirḥamhumā kamā rabbayānī ṣaghīrā.",
+        arti: "Ya Tuhanku, sayangilah keduanya sebagaimana mereka berdua telah menyayangiku pada waktu kecil.",
+        status: "Publish",
+      },
+      {
+        id: "du-005",
+        kategori: "Umum",
+        kategori_doa: "Masjidil Haram",
+        judul: "Doa Memasuki Masjidil Haram",
+        arab: "اللَّهُمَّ افْتَحْ لِي أَبْوَابَ رَحْمَتِكَ",
+        latin: "Allāhumma iftaḥ lī abwāba raḥmatik.",
+        arti: "Ya Allah, bukakanlah untukku pintu-pintu rahmat-Mu.",
+        status: "Publish",
+      },
+    ],
     Arafah: [
       {
         id: "dl-001",

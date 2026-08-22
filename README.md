@@ -24,7 +24,7 @@ hajicerdas/
   jadwal-shalat.html     (redirect ke waktu.html, digabung sejak update ini)
   panduan-waktu.html
   infografis.html
-  persiapan.html
+  checklist-perlengkapan.html
   budget.html
   kurs.html
   peta.html
@@ -146,7 +146,7 @@ istilah-detail.html    Detail istilah berdasarkan slug
 waktu.html             Jam WIB, Arab Saudi, Hijriah, dan jadwal shalat Mekkah/Madinah/Jakarta realtime (jadwal-shalat.html kini redirect ke sini)
 panduan-waktu.html     Estimasi durasi tawaf, sa'i, tahallul, wukuf, jumrah, mabit, tawaf wada
 infografis.html        Infografis sekaligus Download Center (PDF, checklist, e-book) - download.html kini redirect ke sini
-persiapan.html         Panduan persiapan dokumen, ibadah, pribadi, kesehatan, keuangan
+checklist-perlengkapan.html         Panduan persiapan dokumen, ibadah, pribadi, kesehatan, keuangan
 budget.html            Kalkulator estimasi biaya
 kurs.html              Konverter Rupiah, Riyal, Dollar
 peta.html              Peta kategori lokasi dengan pratinjau dan tombol rute
@@ -675,8 +675,8 @@ JadwalShalat       Mekkah, Madinah, Jakarta, ditampilkan realtime di waktu.html 
 Download           Semua unduhan (dokumen PDF/checklist/e-book via kolom `file`, ATAU gambar panduan visual via kolom `gambar`), tampil satu grid di download.html "Download Center" (infografis.html redirect ke sana)
 Video              Video edukasi (video.html)
 PanduanWaktu       Estimasi durasi tawaf, sa'i, wukuf, dll (panduan-waktu.html)
-Persiapan          Checklist dokumen, perlengkapan, kesehatan, keuangan (persiapan.html)
-PersiapanTimeline  Tips H-180 s.d. hari keberangkatan (persiapan.html)
+Persiapan          Checklist dokumen, perlengkapan, kesehatan, keuangan (checklist-perlengkapan.html)
+Checklist Perlengkapan  Tips H-180 s.d. hari keberangkatan (checklist-perlengkapan.html)
 Kurs               Kurs Rupiah, Riyal, Dollar (kurs.html)
 Layanan            Konten halaman Badal Umroh, Fikih, Wakaf Al-Qur'an, Rekrutmen Petugas (badal.html, fikih.html, wakaf-quran.html, rekrutmen-petugas.html)
 ```

@@ -3685,3 +3685,560 @@ body.dark-mode .download-preview-cta,
     background-position: 0 0;
   }
 }
+
+/* Static Haji/Umrah equipment checklist */
+.checklist-choice-card {
+  text-decoration: none;
+}
+.checklist-section-heading {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+}
+.checklist-section-heading .eyebrow {
+  margin-bottom: 0.25rem;
+}
+.checklist-section-icon {
+  flex: 0 0 48px;
+  width: 48px;
+  height: 48px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--primary) 14%, transparent);
+  color: var(--primary-strong);
+  font-size: 1.25rem;
+}
+.checklist-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+}
+.checklist-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.7rem;
+  padding: 0.75rem 0.85rem;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  color: var(--text);
+  cursor: pointer;
+  line-height: 1.5;
+  transition: border-color 0.18s ease, background 0.18s ease, transform 0.18s ease;
+}
+.checklist-item:hover {
+  border-color: rgba(94, 143, 115, 0.45);
+  background: color-mix(in srgb, var(--primary) 5%, var(--surface));
+  transform: translateY(-1px);
+}
+.checklist-item input {
+  flex: 0 0 auto;
+  width: 1.1rem;
+  height: 1.1rem;
+  margin-top: 0.15rem;
+  accent-color: var(--primary-strong);
+}
+body.dark-mode .checklist-item,
+.theme-dark-preload body .checklist-item {
+  border-color: rgba(216, 188, 129, 0.18);
+}
+body.dark-mode .checklist-item:hover,
+.theme-dark-preload body .checklist-item:hover {
+  background: rgba(216, 188, 129, 0.05);
+  border-color: rgba(159, 211, 168, 0.35);
+}
+
+
+/* Checklist pages: responsive layout and navigation */
+.checklist-page .checklist-back-wrap {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.65rem;
+}
+.checklist-back-btn,
+.checklist-switch-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+  white-space: normal;
+  text-align: center;
+}
+.checklist-choice-card {
+  min-height: 300px;
+}
+.checklist-page [data-checklist] > [class*="col-"] {
+  min-width: 0;
+}
+@media (max-width: 767.98px) {
+  .checklist-page .checklist-back-wrap {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .checklist-page .checklist-back-wrap .btn {
+    width: 100%;
+  }
+  .checklist-choice-card {
+    min-height: auto;
+    padding: 1.35rem 1.15rem;
+  }
+  .checklist-page .surface {
+    padding: 1.15rem !important;
+  }
+  .checklist-section-heading {
+    align-items: flex-start;
+    gap: 0.7rem;
+  }
+  .checklist-section-icon {
+    flex-basis: 42px;
+    width: 42px;
+    height: 42px;
+    font-size: 1.05rem;
+  }
+  .checklist-section-heading .h4 {
+    font-size: 1.05rem;
+    line-height: 1.3;
+  }
+  .checklist-list {
+    gap: 0.55rem;
+    margin-top: 1rem !important;
+  }
+  .checklist-item {
+    padding: 0.78rem 0.75rem;
+    gap: 0.6rem;
+    font-size: 0.88rem;
+    line-height: 1.45;
+    overflow-wrap: anywhere;
+  }
+  .checklist-item input {
+    width: 1.15rem;
+    height: 1.15rem;
+    margin-top: 0.08rem;
+  }
+}
+@media (max-width: 575.98px) {
+  .checklist-page .row {
+    --bs-gutter-x: 0.85rem;
+    --bs-gutter-y: 0.85rem;
+  }
+  .checklist-page .surface.p-4 {
+    padding: 1rem !important;
+  }
+  .checklist-choice-card {
+    gap: 0.55rem;
+  }
+  .checklist-choice-card .service-card-desc {
+    font-size: 0.82rem;
+    line-height: 1.5;
+  }
+  .checklist-choice-card .service-card-cta {
+    padding-top: 0.65rem;
+    font-size: 0.8rem;
+  }
+}
+
+/* ===== Checklist v2: filter gender/gelombang/tas + kartu item ===== */
+.checklist-step {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.85rem;
+  padding: 0.85rem 1rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface);
+}
+.checklist-step-no {
+  display: grid;
+  place-items: center;
+  width: 1.9rem;
+  height: 1.9rem;
+  flex: 0 0 1.9rem;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--primary) 10%, var(--surface));
+  color: var(--primary-strong);
+  font-weight: 800;
+  font-size: 0.8rem;
+}
+.checklist-step-content {
+  flex: 1;
+  min-width: 0;
+}
+.checklist-step-content > .eyebrow {
+  display: block;
+  margin-bottom: 0.35rem;
+}
+.checklist-step .checklist-tabs {
+  border-bottom: 0;
+  gap: 1.25rem;
+}
+.checklist-step .checklist-tabs button {
+  padding-bottom: 0.15rem;
+}
+.checklist-step .checklist-pillgroup {
+  width: fit-content;
+}
+.checklist-summary-cards {
+  padding: 0.75rem 0.9rem;
+  border: 1px dashed var(--border);
+  border-radius: var(--radius);
+  background: color-mix(in srgb, var(--primary) 3%, var(--surface));
+}
+.checklist-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+  margin-bottom: 1.5rem;
+}
+.checklist-tabs {
+  display: flex;
+  gap: 1.5rem;
+  border-bottom: 1px solid var(--border);
+}
+.checklist-tabs button {
+  background: none;
+  border: none;
+  padding: 0 0 0.7rem;
+  font-family: var(--font-body);
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: var(--muted);
+  cursor: pointer;
+  position: relative;
+  transition: color 0.18s ease;
+}
+.checklist-tabs button:hover {
+  color: var(--text);
+}
+.checklist-tabs button.active {
+  color: var(--primary-strong);
+}
+.checklist-tabs button.active::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -1px;
+  height: 2px;
+  background: var(--accent-strong);
+  border-radius: 2px;
+}
+.checklist-pillrow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+}
+.checklist-pillgroup {
+  display: inline-flex;
+  gap: 0.35rem;
+  background: color-mix(in srgb, var(--primary) 6%, var(--surface));
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 0.25rem;
+}
+.checklist-pillgroup button {
+  border: none;
+  background: transparent;
+  color: var(--muted);
+  font-family: var(--font-body);
+  font-weight: 700;
+  font-size: 0.8rem;
+  padding: 0.4rem 0.8rem;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: all 0.18s ease;
+  white-space: nowrap;
+}
+.checklist-pillgroup button.active {
+  background: var(--primary-strong);
+  color: #fff;
+}
+.checklist-wave-info {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.6rem;
+  padding: 0.85rem 1rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: color-mix(in srgb, var(--accent) 8%, var(--surface));
+  color: var(--muted);
+  font-size: 0.85rem;
+  line-height: 1.55;
+}
+.checklist-wave-info strong {
+  color: var(--accent-strong);
+}
+.checklist-wave-info .wave-chip {
+  display: inline-flex;
+  align-items: center;
+  font-weight: 700;
+  font-size: 0.72rem;
+  color: var(--accent-strong);
+  background: color-mix(in srgb, var(--accent) 18%, transparent);
+  border: 1px solid color-mix(in srgb, var(--accent) 40%, transparent);
+  padding: 0.05rem 0.45rem;
+  border-radius: 999px;
+}
+.checklist-summary-line {
+  display: flex;
+  gap: 1.1rem;
+  flex-wrap: wrap;
+  font-size: 0.82rem;
+  color: var(--muted);
+}
+.checklist-summary-line b {
+  color: var(--primary-strong);
+  font-weight: 800;
+}
+
+.checklist-cat-block + .checklist-cat-block,
+.bag-group-heading {
+  margin-top: 1.5rem;
+}
+.bag-group-heading {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-family: var(--font-body);
+  font-weight: 800;
+  font-size: 0.78rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 0.6rem;
+}
+.bag-group-heading .bg-line {
+  flex: 1;
+  height: 1px;
+  background: var(--border);
+}
+
+.checklist-list-v2 {
+  display: flex;
+  flex-direction: column;
+}
+.checklist-item-v2 {
+  display: flex;
+  gap: 0.7rem;
+  padding: 0.85rem 0.1rem;
+  border-bottom: 1px dashed var(--border);
+  align-items: flex-start;
+}
+.checklist-item-v2:last-child {
+  border-bottom: none;
+}
+.checklist-item-v2 .ci-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--primary);
+  margin-top: 0.5rem;
+  flex-shrink: 0;
+}
+.checklist-item-v2.is-wave .ci-dot {
+  background: var(--accent-strong);
+}
+.ci-body {
+  flex: 1;
+  min-width: 0;
+}
+.ci-row1 {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.6rem;
+}
+.ci-name {
+  font-weight: 700;
+  font-size: 0.92rem;
+  color: var(--text);
+}
+.ci-qty {
+  font-family: "SFMono-Regular", Menlo, monospace;
+  font-size: 0.75rem;
+  color: var(--muted);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.ci-note {
+  font-size: 0.8rem;
+  color: var(--muted);
+  line-height: 1.5;
+  margin-top: 0.2rem;
+}
+.ci-tags {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  flex-wrap: wrap;
+  margin-top: 0.5rem;
+}
+.bag-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-family: var(--font-body);
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 0.2rem 0.55rem;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--muted);
+  cursor: pointer;
+  transition: all 0.18s ease;
+}
+.bag-badge:hover {
+  border-color: var(--primary);
+  color: var(--primary-strong);
+}
+.bag-badge.is-kecil {
+  color: var(--primary-strong);
+  border-color: color-mix(in srgb, var(--primary) 45%, transparent);
+  background: color-mix(in srgb, var(--primary) 10%, transparent);
+}
+.cat-chip {
+  font-family: "SFMono-Regular", Menlo, monospace;
+  font-size: 0.68rem;
+  color: var(--muted);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 0.15rem 0.5rem;
+}
+.wave-chip {
+  display: inline-flex;
+  align-items: center;
+  font-size: 0.68rem;
+  font-weight: 800;
+  color: var(--accent-strong);
+  background: color-mix(in srgb, var(--accent) 18%, transparent);
+  border: 1px solid color-mix(in srgb, var(--accent) 40%, transparent);
+  padding: 0.15rem 0.5rem;
+  border-radius: 999px;
+}
+
+body.dark-mode .checklist-item-v2,
+.theme-dark-preload body .checklist-item-v2 {
+  border-color: rgba(216, 188, 129, 0.16);
+}
+body.dark-mode .checklist-pillgroup,
+.theme-dark-preload body .checklist-pillgroup,
+body.dark-mode .checklist-wave-info,
+.theme-dark-preload body .checklist-wave-info {
+  border-color: rgba(216, 188, 129, 0.18);
+}
+
+@media (max-width: 767.98px) {
+  .checklist-controls {
+    gap: 0.7rem;
+  }
+  .checklist-tabs {
+    gap: 1.1rem;
+  }
+  .checklist-tabs button {
+    font-size: 0.86rem;
+  }
+  .checklist-pillrow {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .checklist-pillgroup {
+    justify-content: space-between;
+  }
+  .checklist-pillgroup button {
+    flex: 1;
+    text-align: center;
+  }
+  .checklist-wave-info {
+    font-size: 0.8rem;
+    padding: 0.75rem 0.85rem;
+  }
+  .checklist-summary-line {
+    gap: 0.7rem 1rem;
+    font-size: 0.78rem;
+  }
+  .ci-name {
+    font-size: 0.88rem;
+  }
+  .checklist-item-v2 {
+    padding: 0.75rem 0.05rem;
+  }
+}
+
+@media (max-width: 575.98px) {
+  .checklist-step {
+    padding: 0.75rem;
+  }
+  .checklist-step .checklist-tabs {
+    gap: 0.9rem;
+  }
+  .checklist-step .checklist-pillgroup {
+    max-width: 100%;
+    flex-wrap: wrap;
+    border-radius: 0.9rem;
+  }
+  .checklist-step .checklist-pillgroup button {
+    white-space: normal;
+  }
+}
+
+/* ===== HajiCerdas Perlengkapan Haji — clean category cards ===== */
+.hc-pack-page { --hc-card-radius: 18px; }
+.hc-filter-panel {
+  border: 1px solid var(--border); background: var(--surface); border-radius: 22px;
+  padding: 1.35rem; box-shadow: 0 10px 30px rgba(0,0,0,.035); margin-bottom: 2rem;
+}
+.hc-filter-head { display:flex; align-items:center; justify-content:space-between; gap:1rem; margin-bottom:1.25rem; }
+.hc-current-badge { display:inline-flex; align-items:center; gap:.45rem; padding:.55rem .8rem; border-radius:999px; background:color-mix(in srgb,var(--primary) 8%,var(--surface)); color:var(--primary-strong); font-size:.78rem; font-weight:800; white-space:nowrap; }
+.hc-filter-grid { display:grid; grid-template-columns:1fr 1fr .8fr; gap:1rem; }
+.hc-filter-field label { display:block; font-size:.72rem; font-weight:800; color:var(--muted); margin-bottom:.45rem; }
+.hc-segment { display:flex; gap:.25rem; padding:.25rem; border:1px solid var(--border); background:color-mix(in srgb,var(--primary) 3%,var(--surface)); border-radius:13px; }
+.hc-segment button { flex:1; border:0; background:transparent; color:var(--muted); border-radius:10px; padding:.62rem .65rem; font:700 .78rem var(--font-body); cursor:pointer; transition:.18s ease; }
+.hc-segment button:hover { color:var(--text); }
+.hc-segment button.active { background:var(--primary-strong); color:#fff; box-shadow:0 3px 10px rgba(0,0,0,.08); }
+.hc-select { width:100%; min-height:42px; border:1px solid var(--border); border-radius:13px; padding:.55rem .75rem; background:var(--surface); color:var(--text); font:600 .8rem var(--font-body); outline:none; }
+.hc-select:focus { border-color:var(--primary); box-shadow:0 0 0 3px color-mix(in srgb,var(--primary) 12%,transparent); }
+.hc-filter-panel .checklist-wave-info { margin-top:1rem; }
+.hc-filter-grid--single { grid-template-columns:minmax(220px,320px); }
+.hc-category-toolbar { display:flex; justify-content:space-between; align-items:end; gap:1rem; margin-bottom:1rem; }
+.hc-category-grid { display:grid; grid-template-columns:1fr; gap:.85rem; align-items:start; }
+.hc-category-card { border:1px solid var(--border); border-radius:var(--hc-card-radius); background:var(--surface); overflow:hidden; transition:border-color .18s ease,box-shadow .18s ease; }
+.hc-category-card:hover { border-color:color-mix(in srgb,var(--primary) 30%,var(--border)); box-shadow:0 8px 24px rgba(0,0,0,.035); }
+.hc-category-header { width:100%; border:0; background:transparent; color:var(--text); display:flex; align-items:center; gap:.8rem; padding:1rem; text-align:left; cursor:pointer; }
+.hc-category-icon { width:42px; height:42px; border-radius:13px; display:grid; place-items:center; flex:0 0 42px; background:color-mix(in srgb,var(--primary) 9%,var(--surface)); color:var(--primary-strong); font-size:1.05rem; }
+.hc-category-title { flex:1; min-width:0; display:flex; flex-direction:column; gap:.18rem; }
+.hc-category-title small { color:var(--muted); font-size:.67rem; font-weight:700; }
+.hc-category-title strong { font-size:.92rem; }
+.hc-category-chevron { color:var(--muted); transition:transform .18s ease; }
+.hc-category-card.is-open .hc-category-chevron { transform:rotate(180deg); color:var(--primary-strong); }
+.hc-category-body { border-top:1px solid var(--border); padding:.35rem .85rem .75rem; display:grid; grid-template-columns:repeat(auto-fit,minmax(min(100%,260px),1fr)); column-gap:1rem; }
+.hc-item-card { padding:.8rem .15rem; border-bottom:1px dashed var(--border); }
+.hc-item-card:nth-last-child(-n+2) { border-bottom:0; }
+.hc-item-main { display:flex; gap:.65rem; align-items:flex-start; }
+.hc-item-check { width:24px; height:24px; flex:0 0 24px; border-radius:8px; display:grid; place-items:center; background:color-mix(in srgb,var(--primary) 9%,var(--surface)); color:var(--primary-strong); font-size:.7rem; margin-top:.05rem; }
+.hc-item-copy { flex:1; min-width:0; }
+.hc-item-title { display:flex; justify-content:space-between; gap:.75rem; align-items:baseline; font-size:.83rem; font-weight:700; }
+.hc-item-title b { color:var(--primary-strong); font-size:.72rem; white-space:nowrap; }
+.hc-item-copy p { margin:.25rem 0 0; color:var(--muted); font-size:.72rem; line-height:1.5; }
+.hc-item-meta { display:flex; gap:.35rem; flex-wrap:wrap; margin:.45rem 0 0 2.1rem; }
+.hc-bag,.hc-wave { display:inline-flex; align-items:center; padding:.2rem .5rem; border-radius:999px; font-size:.63rem; font-weight:800; border:1px solid var(--border); }
+.hc-bag.small-bag { color:var(--primary-strong); background:color-mix(in srgb,var(--primary) 7%,transparent); border-color:color-mix(in srgb,var(--primary) 25%,var(--border)); }
+.hc-bag.large-bag { color:var(--muted); background:color-mix(in srgb,var(--text) 3%,transparent); }
+.hc-wave { color:var(--accent-strong); background:color-mix(in srgb,var(--accent) 9%,transparent); border-color:color-mix(in srgb,var(--accent) 28%,var(--border)); }
+.hc-note-card { border-radius:18px; }
+.hc-note-icon { width:34px; height:34px; flex:0 0 34px; display:grid; place-items:center; border-radius:10px; background:color-mix(in srgb,var(--primary) 9%,var(--surface)); color:var(--primary-strong); }
+body.dark-mode .hc-filter-panel, body.dark-mode .hc-category-card, body.dark-mode .hc-select,
+.theme-dark-preload body .hc-filter-panel, .theme-dark-preload body .hc-category-card, .theme-dark-preload body .hc-select { box-shadow:none; }
+@media (max-width: 900px) { .hc-filter-grid { grid-template-columns:1fr 1fr; } .hc-filter-grid .hc-filter-field:last-child { grid-column:1/-1; } .hc-category-grid { grid-template-columns:1fr; } }
+@media (max-width: 640px) {
+  .hc-filter-head { align-items:flex-start; flex-direction:column; }
+  .hc-filter-grid { grid-template-columns:1fr; }
+  .hc-filter-grid .hc-filter-field:last-child { grid-column:auto; }
+  .hc-filter-grid--single { grid-template-columns:1fr; }
+  .hc-category-toolbar { align-items:flex-start; flex-direction:column; }
+  .hc-category-toolbar .btn { width:100%; }
+  .hc-item-card:nth-last-child(-n+2) { border-bottom:1px dashed var(--border); }
+  .hc-item-card:last-child { border-bottom:0; }
+  .hc-item-title { align-items:flex-start; flex-direction:column; gap:.15rem; }
+}

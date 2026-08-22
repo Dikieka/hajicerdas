@@ -489,3 +489,156 @@ const HCLayanan = {
 };
 
 window.HCLayanan = HCLayanan;
+
+
+// Checklist perlengkapan Haji & Umrah — data statis, tanpa API/Google Sheets.
+// Struktur ini sengaja dipisahkan dari HTML agar mudah diperbarui dan digunakan
+// oleh halaman perlengkapan-haji.html serta perlengkapan-umroh.html.
+const HCChecklist = {
+  haji: [
+    {
+      icon: "bi-person-standing",
+      eyebrow: "Ihram & Pakaian",
+      title: "Pakaian dan Ihram",
+      items: [
+        "Kain ihram (2 lembar) untuk jamaah laki-laki",
+        "Sabuk ihram atau money belt",
+        "Baju ganti secukupnya",
+        "Pakaian tidur",
+        "Pakaian dalam secukupnya",
+        "Mukena untuk jamaah perempuan",
+        "Kerudung atau hijab secukupnya",
+        "Sandal yang nyaman untuk berjalan"
+      ]
+    },
+    {
+      icon: "bi-book",
+      eyebrow: "Ibadah",
+      title: "Perlengkapan Ibadah",
+      items: [
+        "Al-Qur'an kecil atau mushaf",
+        "Buku doa dan panduan manasik",
+        "Tasbih atau penghitung dzikir",
+        "Sajadah tipis dan mudah dibawa",
+        "Tas kecil untuk membawa perlengkapan ibadah"
+      ]
+    },
+    {
+      icon: "bi-bag",
+      eyebrow: "Pribadi",
+      title: "Kebutuhan Pribadi",
+      items: [
+        "Koper atau tas perjalanan",
+        "Tas selempang atau tas kecil",
+        "Botol minum",
+        "Payung ringan",
+        "Kantong pakaian kotor",
+        "Handuk kecil",
+        "Perlengkapan mandi",
+        "Tisu kering dan tisu basah",
+        "Masker dan hand sanitizer"
+      ]
+    },
+    {
+      icon: "bi-heart-pulse",
+      eyebrow: "Kesehatan",
+      title: "Kebutuhan Kesehatan",
+      items: [
+        "Obat pribadi sesuai kebutuhan",
+        "Vitamin atau kebutuhan kesehatan pribadi",
+        "Plester luka",
+        "Masker cadangan",
+        "Tabir surya",
+        "Krim pelembap atau lip balm",
+        "Salinan resep atau catatan obat jika diperlukan"
+      ]
+    },
+    {
+      icon: "bi-lightning-charge",
+      eyebrow: "Perjalanan",
+      title: "Elektronik & Barang Pendukung",
+      items: [
+        "Telepon genggam",
+        "Charger dan kabel",
+        "Power bank sesuai ketentuan penerbangan",
+        "Adaptor atau kepala charger yang sesuai",
+        "Earphone atau headset",
+        "Penanda koper atau luggage tag"
+      ]
+    }
+  ],
+  umrah: [
+    {
+      icon: "bi-person-standing",
+      eyebrow: "Ihram & Pakaian",
+      title: "Pakaian dan Ihram",
+      items: [
+        "Kain ihram (2 lembar) untuk jamaah laki-laki",
+        "Sabuk ihram atau money belt",
+        "Baju ganti secukupnya",
+        "Pakaian tidur",
+        "Pakaian dalam secukupnya",
+        "Mukena untuk jamaah perempuan",
+        "Kerudung atau hijab secukupnya",
+        "Sandal yang nyaman untuk berjalan"
+      ]
+    },
+    {
+      icon: "bi-book",
+      eyebrow: "Ibadah",
+      title: "Perlengkapan Ibadah",
+      items: [
+        "Al-Qur'an kecil atau mushaf",
+        "Buku doa dan panduan umrah",
+        "Tasbih atau penghitung dzikir",
+        "Sajadah tipis dan mudah dibawa",
+        "Tas kecil untuk membawa perlengkapan ibadah"
+      ]
+    },
+    {
+      icon: "bi-bag",
+      eyebrow: "Pribadi",
+      title: "Kebutuhan Pribadi",
+      items: [
+        "Koper atau tas perjalanan",
+        "Tas selempang atau tas kecil",
+        "Botol minum",
+        "Payung ringan",
+        "Kantong pakaian kotor",
+        "Handuk kecil",
+        "Perlengkapan mandi",
+        "Tisu kering dan tisu basah",
+        "Masker dan hand sanitizer"
+      ]
+    },
+    {
+      icon: "bi-heart-pulse",
+      eyebrow: "Kesehatan",
+      title: "Kebutuhan Kesehatan",
+      items: [
+        "Obat pribadi sesuai kebutuhan",
+        "Vitamin atau kebutuhan kesehatan pribadi",
+        "Plester luka",
+        "Masker cadangan",
+        "Tabir surya",
+        "Krim pelembap atau lip balm",
+        "Salinan resep atau catatan obat jika diperlukan"
+      ]
+    },
+    {
+      icon: "bi-lightning-charge",
+      eyebrow: "Perjalanan",
+      title: "Elektronik & Barang Pendukung",
+      items: [
+        "Telepon genggam",
+        "Charger dan kabel",
+        "Power bank sesuai ketentuan penerbangan",
+        "Adaptor atau kepala charger yang sesuai",
+        "Earphone atau headset",
+        "Penanda koper atau luggage tag"
+      ]
+    }
+  ]
+};
+
+window.HCChecklist = HCChecklist;

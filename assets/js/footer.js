@@ -36,7 +36,7 @@
       '<a class="d-block" href="tata-cara-haji.html">Tata Cara Haji</a>' +
       '<a class="d-block" href="tata-cara-umrah.html">Tata Cara Umrah</a>' +
       '<a class="d-block" href="doa.html">Kumpulan Doa</a>' +
-      '<a class="d-block" href="persiapan.html">Persiapan</a>' +
+      '<a class="d-block" href="checklist-perlengkapan.html">Checklist Perlengkapan</a>' +
       '<a class="d-block" href="waktu.html#jadwal">Jadwal Shalat &amp; Waktu</a>' +
       "</div>" +
       '<div class="col-6 col-lg-2">' +
@@ -51,7 +51,7 @@
       "</div>" +
       '<div class="col-6 col-lg-2">' +
       '<h3 class="h6 text-white">Layanan</h3>' +
-      '<a class="d-block" href="fikih.html">Kumpulan Doa</a>' +
+      '<a class="d-block" href="doa.html">Kumpulan Doa</a>' +
       '<a class="d-block" href="badal.html">Badal Umroh</a>' +
       '<a class="d-block" href="wakaf-quran.html">Wakaf Al-Qur\'an</a>' +
       '<a class="d-block" href="rekrutmen-petugas.html">Informasi Rekrutmen PPIH</a>' +

@@ -98,7 +98,7 @@ const doaSaveProgress = (kategori, progress) => {
 };
 
 const doaCardHtml = (item) => `
-  <div class="doa-card fade-up">
+  <div class="doa-card fade-up"${item.id ? ` id="${item.id}"` : ""}>
     ${item.label ? `<div class="doa-card-label">${item.label}</div>` : ""}
     ${item.keterangan ? `<p class="doa-card-note">${item.keterangan}</p>` : ""}
     ${item.arab ? `<p class="doa-card-arab" lang="ar" dir="rtl">${item.arab}</p>` : ""}
@@ -454,6 +454,7 @@ const renderListMode = async (container, kategoriNama) => {
       ? filtered
           .map((doa) =>
             doaCardHtml({
+              id: doa.id,
               label: doa.judul,
               arab: doa.arab,
               latin: doa.latin,

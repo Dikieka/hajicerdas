@@ -716,6 +716,28 @@
     text-align: left;
   }
 
+  /* "Cara Pendaftaran" & "Teknis Pelaksanaan" (tombol yang membuka halaman
+     terpisah) sengaja dipasangkan satu baris penuh berdua saja - baris ini
+     genap 2 kolom jadi otomatis rapi tanpa perlu aturan tambahan. Supaya
+     pasangannya konsisten walau urutan HTML berubah, keduanya dikunci
+     tampil berurutan lewat "order" alih-alih mengandalkan urutan markup. */
+  .tab-btn.tab-btn-link[href="pendaftaran-haji.html"] {
+    order: 3;
+  }
+  .tab-btn.tab-btn-link[href="teknis-pelaksanaan-haji.html"] {
+    order: 4;
+  }
+
+  /* "Ketentuan Haji" adalah tab kelima (ganjil) - kalau dibiarkan default,
+     dia sendirian di baris terakhir dan cuma mengisi setengah lebar,
+     menyisakan kotak kosong di sebelahnya yang terlihat seperti bug.
+     Jadi tab ini dilebarkan penuh satu baris, sama seperti "Pengertian"
+     dan "Jenis Haji" di atasnya, supaya terlihat rapi/disengaja. */
+  .tabbar > .tab-btn[data-tab="ketentuan"] {
+    grid-column: 1 / -1;
+    order: 5;
+  }
+
   /* Teks nama jenis haji terpilih (mis. "Haji Tamattu'") dipusatkan di
      tampilan mobile, sejajar dengan tab "Pengertian" yang juga rata
      tengah. Ikon tetap di kiri & panah tetap di kanan sebagai penanda
@@ -965,4 +987,88 @@
 .doa-more-btn:hover {
   background: var(--tc-emerald);
   color: #fff;
+}
+
+/* ---------- Tab bar: tombol yang menuju halaman terpisah (mis. "Cara
+   Pendaftaran" -> pendaftaran-haji.html, "Teknis Pelaksanaan" ->
+   teknis-pelaksanaan-haji.html). Tampilannya sama seperti tab-btn biasa
+   supaya menyatu di tabbar, tapi diberi ikon panah kecil di kanan supaya
+   pengguna sadar tombol ini akan berpindah halaman, bukan membuka panel
+   di tempat seperti tab lain. ---------- */
+.tab-btn.tab-btn-link {
+  text-decoration: none;
+}
+
+.tab-btn.tab-btn-link .ext {
+  margin-left: 2px;
+  font-size: 0.72rem;
+  opacity: 0.55;
+}
+
+.tab-btn.tab-btn-link:hover .ext,
+.tab-btn.tab-btn-link:focus-visible .ext {
+  opacity: 0.9;
+}
+
+/* ---------- Kartu tautan "Pelajari Lebih Lanjut" (dipakai di
+   tata-cara-haji.html untuk mengarah ke halaman Cara Pendaftaran &
+   Teknis Pelaksanaan) — dibangun dari komponen .card yang sudah ada
+   supaya otomatis ikut tema terang/gelap. ---------- */
+.subpage-links {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+  margin-top: 4px;
+}
+
+.subpage-link-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  text-decoration: none;
+  color: var(--text);
+  transition:
+    transform 0.15s ease,
+    border-color 0.15s ease,
+    box-shadow 0.15s ease;
+}
+
+.subpage-link-card:hover,
+.subpage-link-card:focus-visible {
+  transform: translateY(-2px);
+  border-color: var(--tc-emerald);
+  box-shadow: var(--shadow-md);
+  color: var(--text);
+}
+
+.subpage-link-card .panel-icon {
+  flex-shrink: 0;
+}
+
+.subpage-link-card h3 {
+  margin: 0 0 4px;
+  font-size: 1.02rem;
+  font-weight: 700;
+}
+
+.subpage-link-card p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.86rem;
+}
+
+.subpage-link-card .go {
+  margin-top: 10px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--tc-emerald-deep);
+}
+
+@media (max-width: 767.98px) {
+  .subpage-links {
+    grid-template-columns: 1fr;
+  }
 }
